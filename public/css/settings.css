@@ -1,0 +1,154 @@
+/* ============================================================
+   ADMIN SETTINGS — COLOSHOP THEME
+   Extends /css/admin-dashboard.css
+============================================================ */
+
+@import url('/css/admin-dashboard.css');
+
+.settings-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 24px;
+}
+
+.settings-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 8px rgba(0, 0, 0, 0.04), 0 10px 24px -4px rgba(0, 0, 0, 0.04);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.settings-card:hover {
+    transform: translateY(-4px);
+    box-shadow: inset 0 1px 0 #ffffff, 0 18px 36px -6px rgba(0, 0, 0, 0.09), 0 4px 18px rgba(254, 76, 80, 0.08);
+}
+
+.card-icon {
+    font-size: 26px;
+    width: 45px;
+    height: 45px;
+    background: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--dark);
+    transition: all var(--transition);
+}
+
+.checkbox-option:hover {
+    border-color: var(--primary);
+    background: #ffffff;
+}
+
+.checkbox-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+/* Store Status Switch */
+.store-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 0;
+}
+
+.store-status h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 4px;
+}
+
+.store-status p {
+    color: var(--text-muted);
+    font-size: 12.5px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 30px;
+    transition: 0.3s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+    background: var(--primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(24px);
+}
+
+.status-message {
+    margin-top: 18px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #a7f3d0;
+}
+
+@media (max-width: 900px) {
+    .settings-container {
+        grid-template-columns: 1fr;
+    }
+}

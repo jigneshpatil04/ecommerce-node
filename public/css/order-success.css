@@ -1,0 +1,132 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: #FAF7F2;
+
+    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+}
+
+
+.success-container {
+    width: 90%;
+    max-width: 550px;
+    background: white;
+    padding: 50px 30px;
+    text-align: center;
+    border-radius: 22px;
+    border-radius: 16px;
+    border: 1px solid #ECE5DD;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 4px 14px rgba(0, 0, 0, 0.04), 0 20px 45px -10px rgba(0, 0, 0, 0.10);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04), 0 20px 45px -10px rgba(0, 0, 0, 0.06);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.success-container:hover {
+    transform: translateY(-4px);
+    box-shadow: inset 0 1px 0 #ffffff, 0 24px 50px -10px rgba(0, 0, 0, 0.14);
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.10);
+}
+
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+
+    margin: 0 auto 25px;
+
+    border-radius: 50%;
+
+    background: #28a745;
+    background: #832729;
+
+    color: white;
+    color: #DFBA73;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 45px;
+
+    font-weight: bold;
+}
+
+
+.success-container h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px;
+    color: #1F1F1F;
+    margin-bottom: 15px;
+}
+
+
+.success-container p {
+    margin: 10px 0;
+
+    color: #555;
+}
+
+
+#orderId {
+    font-weight: bold;
+
+    color: #111;
+    color: #832729;
+
+    margin: 20px 0;
+}
+
+
+.btn {
+    display: inline-block;
+
+    margin-top: 20px;
+
+    padding: 13px 25px;
+
+    background: #111;
+
+    color: white;
+
+    padding: 13px 28px;
+    background: #ffffff;
+    color: #832729;
+    border: 1.5px solid #ECE5DD;
+    text-decoration: none;
+
+    border-radius: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+}
+
+
+.btn:hover {
+    background: #ff6b00;
+    background: #FFF0F2;
+    border-color: #832729;
+    color: #661C1E;
+    box-shadow: 0 4px 14px rgba(131, 39, 41, 0.15);
+    transform: translateY(-1px);
+}

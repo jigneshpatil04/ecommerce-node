@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Offline / Local File & Server Path Compatibility Adapter -->
+    <script>
+        (function() {
+            if (window.location.protocol === "file:") {
+                var pathname = window.location.pathname.replace(/\\/g, "/");
+                var inViews = pathname.toLowerCase().includes("/views/");
+                var publicPrefix = inViews ? "../public/" : "public/";
+                var viewsPrefix = inViews ? "./" : "views/";
+
+                // 1. Ensure stylesheet is injected immediately
+                var link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = publicPrefix + "css/style.css";
+                document.head.appendChild(link);
+
+                // 2. Fix images, links, styles when DOM is ready
+                function fixAllOfflineAssets() {
+                    document.querySelectorAll("img").forEach(function(img) {
+                        var src = img.getAttribute("src") || "";
+                        if (src.startsWith("/images/") || src.startsWith("./images/") || src.startsWith("images/")) {
+                            var filename = src.split("/").pop();
+                            img.src = publicPrefix + "images/" + filename;
+                        }
+                        img.onerror = function() {
+                            this.onerror = null;
+                            this.src = publicPrefix + "images/shirt2.jpg";
+                        };
+                    });
+
+                    document.querySelectorAll('[style*="url("]').forEach(function(el) {
+                        var style = el.getAttribute("style") || "";
+                        if (style.includes("/images/")) {
+                            el.setAttribute("style", style.replace(/\/images\//g, publicPrefix + "images/"));
+                        }
+                    });
+
+                    document.querySelectorAll("a[href]").forEach(function(a) {
+                        var href = a.getAttribute("href") || "";
+                        if (href.startsWith("/") && !href.startsWith("//")) {
+                            if (href === "/") {
+                                a.href = inViews ? "./index.html" : "./index.html";
+                            } else if (href.includes(".html")) {
+                                var clean = href.replace(/^\//, "");
+                                a.href = inViews ? ("./" + clean) : (viewsPrefix + clean);
+                            }
+                        }
+                    });
+
+                    var cartCountEl = document.getElementById("cart-count");
+                    if (cartCountEl) {
+                        try {
+                            var cart = JSON.parse(localStorage.getItem("cart") || "[]");
+                            var total = cart.reduce(function(sum, item) { return sum + Number(item.quantity || 1); }, 0);
+                            cartCountEl.textContent = total;
+                        } catch (e) {}
+                    }
+                }
+
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", fixAllOfflineAssets);
+                } else {
+                    fixAllOfflineAssets();
+                }
+            }
+        })();
+    </script>
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyStore — Fashion & Lifestyle</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="../public/css/style.css?v=13" id="mainStyleLink">
+    <link rel="stylesheet" href="/css/style.css?v=13">
+
+    <!-- Dedicated Styles for Size & Fit Guide & Hero Carousel -->
+    <style>
+        /* Hero Carousel Track & Slides */
+        .hero-carousel {
+            position: relative;
+            height: 560px;
+            overflow: hidden;
+            background: #140506;
+        }
+        .hero-slides-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+        .hero-slide {
+            position: relative;
+            flex: 0 0 100%;
+            width: 100%;
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center right;
+            display: flex;
+            align-items: center;
+            padding: 0 6%;
+            box-sizing: border-box;
+        }
+
+        /* Size & Fit Guide Section */
+        #size-fit-guide {
+            padding: 70px 6%;
+            background: #FAF7F2;
+        }
+        .size-guide-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .size-guide-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .size-tab {
+            padding: 10px 24px;
+            border-radius: 24px;
+            background: #ffffff;
+            border: 1.5px solid #ECE5DD;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1F1F1F;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+        .size-tab:hover {
+            border-color: #832729;
+            color: #832729;
+            background: #FFF0F2;
+        }
+        .size-tab.active {
+            background: #832729 !important;
+            border-color: #832729 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(131, 39, 41, 0.25);
+        }
+        .size-table-card {
+            background: #ffffff;
+            border: 1px solid #ECE5DD;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+            margin-bottom: 30px;
+        }
+        .size-panel {
+            display: none !important;
+        }
+        .size-panel.active {
+            display: block !important;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .size-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .size-table th {
+            background: #FAF7F2;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #832729;
+            border-bottom: 1.5px solid #ECE5DD;
+        }
+        .size-table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            color: #333333;
+            border-bottom: 1px solid #F0EAE1;
+        }
+        .size-table tbody tr:hover {
+            background: #FFF9FA;
+        }
+        .size-table tbody tr.recommended-row {
+            background: #FAF5EA;
+        }
+        .size-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #832729;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12px;
+        }
+        .popular-tag {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: #C5A059;
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        .fit-guide-row {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 24px;
+        }
+        .fit-recommender-card,
+        .how-to-measure-card {
+            background: #ffffff;
+            border: 1px solid #ECE5DD;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+        }
+        .fit-recommender-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .fit-recommender-header i {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #FFF0F2;
+            color: #832729;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .fit-recommender-header h4 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1F1F1F;
+            margin-bottom: 3px;
+        }
+        .fit-recommender-header p {
+            font-size: 13px;
+            color: #777;
+        }
+        .fit-calculator-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .fit-input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #444;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .fit-input-group input,
+        .fit-input-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #ECE5DD;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1F1F1F;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .fit-input-group input:focus,
+        .fit-input-group select:focus {
+            border-color: #832729;
+        }
+        .calc-fit-btn {
+            grid-column: span 2;
+            width: 100%;
+            padding: 13px;
+            background: #832729;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .calc-fit-btn:hover {
+            background: #661C1E;
+        }
+        .fit-result-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #FAF5EA;
+            border: 1.5px solid #C5A059;
+            color: #832729;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .fit-result-badge i {
+            font-size: 20px;
+            color: #C5A059;
+            flex-shrink: 0;
+        }
+        .how-to-measure-card h4 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1F1F1F;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .how-to-measure-card h4 i {
+            color: #832729;
+        }
+        .measure-steps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .measure-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #FFF0F2;
+            color: #832729;
+            border: 1px solid rgba(131, 39, 41, 0.2);
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .measure-step strong {
+            display: block;
+            font-size: 13px;
+            color: #1F1F1F;
+            margin-bottom: 2px;
+        }
+        .measure-step p {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+            margin: 0;
+        }
+        @media (max-width: 800px) {
+            .fit-guide-row {
+                grid-template-columns: 1fr;
+            }
+            .measure-steps-grid {
+                grid-template-columns: 1fr;
+            }
+            .fit-calculator-inputs {
+                grid-template-columns: 1fr;
+            }
+            .calc-fit-btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- ==========================================
+         ANNOUNCEMENT BAR
+    =========================================== -->
+
+    <div class="announcement-bar">
+        <i class="fa-solid fa-truck-fast"></i> Free Shipping on all orders over <span>₹999</span> &nbsp;|&nbsp; Use code <span>WELCOME10</span> for 10% off
+    </div>
+
+
+    <!-- ==========================================
+         NAVBAR
+    =========================================== -->
+
+        <nav class="navbar">
+
+        <!-- Logo -->
+        <div class="logo">
+            <a href="./index.html">
+                My<span>Store</span>
+            </a>
+        </div>
+
+        <!-- Pill Search Bar (With Camera & Mic icons) -->
+        <div class="nav-search-bar" id="navSearchBar">
+            <form class="nav-search-form" id="navSearchForm" onsubmit="handleNavSearch(event)">
+                <button type="submit" class="nav-search-btn" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <input 
+                    type="text" 
+                    class="nav-search-input" 
+                    id="navSearchInput" 
+                    placeholder="Search for shirts, styles, brands..." 
+                    autocomplete="off" 
+                    spellcheck="false"
+                >
+                <div class="nav-search-actions">
+                    <button type="button" class="nav-search-action-btn camera" id="navSearchCameraBtn" title="Search by image" aria-label="Search by image" onclick="triggerNavImageSearch(event)">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
+                    <button type="button" class="nav-search-action-btn mic" id="navSearchMicBtn" title="Voice search" aria-label="Search by voice" onclick="triggerNavVoiceSearch(event)">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                </div>
+            </form>
+            <input type="file" id="navSearchFileInput" accept="image/*" style="display:none;" onchange="handleNavImageSelected(event)">
+            <div class="nav-search-dropdown" id="navSearchDropdown"></div>
+        </div>
+
+        <!-- 5 Right Action Icons (Matching Tanishq Reference: Diamond, Stores, Wishlist, Account, Cart) -->
+        <div class="nav-actions">
+            <!-- 1. Diamond / Trending -->
+            <a href="./products.html?badge=Trending" class="nav-action-icon" title="Trending Collections">
+                <i class="fa-solid fa-gem"></i>
+            </a>
+
+            <!-- 2. Stores & Support -->
+            <a href="#" onclick="openCustomerSupportModal(event)" class="nav-action-icon" title="Stores & Support">
+                <i class="fa-solid fa-store"></i>
+            </a>
+
+            <!-- 3. Wishlist -->
+            <a href="./wishlist.html" class="nav-action-icon " title="Wishlist">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+
+            <!-- 4. Account / Login -->
+            <a href="./login.html" class="nav-action-icon " id="loginBtn" title="Account / Login">
+                <i class="fa-regular fa-user"></i>
+            </a>
+            <!-- User Menu (shown when logged in) -->
+            <div class="user-menu" id="userMenu" style="display: none;">
+                <a href="./orders.html" class="nav-action-icon " title="My Orders & Profile">
+                    <i class="fa-solid fa-user-check"></i>
+                </a>
+                <span class="user-name" id="userName" style="display: none;"></span>
+                <button type="button" class="nav-action-icon logout-icon-btn" id="logoutBtn" title="Logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+
+            <!-- 5. Cart / Bag with Badge -->
+            <a href="./cart.html" class="nav-action-icon nav-cart-icon " title="Shopping Bag">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span id="cart-count" class="cart-badge">0</span>
+            </a>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button type="button" class="menu-btn" id="menuBtn" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer Links (Only shown when toggled on mobile) -->
+        <div class="nav-links mobile-drawer">
+            <a href="./index.html" class="nav-link active">Home</a>
+            <a href="./categories.html" class="nav-link ">Categories</a>
+            <a href="./products.html" class="nav-link ">Shop</a>
+            <a href="./wishlist.html" class="nav-link ">Wishlist</a>
+            <a href="./orders.html" class="nav-link ">My Orders</a>
+            <a href="#" onclick="openCustomerSupportModal(event)" class="nav-link"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+
+    </nav>
+
+        <!-- ==========================================
+         SUB-NAVIGATION STRIP (ROW 2: HOME | ALL PRODUCTS | CATEGORIES MEGA MENU | T-SHIRTS | SHIRTS | PANTS | SHORTS | HOODIES | JACKETS | SHOES | ACCESSORIES)
+    =========================================== -->
+    <div class="header-sub-strip">
+        <div class="header-sub-container">
+            <!-- 1. Home -->
+            <a href="./index.html" class="header-sub-link active">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+
+            <!-- 2. All Products -->
+            <a href="./products.html" class="header-sub-link ">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> All Products
+            </a>
+
+            <!-- 3. Categories (With Luxury Mega Menu) -->
+            <div class="header-sub-item mega-dropdown-trigger">
+                <a href="javascript:void(0)" class="header-sub-link mega-trigger-link " role="button" title="View Categories">
+                    <i class="fa-solid fa-layer-group"></i> Categories <i class="fa-solid fa-chevron-down nav-caret"></i>
+                </a>
+                
+                <!-- Mega Menu Dropdown -->
+                <div class="nav-mega-menu">
+                    <div class="mega-menu-grid">
+                        
+                        <!-- Col 1: Vertical Category & Filter Tabs -->
+                        <div class="mega-tabs-col">
+                            <button type="button" class="mega-tab-btn active" data-target="megaPaneCategory" data-link="./products.html"
+                                data-featured-img="../public/images/jacket1.jpg" 
+                                data-featured-title="Discover Timeless Crafted Luxury Wear." 
+                                data-featured-link="./products.html">
+                                All Categories
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneTShirts" data-link="./products.html?category=T-Shirts"
+                                data-featured-img="../public/images/tshirt1.jpg" 
+                                data-featured-title="Luxury Cotton & Vintage Polo T-Shirts." 
+                                data-featured-link="./products.html?category=T-Shirts">
+                                T-Shirts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShirts" data-link="./products.html?category=Shirts"
+                                data-featured-img="../public/images/shirt2.jpg" 
+                                data-featured-title="Impeccable Formal & Casual Italian Shirts." 
+                                data-featured-link="./products.html?category=Shirts">
+                                Shirts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPanePants" data-link="./products.html?category=Pants"
+                                data-featured-img="../public/images/cargo_pants.jpg" 
+                                data-featured-title="Tailored Trousers, Chinos & Tactical Cargo Pants." 
+                                data-featured-link="./products.html?category=Pants">
+                                Pants
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneJeans" data-link="./products.html?category=Jeans"
+                                data-featured-img="../public/images/denim_jeans.jpg" 
+                                data-featured-title="Premium Slim Fit, Black & Vintage Denim Jeans." 
+                                data-featured-link="./products.html?category=Jeans">
+                                Jeans
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShorts" data-link="./products.html?category=Shorts"
+                                data-featured-img="../public/images/shorts.jpg" 
+                                data-featured-title="Relaxed Chino, Cargo & Casual Shorts." 
+                                data-featured-link="./products.html?category=Shorts">
+                                Shorts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneHoodies" data-link="./products.html?category=Hoodies"
+                                data-featured-img="../public/images/hoodie.jpg" 
+                                data-featured-title="Premium Heavyweight Streetwear Hoodies." 
+                                data-featured-link="./products.html?category=Hoodies">
+                                Hoodies
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneJackets" data-link="./products.html?category=Jackets"
+                                data-featured-img="../public/images/jacket1.jpg" 
+                                data-featured-title="Signature Outerwear, Blazers & Biker Jackets." 
+                                data-featured-link="./products.html?category=Jackets">
+                                Jackets
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShoes" data-link="./products.html?category=Shoes"
+                                data-featured-img="../public/images/shoes.jpg" 
+                                data-featured-title="Handcrafted Leather Loafers & Casual Sneakers." 
+                                data-featured-link="./products.html?search=Shoes">
+                                Shoes & Loafers
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneAccessories" data-link="./products.html?category=Accessories"
+                                data-featured-img="../public/images/accessories.jpg" 
+                                data-featured-title="Handcrafted Wallets, Watches & Accessories." 
+                                data-featured-link="./products.html?category=Accessories">
+                                Accessories
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPanePrice" data-link="./products.html"
+                                data-featured-img="../public/images/shirt3.jpg" 
+                                data-featured-title="Curated Value Drops For Every Budget." 
+                                data-featured-link="./products.html">
+                                By Price
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneOccasion" data-link="./products.html"
+                                data-featured-img="../public/images/jacket2.jpg" 
+                                data-featured-title="Styles Selected For Every Grand Occasion." 
+                                data-featured-link="./products.html">
+                                Occasions
+                            </button>
+                        </div>
+
+                        <!-- Col 2: Middle Subcategories & Quick Links -->
+                        <div class="mega-middle-col">
+                            
+                            <!-- Pane 1: All Categories (With Real Photos) -->
+                            <div class="mega-tab-pane active" id="megaPaneCategory">
+                                <div class="mega-subcategories-grid">
+                                    <!-- Column 1: Shirts & Tops -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="All Clothing" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Clothing</span>
+                                        </a>
+                                        <a href="./products.html?category=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="Formal Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt3.jpg" alt="Casual Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Shirts</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Linen Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=T-Shirts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt2.jpg" alt="Cotton T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Cotton T-Shirts</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Column 2: T-Shirts, Pants, Shorts, Jeans -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Polo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Polo T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Polo T-Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Chinos & Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Chinos & Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Casual Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Shorts</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Denim Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Denim Jeans</span>
+                                        </a>
+                                        <a href="./products.html?search=Cargo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Cargo Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Cargo Pants</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Column 3: Hoodies, Jackets, Shoes & Accessories -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Hoodies" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Winter Hoodies" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Winter Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?category=Jackets" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="Luxury Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Jackets</span>
+                                        </a>
+                                        <a href="./products.html?search=Shoes" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Sneakers & Shoes" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Sneakers & Shoes</span>
+                                        </a>
+                                        <a href="./products.html?search=Loafers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Loafers & Footwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Loafers & Footwear</span>
+                                        </a>
+                                        <a href="./products.html?category=Accessories" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Accessories" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Accessories</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 2: T-Shirts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneTShirts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=T-Shirts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="All T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All T-Shirts</span>
+                                        </a>
+                                        <a href="./products.html?search=Polo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Polo Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Premium Polo Tees</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Cotton" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt2.jpg" alt="Cotton Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Cotton Tees</span>
+                                        </a>
+                                        <a href="./products.html?search=Oversized" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt.jpg" alt="Oversized Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Oversized Fit Tees</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Graphic" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt3.jpg" alt="Graphic Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Graphic Print Tees</span>
+                                        </a>
+                                        <a href="./products.html?search=Striped" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt4.jpg" alt="Striped Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Striped Casual Tees</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 3: Shirts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShirts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Shirts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="All Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="Formal Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Executive Formal</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt3.jpg" alt="Casual Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Spread Collar</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Pure Linen Shirts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Checked" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt10.jpg" alt="Checked Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Checked & Plaid</span>
+                                        </a>
+                                        <a href="./products.html?search=Oxford" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt.jpg" alt="Oxford Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Oxford</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 4: Pants Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPanePants">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="All Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Cargo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="Cargo Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Utility Cargo Pants</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants&search=Chinos" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/chino_pants.jpg" alt="Chinos" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Chino Casual Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Trousers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/chino_pants.jpg" alt="Formal Trousers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Tailored Pants</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants&search=Relaxed" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Relaxed Fit" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Relaxed Fit Cargos</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Cotton" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="Cotton Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Stretch Cotton Pants</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 4B: Jeans Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneJeans">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/denim_jeans.jpg" alt="All Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Jeans</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Slim" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/denim_jeans.jpg" alt="Slim Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Slim Straight Denim</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans&search=Black" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/black_jeans.jpg" alt="Black Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Sleek Black Denim</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Skinny" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/black_jeans.jpg" alt="Skinny Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Urban Skinny Jeans</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans&search=Straight" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Classic Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Straight Jeans</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Vintage" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans3.jpg" alt="Vintage Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Vintage Washed Denim</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 5: Shorts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShorts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Shorts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="All Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Chino+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Chino Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Chino Shorts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Cargo+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Cargo Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Utility Cargo Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Denim+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Denim Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Denim Cut-off Shorts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Sweat+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Sweat Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Athletic Sweat Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Summer Linen Shorts</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 6: Hoodies Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneHoodies">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Hoodies" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="All Hoodies" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Pullover" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Pullover" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Pullover Fleece Hoodies</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Zip-Up" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Zip-Up" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Zip-Up Casual Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Oversized+Hoodie" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Oversized" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Oversized Street Hoodies</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Heavyweight" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Heavyweight" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Winter Thermal Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Athletic" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Athletic" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Athletic Training Hoodies</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 7: Jackets Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneJackets">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jackets" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="All Outerwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Outerwear</span>
+                                        </a>
+                                        <a href="./products.html?search=Leather" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="Leather Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Biker Jackets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Blazer" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket2.jpg" alt="Blazers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Designer Blazers</span>
+                                        </a>
+                                        <a href="./products.html?search=Bomber" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Bombers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Urban Bomber Jackets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Denim" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket4.jpg" alt="Denim Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Denim Jackets</span>
+                                        </a>
+                                        <a href="./products.html?search=Puffer" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket6.jpg" alt="Puffers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Thermal Puffer Jackets</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 8: Shoes Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShoes">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Shoes" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="All Footwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Footwear</span>
+                                        </a>
+                                        <a href="./products.html?search=Sneakers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Sneakers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury White Sneakers</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Loafers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Loafers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Handcrafted Loafers</span>
+                                        </a>
+                                        <a href="./products.html?search=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Slip-ons" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Slip-on Shoes</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Formal Shoes" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Leather Oxfords</span>
+                                        </a>
+                                        <a href="./products.html?search=Trainers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Trainers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Minimalist Trainers</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 9: Accessories Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneAccessories">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Accessories" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="All Accessories" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Accessories</span>
+                                        </a>
+                                        <a href="./products.html?search=Wallet" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Wallets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Genuine Leather Wallets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Watch" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Watches" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Chrono Watches</span>
+                                        </a>
+                                        <a href="./products.html?search=Sunglasses" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Sunglasses" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Designer Sunglasses</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Belt" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Belts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Italian Leather Belts</span>
+                                        </a>
+                                        <a href="./products.html?search=Caps" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Caps" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Signature Caps & Hats</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 10: Price Filters -->
+                            <div class="mega-tab-pane" id="megaPanePrice">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?maxPrice=499" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">Under ₹499</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=500&maxPrice=999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹500 — ₹999</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?minPrice=1000&maxPrice=1499" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹1,000 — ₹1,499</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=1500&maxPrice=1999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹1,500 — ₹1,999</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?minPrice=2000&maxPrice=2999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹2,000 — ₹2,999</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=3000" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-crown"></i></span>
+                                            <span class="mega-item-name">Luxury Above ₹3,000</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 11: Occasion Filters -->
+                            <div class="mega-tab-pane" id="megaPaneOccasion">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Casual" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-mug-saucer"></i></span>
+                                            <span class="mega-item-name">Everyday Casual</span>
+                                        </a>
+                                        <a href="./products.html?search=Office" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-briefcase"></i></span>
+                                            <span class="mega-item-name">Office & Boardroom</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Party" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-champagne-glasses"></i></span>
+                                            <span class="mega-item-name">Party & Night Out</span>
+                                        </a>
+                                        <a href="./products.html?search=Vacation" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-plane-departure"></i></span>
+                                            <span class="mega-item-name">Weekend Vacation</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Festive" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-sparkles"></i></span>
+                                            <span class="mega-item-name">Festive Celebrations</span>
+                                        </a>
+                                        <a href="./products.html?search=Wedding" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-heart"></i></span>
+                                            <span class="mega-item-name">Wedding & Reception</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Promo Banner Strip (Matching Reference) -->
+                            <div class="mega-bottom-banner">
+                                <div class="mega-banner-left">
+                                    <div class="mega-banner-thumbs">
+                                        <img src="../public/images/hoodie.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/jacket1.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/accessories.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/shorts.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                    </div>
+                                    <div class="mega-banner-info">
+                                        <strong>Fashion for Every Moment — See It All Here!</strong>
+                                        <span>500+ handcrafted luxury designs to explore</span>
+                                    </div>
+                                </div>
+                                <a href="./products.html" class="mega-banner-btn">View All</a>
+                            </div>
+
+                        </div>
+
+                        <!-- Col 3: Right Featured Card (Matching Reference) -->
+                        <div class="mega-featured-col">
+                            <a href="./products.html?badge=Trending" class="mega-featured-card">
+                                <div class="mega-featured-img-wrap">
+                                    <img src="../public/images/jacket1.jpg" alt="Featured Craft" class="mega-featured-img">
+                                </div>
+                                <h4 class="mega-featured-title">Discover Timeless Crafted Luxury Wear.</h4>
+                                <span class="mega-featured-link">Explore Now <i class="fa-solid fa-arrow-trend-up"></i></span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<!-- ==========================================
+         HERO BANNER ("DEFINE YOUR STYLE" - AUTO SCROLLING)
+    =========================================== -->
+
+    <section class="hero-carousel" id="heroCarousel">
+
+        <div class="hero-slides-track" id="heroTrack">
+
+            <!-- Slide 1: Primary - DEFINE YOUR STYLE -->
+            <div class="hero-slide active" style="background-image: linear-gradient(to right, rgba(20, 5, 6, 0.88) 0%, rgba(20, 5, 6, 0.65) 50%, rgba(20, 5, 6, 0.3) 100%), url('../public/images/jacket1.jpg');">
+                <div class="hero-slide-content">
+                    <span class="hero-slide-badge"><i class="fa-solid fa-crown"></i> SPRING / SUMMER 2025</span>
+                    <h1 class="hero-slide-title">DEFINE YOUR <span class="highlight-gold">STYLE</span></h1>
+                    <p class="hero-slide-desc">
+                        Discover luxury tailored cuts, bespoke textures, and statement modern silhouettes designed to command every room.
+                    </p>
+                    <div class="hero-slide-actions">
+                        <a href="./products.html" class="hero-btn-primary">
+                            <i class="fa-solid fa-bag-shopping"></i> EXPLORE COLLECTION
+                        </a>
+                        <a href="#trending-section" class="hero-btn-secondary">
+                            VIEW TRENDING PICKS <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Formalwear Distinction -->
+            <div class="hero-slide" style="background-image: linear-gradient(to right, rgba(20, 5, 6, 0.88) 0%, rgba(20, 5, 6, 0.65) 50%, rgba(20, 5, 6, 0.3) 100%), url('../public/images/shirt2.jpg');">
+                <div class="hero-slide-content">
+                    <span class="hero-slide-badge"><i class="fa-solid fa-sparkles"></i> ATELIER EXCLUSIVE</span>
+                    <h1 class="hero-slide-title">CRAFTED FOR <span class="highlight-gold">DISTINCTION</span></h1>
+                    <p class="hero-slide-desc">
+                        Impeccably tailored Egyptian cotton, crisp spread collars, and timeless executive elegance built for leaders.
+                    </p>
+                    <div class="hero-slide-actions">
+                        <a href="./products.html?category=shirts" class="hero-btn-primary">
+                            <i class="fa-solid fa-shirt"></i> SHOP FORMALWEAR
+                        </a>
+                        <a href="./products.html" class="hero-btn-secondary">
+                            NEW ARRIVALS
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Street & Urban Culture -->
+            <div class="hero-slide" style="background-image: linear-gradient(to right, rgba(20, 5, 6, 0.88) 0%, rgba(20, 5, 6, 0.65) 50%, rgba(20, 5, 6, 0.3) 100%), url('../public/images/tshirt1.jpg');">
+                <div class="hero-slide-content">
+                    <span class="hero-slide-badge"><i class="fa-solid fa-fire"></i> STREET CULTURE</span>
+                    <h1 class="hero-slide-title">UNAPOLOGETICALLY <span class="highlight-gold">BOLD</span></h1>
+                    <p class="hero-slide-desc">
+                        Heavyweight vintage washes, drop-shoulder comfort, and modern relaxed denim for fearless street styling.
+                    </p>
+                    <div class="hero-slide-actions">
+                        <a href="./products.html?category=t-shirts" class="hero-btn-primary">
+                            <i class="fa-solid fa-tag"></i> SHOP STREETWEAR
+                        </a>
+                        <a href="./products.html" class="hero-btn-secondary">
+                            EXPLORE ALL
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Arrows -->
+        <button type="button" class="hero-arrow-btn prev-arrow" id="heroPrevBtn" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button type="button" class="hero-arrow-btn next-arrow" id="heroNextBtn" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Slide Indicators / Dots -->
+        <div class="hero-dots-nav" id="heroDotsNav">
+            <span class="hero-dot active" data-index="0"></span>
+            <span class="hero-dot" data-index="1"></span>
+            <span class="hero-dot" data-index="2"></span>
+        </div>
+
+        <!-- Animated Progress Bar -->
+        <div class="hero-progress-bar">
+            <div class="hero-progress-fill" id="heroProgressFill"></div>
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         1. TRENDING NOW
+    =========================================== -->
+
+    <section class="home-section bg-white" id="trending-section">
+
+        <div class="section-header-wrap">
+            <span class="section-tag"><i class="fa-solid fa-fire"></i> Trending Now</span>
+            <h2>TRENDING NOW</h2>
+            <p>Explore this week's most-coveted luxury styles and high-demand statements</p>
+        </div>
+
+        <div class="product-grid-4" id="trendingContainer">
+
+            <!-- Product 1 -->
+            <div class="home-product-card" data-product-id="1" data-selected-color="Blue">
+                <span class="product-badge badge-trending">Trending</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(1)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./product-details.html?id=1&color=Blue" class="product-thumb-wrap" data-card-link>
+                    <img src="../public/images/tshirt1.jpg" alt="Vintage Oversized Graphic T-Shirt" onerror="this.src='../public/images/shirt2.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">T-Shirts</span>
+                    <a href="./product-details.html?id=1&color=Blue" class="home-card-title" data-card-link>Vintage Oversized Graphic T-Shirt</a>
+                    <div class="card-color-swatches" onclick="event.stopPropagation();" title="Choose color">
+                        <button type="button" class="card-color-badge active" style="background-color: #1B2A4A;" title="Blue / Navy" aria-label="Blue" onclick="switchCardColor(event, this, 1, '/images/tshirt1.jpg', 'Blue')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #181818;" title="Black" aria-label="Black" onclick="switchCardColor(event, this, 1, '/images/jacket3.jpg', 'Black')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge white-swatch" style="background-color: #FFFFFF;" title="White" aria-label="White" onclick="switchCardColor(event, this, 1, '/images/jacket4.jpg', 'White')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #BA292B;" title="Red" aria-label="Red" onclick="switchCardColor(event, this, 1, '/images/jacket6.jpg', 'Red')"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(4.9)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹849.00</span>
+                        <span class="home-card-old-price">₹1,399.00</span>
+                        <span class="home-card-discount">39% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(1, 'Vintage Oversized Graphic T-Shirt', 849, '/images/tshirt1.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="home-product-card" data-product-id="2" data-selected-color="Brown">
+                <span class="product-badge badge-trending">Hot</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(2)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./product-details.html?id=2&color=Brown" class="product-thumb-wrap" data-card-link>
+                    <img src="../public/images/shirt2.jpg" alt="Tailored Linen Casual Shirt" onerror="this.src='../public/images/tshirt1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Shirts</span>
+                    <a href="./product-details.html?id=2&color=Brown" class="home-card-title" data-card-link>Tailored Linen Casual Shirt</a>
+                    <div class="card-color-swatches" onclick="event.stopPropagation();" title="Choose color">
+                        <button type="button" class="card-color-badge active" style="background-color: #6E473B;" title="Brown / Khaki" aria-label="Brown" onclick="switchCardColor(event, this, 2, '/images/shirt2.jpg', 'Brown')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #2E68C0;" title="Blue" aria-label="Blue" onclick="switchCardColor(event, this, 2, '/images/jacket2.jpg', 'Blue')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #181818;" title="Black" aria-label="Black" onclick="switchCardColor(event, this, 2, '/images/jacket3.jpg', 'Black')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge white-swatch" style="background-color: #FFFFFF;" title="White" aria-label="White" onclick="switchCardColor(event, this, 2, '/images/jacket4.jpg', 'White')"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>(4.8)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹1,199.00</span>
+                        <span class="home-card-old-price">₹1,899.00</span>
+                        <span class="home-card-discount">37% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(2, 'Tailored Linen Casual Shirt', 1199, '/images/shirt2.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="home-product-card" data-product-id="3" data-selected-color="Blue">
+                <span class="product-badge badge-trending">Trending</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(3)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./product-details.html?id=3&color=Blue" class="product-thumb-wrap" data-card-link>
+                    <img src="../public/images/jeans3.jpg" alt="Slim Tapered Stretch Denim" onerror="this.src='../public/images/tshirt1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Jeans</span>
+                    <a href="./product-details.html?id=3&color=Blue" class="home-card-title" data-card-link>Slim Tapered Stretch Denim</a>
+                    <div class="card-color-swatches" onclick="event.stopPropagation();" title="Choose color">
+                        <button type="button" class="card-color-badge active" style="background-color: #2E68C0;" title="Blue / Denim" aria-label="Blue" onclick="switchCardColor(event, this, 3, '/images/jeans3.jpg', 'Blue')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #181818;" title="Black" aria-label="Black" onclick="switchCardColor(event, this, 3, '/images/jacket3.jpg', 'Black')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge white-swatch" style="background-color: #FFFFFF;" title="White" aria-label="White" onclick="switchCardColor(event, this, 3, '/images/jacket4.jpg', 'White')"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(5.0)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹1,499.00</span>
+                        <span class="home-card-old-price">₹2,299.00</span>
+                        <span class="home-card-discount">35% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(3, 'Slim Tapered Stretch Denim', 1499, '/images/jeans3.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="home-product-card" data-product-id="4" data-selected-color="Green">
+                <span class="product-badge badge-trending">Hot</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(4)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./product-details.html?id=4&color=Green" class="product-thumb-wrap" data-card-link>
+                    <img src="../public/images/jacket1.jpg" alt="Classic Leather Biker Jacket" onerror="this.src='../public/images/shirt2.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Jackets</span>
+                    <a href="./product-details.html?id=4&color=Green" class="home-card-title" data-card-link>Classic Leather Biker Jacket</a>
+                    <div class="card-color-swatches" onclick="event.stopPropagation();" title="Choose color">
+                        <button type="button" class="card-color-badge" style="background-color: #181818;" title="Black" aria-label="Black" onclick="switchCardColor(event, this, 4, '/images/jacket3.jpg', 'Black')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #2E68C0;" title="Blue" aria-label="Blue" onclick="switchCardColor(event, this, 4, '/images/jacket2.jpg', 'Blue')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge" style="background-color: #BA292B;" title="Red" aria-label="Red" onclick="switchCardColor(event, this, 4, '/images/jacket6.jpg', 'Red')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge white-swatch" style="background-color: #FFFFFF;" title="White" aria-label="White" onclick="switchCardColor(event, this, 4, '/images/jacket4.jpg', 'White')"><i class="fa-solid fa-check"></i></button>
+                        <button type="button" class="card-color-badge active" style="background-color: #4E6E3D;" title="Green / Olive" aria-label="Green" onclick="switchCardColor(event, this, 4, '/images/jacket1.jpg', 'Green')"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(4.9)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹2,899.00</span>
+                        <span class="home-card-old-price">₹4,499.00</span>
+                        <span class="home-card-discount">36% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(4, 'Classic Leather Biker Jacket', 2899, '/images/jacket1.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         2. SPECIAL OFFER (40% OFF)
+    =========================================== -->
+
+    <section class="special-offer-section" id="special-offer">
+
+        <div class="special-offer-inner">
+
+            <span class="offer-pill">
+                <i class="fa-solid fa-bolt"></i> LIMITED TIME EVENT
+            </span>
+
+            <h2>
+                SPECIAL OFFER — <span>40% OFF</span>
+            </h2>
+
+            <p>
+                Refresh your capsule with our signature luxury designer drops. Use your exclusive seasonal discount code at checkout before midnight!
+            </p>
+
+            <div class="offer-coupon-box">
+                <span class="coupon-label"><i class="fa-solid fa-ticket"></i> PROMO CODE:</span>
+                <span class="coupon-code" id="couponCodeText">LUXE40</span>
+                <button type="button" class="coupon-copy-btn" id="copyCouponBtn" onclick="copyCouponCode()">
+                    <i class="fa-solid fa-copy"></i> COPY
+                </button>
+            </div>
+
+            <br>
+
+            <a href="./products.html" class="offer-cta-btn">
+                <i class="fa-solid fa-tag"></i> SHOP 40% OFF NOW
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         3. NEW ARRIVALS
+    =========================================== -->
+
+    <section class="home-section bg-ivory" id="new-arrivals-section">
+
+        <div class="section-header-wrap">
+            <span class="section-tag"><i class="fa-solid fa-sparkles"></i> Just Dropped</span>
+            <h2>NEW ARRIVALS</h2>
+            <p>Fresh additions crafted with uncompromising quality, breathable textiles and modern silhouettes</p>
+        </div>
+
+        <div class="product-grid-4" id="newArrivalsContainer">
+
+            <!-- Product 1 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-new">New</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(5)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/jacket2.jpg" alt="Urban Bomber Windbreaker" onerror="this.src='../public/images/jacket1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Jackets</span>
+                    <a href="./products.html" class="home-card-title">Urban Bomber Windbreaker</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(5.0)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹2,199.00</span>
+                        <span class="home-card-old-price">₹3,299.00</span>
+                        <span class="home-card-discount">33% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(5, 'Urban Bomber Windbreaker', 2199, '/images/jacket2.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-new">New</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(6)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/shirt2.jpg" alt="Oxford Cotton Formal Shirt" onerror="this.src='../public/images/tshirt1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Shirts</span>
+                    <a href="./products.html" class="home-card-title">Oxford Cotton Formal Shirt</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(4.8)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹1,299.00</span>
+                        <span class="home-card-old-price">₹1,999.00</span>
+                        <span class="home-card-discount">35% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(6, 'Oxford Cotton Formal Shirt', 1299, '/images/shirt2.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-new">New</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(7)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/tshirt1.jpg" alt="Heavyweight Cotton Crewneck" onerror="this.src='../public/images/shirt2.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">T-Shirts</span>
+                    <a href="./products.html" class="home-card-title">Heavyweight Cotton Crewneck</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>(4.7)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹799.00</span>
+                        <span class="home-card-old-price">₹1,199.00</span>
+                        <span class="home-card-discount">33% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(7, 'Heavyweight Cotton Crewneck', 799, '/images/tshirt1.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-new">New</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(8)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/jeans3.jpg" alt="Relaxed Fit Dark Wash Jeans" onerror="this.src='../public/images/tshirt1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Jeans</span>
+                    <a href="./products.html" class="home-card-title">Relaxed Fit Dark Wash Jeans</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(4.9)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹1,599.00</span>
+                        <span class="home-card-old-price">₹2,499.00</span>
+                        <span class="home-card-discount">36% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(8, 'Relaxed Fit Dark Wash Jeans', 1599, '/images/jeans3.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         4. SHOP BY COLLECTION (Street | Formal | Casual | Premium)
+    =========================================== -->
+
+    <section class="home-section bg-white" id="collections-section">
+
+        <div class="section-header-wrap">
+            <span class="section-tag"><i class="fa-solid fa-layer-group"></i> Curated Aesthetics</span>
+            <h2>SHOP BY COLLECTION</h2>
+            <p>Discover signature collections designed to reflect your distinctive style identity</p>
+        </div>
+
+        <div class="collections-grid-4">
+
+            <!-- Street -->
+            <a href="./products.html?category=t-shirts" class="collection-box">
+                <img src="../public/images/tshirt1.jpg" alt="Street Collection" onerror="this.src='../public/images/shirt2.jpg'">
+                <div class="collection-overlay">
+                    <span class="collection-tag-mini">Urban & Edgy</span>
+                    <h3 class="collection-name">Street</h3>
+                    <p class="collection-desc">Oversized tees, drop shoulders, and underground graphics</p>
+                    <span class="collection-link-text">Explore Street <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <!-- Formal -->
+            <a href="./products.html?category=shirts" class="collection-box">
+                <img src="../public/images/shirt2.jpg" alt="Formal Collection" onerror="this.src='../public/images/tshirt1.jpg'">
+                <div class="collection-overlay">
+                    <span class="collection-tag-mini">Crisp & Sharp</span>
+                    <h3 class="collection-name">Formal</h3>
+                    <p class="collection-desc">Italian collars, structured button-downs, and boardroom elegance</p>
+                    <span class="collection-link-text">Explore Formal <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <!-- Casual -->
+            <a href="./products.html?category=jeans" class="collection-box">
+                <img src="../public/images/jeans3.jpg" alt="Casual Collection" onerror="this.src='../public/images/jacket1.jpg'">
+                <div class="collection-overlay">
+                    <span class="collection-tag-mini">Effortless Comfort</span>
+                    <h3 class="collection-name">Casual</h3>
+                    <p class="collection-desc">Relaxed denim, breathable polos, and everyday weekend essentials</p>
+                    <span class="collection-link-text">Explore Casual <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <!-- Premium -->
+            <a href="./products.html?category=jackets" class="collection-box">
+                <img src="../public/images/jacket1.jpg" alt="Premium Collection" onerror="this.src='../public/images/shirt2.jpg'">
+                <div class="collection-overlay">
+                    <span class="collection-tag-mini">Luxury Atelier</span>
+                    <h3 class="collection-name">Premium</h3>
+                    <p class="collection-desc">Supple leather coats, crafted outerwear, and couture craftsmanship</p>
+                    <span class="collection-link-text">Explore Premium <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         SIZE & FIT GUIDE ("Find your perfect size")
+    =========================================== -->
+
+    <section class="home-section bg-white" id="size-fit-guide">
+
+        <div class="section-header-wrap">
+            <span class="section-tag"><i class="fa-solid fa-ruler-combined"></i> Precision Sizing</span>
+            <h2>SIZE & FIT GUIDE</h2>
+            <p>Find your perfect size with our accurate garment measurements and interactive fit finder</p>
+        </div>
+
+        <div class="size-guide-container">
+
+            <!-- Tab Switcher -->
+            <div class="size-guide-tabs">
+                <button type="button" class="size-tab active" data-tab="tshirts">
+                    <i class="fa-solid fa-tshirt"></i> T-Shirts & Tops
+                </button>
+                <button type="button" class="size-tab" data-tab="shirts">
+                    <i class="fa-solid fa-shirt"></i> Formal Shirts
+                </button>
+                <button type="button" class="size-tab" data-tab="jeans">
+                    <i class="fa-solid fa-vest"></i> Jeans & Bottoms
+                </button>
+                <button type="button" class="size-tab" data-tab="jackets">
+                    <i class="fa-solid fa-mitten"></i> Jackets & Coats
+                </button>
+            </div>
+
+            <!-- Size Tables Container -->
+            <div class="size-table-card">
+
+                <!-- T-Shirts Table -->
+                <div class="size-panel active" id="panel-tshirts">
+                    <div class="table-responsive">
+                        <table class="size-table">
+                            <thead>
+                                <tr>
+                                    <th>Size</th>
+                                    <th>Chest (in / cm)</th>
+                                    <th>Shoulder (in / cm)</th>
+                                    <th>Length (in / cm)</th>
+                                    <th>Body Fit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="size-pill">S</strong></td>
+                                    <td>38" / 96 cm</td>
+                                    <td>17.5" / 44 cm</td>
+                                    <td>27" / 68 cm</td>
+                                    <td>Slim / Athletic</td>
+                                </tr>
+                                <tr class="recommended-row">
+                                    <td><strong class="size-pill">M</strong> <span class="popular-tag">Popular</span></td>
+                                    <td>40" / 102 cm</td>
+                                    <td>18.5" / 47 cm</td>
+                                    <td>28" / 71 cm</td>
+                                    <td>Regular Fit</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">L</strong></td>
+                                    <td>42" / 107 cm</td>
+                                    <td>19.5" / 50 cm</td>
+                                    <td>29" / 74 cm</td>
+                                    <td>Relaxed Fit</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">XL</strong></td>
+                                    <td>44" / 112 cm</td>
+                                    <td>20.5" / 52 cm</td>
+                                    <td>30" / 76 cm</td>
+                                    <td>Oversized / Loose</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">XXL</strong></td>
+                                    <td>46" / 117 cm</td>
+                                    <td>21.5" / 55 cm</td>
+                                    <td>31" / 79 cm</td>
+                                    <td>Comfort Plus</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Shirts Table -->
+                <div class="size-panel" id="panel-shirts">
+                    <div class="table-responsive">
+                        <table class="size-table">
+                            <thead>
+                                <tr>
+                                    <th>Collar Size</th>
+                                    <th>Chest (in / cm)</th>
+                                    <th>Waist (in / cm)</th>
+                                    <th>Sleeve (in / cm)</th>
+                                    <th>Fit Cut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="size-pill">38 (S)</strong></td>
+                                    <td>38" / 96 cm</td>
+                                    <td>34" / 86 cm</td>
+                                    <td>32.5" / 83 cm</td>
+                                    <td>Tailored Cut</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">40 (M)</strong></td>
+                                    <td>40" / 102 cm</td>
+                                    <td>36" / 91 cm</td>
+                                    <td>33.5" / 85 cm</td>
+                                    <td>Classic Executive</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">42 (L)</strong></td>
+                                    <td>42" / 107 cm</td>
+                                    <td>38" / 96 cm</td>
+                                    <td>34.5" / 88 cm</td>
+                                    <td>Standard Comfort</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">44 (XL)</strong></td>
+                                    <td>44" / 112 cm</td>
+                                    <td>40" / 102 cm</td>
+                                    <td>35.5" / 90 cm</td>
+                                    <td>Straight Fit</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Jeans Table -->
+                <div class="size-panel" id="panel-jeans">
+                    <div class="table-responsive">
+                        <table class="size-table">
+                            <thead>
+                                <tr>
+                                    <th>Waist Size</th>
+                                    <th>Hip (in / cm)</th>
+                                    <th>Thigh (in / cm)</th>
+                                    <th>Inseam (in / cm)</th>
+                                    <th>Style</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="size-pill">30</strong></td>
+                                    <td>37" / 94 cm</td>
+                                    <td>21" / 53 cm</td>
+                                    <td>32" / 81 cm</td>
+                                    <td>Slim Tapered</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">32</strong></td>
+                                    <td>39" / 99 cm</td>
+                                    <td>22" / 56 cm</td>
+                                    <td>32" / 81 cm</td>
+                                    <td>Regular Straight</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">34</strong></td>
+                                    <td>41" / 104 cm</td>
+                                    <td>23" / 58 cm</td>
+                                    <td>32.5" / 83 cm</td>
+                                    <td>Relaxed Denim</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">36</strong></td>
+                                    <td>43" / 109 cm</td>
+                                    <td>24" / 61 cm</td>
+                                    <td>33" / 84 cm</td>
+                                    <td>Loose Fit</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Jackets Table -->
+                <div class="size-panel" id="panel-jackets">
+                    <div class="table-responsive">
+                        <table class="size-table">
+                            <thead>
+                                <tr>
+                                    <th>Jacket Size</th>
+                                    <th>Chest (in / cm)</th>
+                                    <th>Shoulder (in / cm)</th>
+                                    <th>Length (in / cm)</th>
+                                    <th>Layering Room</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="size-pill">38 (S)</strong></td>
+                                    <td>40" / 102 cm</td>
+                                    <td>18" / 46 cm</td>
+                                    <td>26" / 66 cm</td>
+                                    <td>Fitted Layer</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">40 (M)</strong></td>
+                                    <td>42" / 107 cm</td>
+                                    <td>19" / 48 cm</td>
+                                    <td>27" / 69 cm</td>
+                                    <td>Standard Layer</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">42 (L)</strong></td>
+                                    <td>44" / 112 cm</td>
+                                    <td>20" / 51 cm</td>
+                                    <td>28" / 71 cm</td>
+                                    <td>Comfort Outer</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="size-pill">44 (XL)</strong></td>
+                                    <td>46" / 117 cm</td>
+                                    <td>21" / 53 cm</td>
+                                    <td>29" / 74 cm</td>
+                                    <td>Heavy Winter Layer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Smart Fit Recommender & Measuring Guide Cards -->
+            <div class="fit-guide-row">
+
+                <!-- Interactive Size Recommender -->
+                <div class="fit-recommender-card">
+                    <div class="fit-recommender-header">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <div>
+                            <h4>Smart Size Recommender</h4>
+                            <p>Enter your chest circumference for an instant size recommendation</p>
+                        </div>
+                    </div>
+                    <div class="fit-calculator-inputs">
+                        <div class="fit-input-group">
+                            <label for="chestInput">Your Chest Size (Inches):</label>
+                            <input type="number" id="chestInput" min="30" max="55" value="40" placeholder="e.g. 40">
+                        </div>
+                        <div class="fit-input-group">
+                            <label for="fitPreference">Preferred Fit:</label>
+                            <select id="fitPreference">
+                                <option value="regular">Regular Fit (Standard)</option>
+                                <option value="slim">Slim Fit (Snug)</option>
+                                <option value="relaxed">Relaxed / Oversized</option>
+                            </select>
+                        </div>
+                        <button type="button" class="calc-fit-btn" onclick="calculateRecommendedSize()">
+                            Calculate My Size
+                        </button>
+                    </div>
+                    <div class="fit-result-badge" id="fitResultDisplay">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Your Recommended Size: <strong>M (Medium - Regular Fit)</strong></span>
+                    </div>
+                </div>
+
+                <!-- 4 How-to-Measure Steps -->
+                <div class="how-to-measure-card">
+                    <h4><i class="fa-solid fa-tape"></i> How to Measure</h4>
+                    <div class="measure-steps-grid">
+                        <div class="measure-step">
+                            <span class="step-num">1</span>
+                            <div>
+                                <strong>Chest / Bust</strong>
+                                <p>Wrap the tape around the fullest part of your chest under your arms.</p>
+                            </div>
+                        </div>
+                        <div class="measure-step">
+                            <span class="step-num">2</span>
+                            <div>
+                                <strong>Waistline</strong>
+                                <p>Measure around the natural waistline where your pants comfortably sit.</p>
+                            </div>
+                        </div>
+                        <div class="measure-step">
+                            <span class="step-num">3</span>
+                            <div>
+                                <strong>Shoulders</strong>
+                                <p>Measure straight across the back from one shoulder edge to the other.</p>
+                            </div>
+                        </div>
+                        <div class="measure-step">
+                            <span class="step-num">4</span>
+                            <div>
+                                <strong>Body Length</strong>
+                                <p>From the highest shoulder point down to where you want the hem to fall.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         5. CUSTOMER FAVORITES
+    =========================================== -->
+
+    <section class="home-section bg-ivory" id="favorites-section">
+
+        <div class="section-header-wrap">
+            <span class="section-tag"><i class="fa-solid fa-award"></i> Top Rated</span>
+            <h2>CUSTOMER FAVORITES</h2>
+            <p>Our highest-rated bestsellers loved by thousands of verified fashion enthusiasts</p>
+        </div>
+
+        <div class="product-grid-4" id="customerFavoritesContainer">
+
+            <!-- Product 1 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-favorite">Bestseller</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(9)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/shirt2.jpg" alt="Luxury Satin Finish Dress Shirt" onerror="this.src='../public/images/tshirt1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Shirts</span>
+                    <a href="./products.html" class="home-card-title">Luxury Satin Finish Dress Shirt</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(5.0 · 340+ reviews)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹1,399.00</span>
+                        <span class="home-card-old-price">₹2,199.00</span>
+                        <span class="home-card-discount">36% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(9, 'Luxury Satin Finish Dress Shirt', 1399, '/images/shirt2.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-favorite">Top Choice</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(10)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/tshirt1.jpg" alt="Acid Wash Drop Shoulder Tee" onerror="this.src='../public/images/shirt2.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">T-Shirts</span>
+                    <a href="./products.html" class="home-card-title">Acid Wash Drop Shoulder Tee</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(4.9 · 210+ reviews)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹899.00</span>
+                        <span class="home-card-old-price">₹1,499.00</span>
+                        <span class="home-card-discount">40% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(10, 'Acid Wash Drop Shoulder Tee', 899, '/images/tshirt1.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-favorite">Bestseller</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(11)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/jacket1.jpg" alt="Motorcycle Leather Riding Jacket" onerror="this.src='../public/images/jacket2.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Jackets</span>
+                    <a href="./products.html" class="home-card-title">Motorcycle Leather Riding Jacket</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>(5.0 · 180+ reviews)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹3,299.00</span>
+                        <span class="home-card-old-price">₹4,999.00</span>
+                        <span class="home-card-discount">34% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(11, 'Motorcycle Leather Riding Jacket', 3299, '/images/jacket1.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="home-product-card">
+                <span class="product-badge badge-favorite">Top Rated</span>
+                <button type="button" class="card-wish-btn" onclick="toggleWishlist(12)" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="./products.html" class="product-thumb-wrap">
+                    <img src="../public/images/jeans3.jpg" alt="Distressed Raw Edge Blue Denim" onerror="this.src='../public/images/tshirt1.jpg'">
+                </a>
+                <div class="home-card-body">
+                    <span class="home-card-category">Jeans</span>
+                    <a href="./products.html" class="home-card-title">Distressed Raw Edge Blue Denim</a>
+                    <div class="home-card-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>(4.8 · 195+ reviews)</span>
+                    </div>
+                    <div class="home-card-price-row">
+                        <span class="home-card-price">₹1,699.00</span>
+                        <span class="home-card-old-price">₹2,599.00</span>
+                        <span class="home-card-discount">35% OFF</span>
+                    </div>
+                    <button type="button" class="home-card-add-btn" onclick="quickAddToCart(12, 'Distressed Raw Edge Blue Denim', 1699, '/images/jeans3.jpg')">
+                        <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         6. WHY CHOOSE US (Delivery | Secure | Returns | Help)
+    =========================================== -->
+
+    <section class="home-section bg-white" id="why-choose-us">
+
+        <div class="section-header-wrap">
+            <span class="section-tag"><i class="fa-solid fa-shield-halved"></i> The SQUAD Promise</span>
+            <h2>WHY CHOOSE US</h2>
+            <p>Elevating your lifestyle through exceptional quality, transparent service and total peace of mind</p>
+        </div>
+
+        <div class="why-choose-grid">
+
+            <!-- 1. Delivery -->
+            <div class="why-card">
+                <div class="why-icon-circle">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h3>Express Delivery</h3>
+                <p>Enjoy prompt, carefully packaged dispatch with free delivery across India on all orders over ₹999.</p>
+            </div>
+
+            <!-- 2. Secure -->
+            <div class="why-card">
+                <div class="why-icon-circle">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3>100% Secure Payment</h3>
+                <p>Bank-grade SSL encrypted checkout supporting Stripe, Credit/Debit Cards, UPI, Net Banking & Cash on Delivery.</p>
+            </div>
+
+            <!-- 3. Returns -->
+            <div class="why-card">
+                <div class="why-icon-circle">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </div>
+                <h3>Hassle-Free Returns</h3>
+                <p>Shop with total confidence with our 30-day effortless return & exchange guarantee with doorstep pickup.</p>
+            </div>
+
+            <!-- 4. Help -->
+            <div class="why-card">
+                <div class="why-icon-circle">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3>24/7 Dedicated Help</h3>
+                <p>Our luxury concierge support team is here around the clock to assist you via live chat, email and phone.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-grid">
+
+            <div class="footer-brand">
+                <div class="logo-text">My<span>Store</span></div>
+                <p>
+                    Your one-stop destination for fashion,
+                    lifestyle and accessories. Quality products
+                    at the best prices.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <a href="./products.html">All Products</a>
+                <a href="./products.html?category=t-shirts">T-Shirts</a>
+                <a href="./products.html?category=jeans">Jeans</a>
+                <a href="./products.html?category=jackets">Jackets</a>
+                <a href="./categories.html">Categories</a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Account</h4>
+                <a href="./login.html">Login</a>
+                <a href="./register.html">Register</a>
+                <a href="./orders.html">My Orders</a>
+                <a href="./wishlist.html">Wishlist</a>
+                <a href="./cart.html">Cart</a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Support</h4>
+                <a href="#" onclick="openCustomerSupportModal(event, 'ticket')">Contact Us</a>
+                <a href="#" onclick="openCustomerSupportModal(event, 'faqs')">FAQs</a>
+                <a href="#" onclick="openCustomerSupportModal(event, 'faqs')">Shipping Policy</a>
+                <a href="#" onclick="openCustomerSupportModal(event, 'faqs')">Return Policy</a>
+                <a href="#" onclick="openCustomerSupportModal(event, 'faqs')">Privacy Policy</a>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2025 <a href="./index.html">MyStore</a>. All rights reserved.</span>
+            <span>Made with ❤️ in India</span>
+        </div>
+
+    </footer>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
+
+    <script src="../public/js/cart.js?v=5"></script>
+
+    <script>
+
+        /* Cart Count */
+        function updateCartCount() {
+            const el = document.getElementById("cart-count");
+            if (!el) return;
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const total = cart.reduce((sum, i) => sum + Number(i.quantity || 0), 0);
+            el.textContent = total;
+        }
+
+        /* Mobile Menu */
+        const menuBtn = document.getElementById("menuBtn");
+        const navLinks = document.querySelector(".nav-links");
+
+        if (menuBtn && navLinks) {
+            menuBtn.addEventListener("click", function () {
+                navLinks.classList.toggle("mobile-active");
+                menuBtn.textContent = navLinks.classList.contains("mobile-active") ? "✕" : "☰";
+            });
+        }
+
+        updateCartCount();
+
+    </script>
+
+    <script src="../public/js/script.js?v=19"></script>
+    <script src="/js/script.js?v=19"></script>
+    <script src="../public/js/category-bar.js?v=7"></script>
+    <script src="../public/js/customer-support.js?v=2"></script>
+    <script src="/js/customer-support.js?v=2"></script>
+
+    <script src="../public/js/navbar-search.js?v=1"></script>
+    <script src="/js/navbar-search.js?v=1"></script>
+    <script src="../public/js/mega-menu.js?v=1"></script>
+    <script src="/js/mega-menu.js?v=1"></script>
+</body>
+
+</html>

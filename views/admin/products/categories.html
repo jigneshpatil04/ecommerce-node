@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories — Admin | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <link rel="stylesheet" href="/admin/products/categories.css?v=2">
+
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES (ACTIVE) -->
+            <a href="/admin/products/categories.html" class="nav-item active">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-layer-group" style="color: var(--primary); margin-right: 8px;"></i> Product Categories</h1>
+                <p>Manage and organize store categories</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- SEARCH BAR -->
+        <div class="category-search-bar-wrap">
+            <div class="category-search-container">
+                <div class="category-search">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input
+                        type="text"
+                        id="categorySearch"
+                        placeholder="Search categories..."
+                        autocomplete="off"
+                    >
+                    <button
+                        type="button"
+                        id="clearSearch"
+                        aria-label="Clear Search"
+                        title="Clear Search"
+                    >
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <button type="button" id="viewAllProductsQuickBtn" class="view-all-quick-btn" title="View all product collections">
+                    <i class="fa-solid fa-layer-group"></i> View All Products
+                </button>
+            </div>
+        </div>
+
+        <!-- CATEGORIES GRID SECTION -->
+        <section class="category-grid-section" id="categoryGridSection">
+            <div class="category-grid" id="categoryGrid">
+                <!-- Dynamically populated category cards -->
+            </div>
+            <div id="noCategoriesFound" class="no-results hidden">
+                <div class="no-results-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <h3>No categories found</h3>
+                <p>Try searching for another category name.</p>
+            </div>
+        </section>
+
+        <!-- CATEGORY PRODUCTS SECTION -->
+        <section class="category-products-wrapper" id="categoryProductsWrapper" style="display: none;">
+            <div class="category-filter-header" id="categoryFilterHeader" style="display: none;">
+                <div class="filter-header-left">
+                    <button type="button" id="backToCategoriesBtn" class="back-to-categories-btn" title="Back to Category Directory">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Categories
+                    </button>
+                    <div class="filter-header-info">
+                        <span class="filter-tag"><i class="fa-solid fa-filter"></i> Category View</span>
+                        <h3 id="activeCategoryTitle">All Products</h3>
+                        <span id="activeCategoryBadge" class="active-count-badge">0 Products</span>
+                    </div>
+                </div>
+                <button type="button" id="resetCategoryFilterBtn" class="reset-filter-btn" title="Show all categories">
+                    <i class="fa-solid fa-boxes-stacked"></i> View All Categories
+                </button>
+            </div>
+
+            <div id="categoriesContainer" class="categories-container">
+                <div class="loading">
+                    Loading products...
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/admin/products/categories.js?v=3"></script>
+
+<script src="/js/admin-order-badge.js"></script>
+</body>
+
+</html>

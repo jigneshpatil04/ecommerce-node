@@ -1,0 +1,29 @@
+# Node dependencies
+node_modules/
+package-lock.json
+
+# Environment variables & secrets
+.env
+.env.*
+
+# Logs
+*.log
+crash.log
+crash_err.log
+server_running.log
+server_stdout.log
+
+# Temporary files
+scratch/
+scratch_fix_subnav.js
+public/temp_ai/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+.orders_cleared
+crash.log
+crash_err.log
+server_running.log
+server_stdout.log

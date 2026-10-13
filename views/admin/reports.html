@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin  Reports & Analytics | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js for High-Definition Interactive Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- SheetJS (xlsx) for Native Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Base admin theme -->
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <!-- Reports CSS -->
+    <link rel="stylesheet" href="/css/admin-reports.css?v=2">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- ======================================
+         SIDEBAR
+    ======================================= -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS (ACTIVE) -->
+            <a href="/admin/reports.html" class="nav-item active">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports & Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ======================================
+         MAIN CONTENT
+    ======================================= -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button">â˜°</button>
+            <div class="topbar-title">
+                <h1>Reports & Analytics</h1>
+                <p>Real-time revenue metrics, daily/weekly/monthly sales, top products & export reports</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="admin-profile">
+                    <div class="admin-avatar">A</div>
+                    <div class="admin-info">
+                        <strong>Admin</strong>
+                        <span>Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="reports-page-wrapper">
+
+            <!-- TIMEFRAME & EXPORT ACTION TOOLBAR -->
+            <div class="reports-toolbar-card">
+                <div class="toolbar-left">
+                    <div class="timeframe-pills" id="timeframePills">
+                        <button type="button" class="timeframe-pill active" data-period="all">All Time</button>
+                        <button type="button" class="timeframe-pill" data-period="today">Today (Daily)</button>
+                        <button type="button" class="timeframe-pill" data-period="this_week">This Week</button>
+                        <button type="button" class="timeframe-pill" data-period="this_month">This Month</button>
+                        <button type="button" class="timeframe-pill" data-period="this_year">This Year</button>
+                        <button type="button" class="timeframe-pill" data-period="custom">Custom Range</button>
+                    </div>
+
+                    <!-- Custom Range Form (Hidden by default) -->
+                    <div class="custom-range-wrap" id="customRangeWrap" style="display: none;">
+                        <input type="date" id="customStartDate" class="date-input">
+                        <span class="range-sep">to</span>
+                        <input type="date" id="customEndDate" class="date-input">
+                        <button type="button" class="btn-apply-range" id="applyRangeBtn">Apply</button>
+                    </div>
+                </div>
+
+                <div class="toolbar-right">
+                    <button type="button" class="btn-export-excel" id="exportExcelBtn" title="Download Excel (.xlsx) Spreadsheet">
+                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                    </button>
+                    <button type="button" class="btn-export-pdf" id="exportPdfBtn" title="Generate and Download PDF Statement">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF
+                    </button>
+                    <button type="button" class="btn-refresh" id="refreshBtn" title="Refresh Latest Data">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUMMARY KPI STATS ROW -->
+            <div class="reports-stats-grid">
+                <!-- 1. Total Revenue -->
+                <div class="report-stat-card">
+                    <div class="stat-top">
+                        <span class="stat-title">Total Revenue</span>
+                        <div class="stat-badge bg-primary-soft">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-big-val" id="kpiRevenue">₹0.00</div>
+                    <div class="stat-sub-info">
+                        <span class="text-success"><i class="fa-solid fa-circle-check"></i> <strong id="kpiDeliveredRevenue">₹0</strong> delivered</span>
+                        <span class="text-muted">|</span>
+                        <span class="text-warning"><strong id="kpiInProgressRevenue">₹0</strong> processing</span>
+                    </div>
+                </div>
+
+                <!-- 2. Total Orders & AOV -->
+                <div class="report-stat-card">
+                    <div class="stat-top">
+                        <span class="stat-title">Total Orders</span>
+                        <div class="stat-badge bg-success-soft">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="stat-big-val" id="kpiOrders">0</div>
+                    <div class="stat-sub-info">
+                        <span>Avg. Order Value (AOV): <strong class="text-dark" id="kpiAOV">₹0.00</strong></span>
+                    </div>
+                </div>
+
+                <!-- 3. Units Sold -->
+                <div class="report-stat-card">
+                    <div class="stat-top">
+                        <span class="stat-title">Units / Items Sold</span>
+                        <div class="stat-badge bg-info-soft">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                    </div>
+                    <div class="stat-big-val" id="kpiUnits">0</div>
+                    <div class="stat-sub-info">
+                        <span>Items dispatched across orders</span>
+                    </div>
+                </div>
+
+                <!-- 4. Cancelled Orders -->
+                <div class="report-stat-card">
+                    <div class="stat-top">
+                        <span class="stat-title">Cancelled Orders</span>
+                        <div class="stat-badge bg-danger-soft">
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+                    </div>
+                    <div class="stat-big-val text-danger" id="kpiCancelledOrders">0</div>
+                    <div class="stat-sub-info">
+                        <span class="text-danger"><strong id="kpiCancelledLoss">₹0</strong> lost</span>
+                        <span class="text-muted">|</span>
+                        <span class="text-muted">Rate: <strong id="kpiCancelRate">0%</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION (SALES TREND & DISTRIBUTIONS) -->
+            <div class="charts-layout-grid">
+                <!-- Main Trend Chart -->
+                <div class="chart-card main-chart-card">
+                    <div class="chart-card-header">
+                        <div>
+                            <h3>Sales & Revenue Trend</h3>
+                            <p class="text-muted" id="trendSubtitle">Visualizing sales performance across time</p>
+                        </div>
+                        <div class="chart-toggle-group">
+                            <button type="button" class="chart-toggle-btn active" data-metric="revenue">Revenue (₹)</button>
+                            <button type="button" class="chart-toggle-btn" data-metric="orders">Order Volume</button>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="salesTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown Chart -->
+                <div class="chart-card side-chart-card">
+                    <div class="chart-card-header">
+                        <div>
+                            <h3>Sales by Category</h3>
+                            <p class="text-muted">Share of revenue by category</p>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrap doughnut-wrap">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="category-legend-list" id="categoryLegendList"></div>
+                </div>
+            </div>
+
+            <!-- MOST-SELLING PRODUCTS & CANCELLED ORDERS GRID -->
+            <div class="insights-layout-grid">
+                
+                <!-- TOP SELLING PRODUCTS -->
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-title-wrap">
+                            <i class="fa-solid fa-trophy text-warning"></i>
+                            <div>
+                                <h3>Most-Selling Products</h3>
+                                <p class="text-muted">Top performing items by volume & revenue</p>
+                            </div>
+                        </div>
+                        <span class="badge-pill bg-primary-soft text-primary font-weight-bold" id="topProductsCount">Top 10</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="report-table" id="topProductsTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Rank</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th style="text-align: right;">Units Sold</th>
+                                    <th style="text-align: right;">Total Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topProductsBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <i class="fa-solid fa-spinner fa-spin"></i> Loading top products...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CANCELLED ORDERS ANALYSIS -->
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-title-wrap">
+                            <i class="fa-solid fa-circle-exclamation text-danger"></i>
+                            <div>
+                                <h3>Cancelled Orders Audit</h3>
+                                <p class="text-muted">Orders marked as cancelled and lost revenue</p>
+                            </div>
+                        </div>
+                        <span class="badge-pill bg-danger-soft text-danger font-weight-bold" id="cancelledOrdersBadge">0 Cancelled</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="report-table" id="cancelledOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Items Ordered</th>
+                                    <th>Payment</th>
+                                    <th style="text-align: right;">Lost Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cancelledOrdersBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <i class="fa-solid fa-spinner fa-spin"></i> Loading cancelled orders...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            </div>
+
+    </main>
+
+</div>
+
+<!-- HIDDEN PRINTABLE TEMPLATE CONTAINER (FOR PROFESSIONAL PDF EXPORT) -->
+<div id="pdfExportContainer" class="pdf-export-sheet" style="display: none;">
+    <div class="pdf-header">
+        <div class="pdf-brand">
+            <h1>My<span>Store</span></h1>
+            <p>Official Sales & Performance Audit Report</p>
+        </div>
+        <div class="pdf-meta">
+            <div><strong>Report Period:</strong> <span id="pdfPeriodLabel">All Time</span></div>
+            <div><strong>Generated At:</strong> <span id="pdfGeneratedAt"></span></div>
+            <div><strong>Generated By:</strong> Administrator</div>
+        </div>
+    </div>
+
+    <div class="pdf-kpis-grid">
+        <div class="pdf-kpi">
+            <span>TOTAL REVENUE</span>
+            <strong id="pdfRevenue">₹0.00</strong>
+        </div>
+        <div class="pdf-kpi">
+            <span>TOTAL ORDERS</span>
+            <strong id="pdfOrders">0</strong>
+        </div>
+        <div class="pdf-kpi">
+            <span>UNITS SOLD</span>
+            <strong id="pdfUnits">0</strong>
+        </div>
+        <div class="pdf-kpi">
+            <span>CANCELLED ORDERS</span>
+            <strong id="pdfCancelled">0</strong>
+        </div>
+    </div>
+
+    <div class="pdf-section">
+        <h3>Top Performing Products</h3>
+        <table class="pdf-table" id="pdfTopProductsTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th style="text-align: right;">Units Sold</th>
+                    <th style="text-align: right;">Total Revenue</th>
+                </tr>
+            </thead>
+            <tbody id="pdfTopProductsBody"></tbody>
+        </table>
+    </div>
+
+    <div class="pdf-section">
+        <h3>Cancelled Orders Audit</h3>
+        <table class="pdf-table" id="pdfCancelledTable">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer Name</th>
+                    <th>Date</th>
+                    <th>Payment</th>
+                    <th style="text-align: right;">Lost Revenue</th>
+                </tr>
+            </thead>
+            <tbody id="pdfCancelledBody"></tbody>
+        </table>
+    </div>
+
+    <div class="pdf-footer">
+        <span>MyStore E-Commerce Management System &bull; Confidential Executive Document</span>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div id="toastContainer" class="admin-toast-container"></div>
+
+<!-- Admin Reports Script -->
+<script src="/js/admin-reports.js?v=3"></script>
+
+<script src="/js/admin-order-badge.js"></script>
+</body>
+</html>
+

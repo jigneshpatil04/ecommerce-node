@@ -1,0 +1,600 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Settings - Admin Panel</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <link rel="stylesheet" href="/css/settings.css">
+
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS (ACTIVE) -->
+            <a href="/admin/settings.html" class="nav-item active">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- ==========================================
+             HEADER
+        =========================================== -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1>Settings</h1>
+                <p>Manage your store settings & account</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+
+
+        <!-- ==========================================
+             SETTINGS CONTAINER
+        =========================================== -->
+
+        <section class="settings-container">
+
+
+            <!-- ==========================================
+                 STORE SETTINGS
+            =========================================== -->
+
+            <div class="settings-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon" style="background:#fff1f2;border-color:#fecdd3;"><i class="fa-solid fa-shop" style="color:#fe4c50;font-size:20px;"></i></div>
+
+                    <div>
+
+                        <h2>
+                            Store Settings
+                        </h2>
+
+                        <p>
+                            Basic information about your store
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="storeSettingsForm">
+
+
+                    <div class="form-group">
+
+                        <label for="storeName">
+                            Store Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="storeName"
+                            placeholder="Enter store name"
+                            value="SQUAD Fashion"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="storeEmail">
+                            Store Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="storeEmail"
+                            placeholder="Enter store email"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="storePhone">
+                            Store Phone
+                        </label>
+
+                        <input
+                            type="text"
+                            id="storePhone"
+                            placeholder="Enter store phone"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="storeAddress">
+                            Store Address
+                        </label>
+
+                        <textarea
+                            id="storeAddress"
+                            placeholder="Enter store address"
+                            rows="4"
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="save-button"
+                    >
+                        Save Store Settings
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 SHIPPING SETTINGS
+            =========================================== -->
+
+            <div class="settings-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon" style="background:#eef2ff;border-color:#e0e7ff;"><i class="fa-solid fa-truck-fast" style="color:#6366f1;font-size:20px;"></i></div>
+
+                    <div>
+
+                        <h2>
+                            Shipping Settings
+                        </h2>
+
+                        <p>
+                            Configure your delivery charges
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="shippingSettingsForm">
+
+
+                    <div class="form-group">
+
+                        <label for="shippingCharge">
+                            Shipping Charge (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="shippingCharge"
+                            min="0"
+                            step="0.01"
+                            value="50"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="freeShippingAmount">
+                            Free Shipping Above (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="freeShippingAmount"
+                            min="0"
+                            step="0.01"
+                            value="1000"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="save-button"
+                    >
+                        Save Shipping Settings
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 PAYMENT SETTINGS
+            =========================================== -->
+
+            <div class="settings-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon" style="background:#f0f9ff;border-color:#bae6fd;"><i class="fa-solid fa-credit-card" style="color:#0284c7;font-size:20px;"></i></div>
+
+                    <div>
+
+                        <h2>
+                            Payment Settings
+                        </h2>
+
+                        <p>
+                            Select available payment methods
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="payment-options">
+
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="codPayment"
+                            checked
+                        >
+
+                        <span>
+                            Cash on Delivery
+                        </span>
+
+                    </label>
+
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="onlinePayment"
+                        >
+
+                        <span>
+                            Online Payment
+                        </span>
+
+                    </label>
+
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="upiPayment"
+                        >
+
+                        <span>
+                            UPI Payment
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+
+                <button
+                    id="savePaymentButton"
+                    class="save-button"
+                >
+                    Save Payment Settings
+                </button>
+
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 ADMIN ACCOUNT SETTINGS
+            =========================================== -->
+
+            <div class="settings-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon" style="background:#f5f3ff;border-color:#ede9fe;"><i class="fa-solid fa-user-shield" style="color:#8b5cf6;font-size:20px;"></i></div>
+
+                    <div>
+
+                        <h2>
+                            Admin Account
+                        </h2>
+
+                        <p>
+                            Manage your admin account
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminAccountForm">
+
+
+                    <div class="form-group">
+
+                        <label for="adminName">
+                            Admin Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="adminName"
+                            placeholder="Enter admin name"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="adminEmail">
+                            Admin Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="adminEmail"
+                            placeholder="Enter admin email"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="adminPassword">
+                            New Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            placeholder="Enter new password"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="save-button"
+                    >
+                        Update Account
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 STORE STATUS
+            =========================================== -->
+
+            <div class="settings-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon" style="background:#ecfdf5;border-color:#a7f3d0;"><i class="fa-solid fa-globe" style="color:#10b981;font-size:20px;"></i></div>
+
+                    <div>
+
+                        <h2>
+                            Store Status
+                        </h2>
+
+                        <p>
+                            Control your online store
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="store-status">
+
+
+                    <div>
+
+                        <h3>
+                            Store Online
+                        </h3>
+
+                        <p>
+                            Customers can browse and place orders.
+                        </p>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            id="storeStatus"
+                            checked
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+
+                </div>
+
+
+                <div
+                    id="storeStatusMessage"
+                    class="status-message"
+                >
+                    Store is currently online.
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ==========================================
+     JAVASCRIPT
+=========================================== -->
+
+<script
+    src="/js/settings.js"
+></script>
+
+<script id="menuBtnToggleListener">
+const mb = document.getElementById("menuBtn");
+if (mb) {
+    mb.addEventListener("click", () => {
+        const sb = document.getElementById("sidebar");
+        if (sb) sb.classList.toggle("open");
+    });
+}
+</script>
+<script src="/js/admin-order-badge.js"></script>
+</body>
+
+</html>

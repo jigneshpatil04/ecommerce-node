@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Offline / Local File & Server Path Compatibility Adapter -->
+    <script>
+        (function() {
+            if (window.location.protocol === "file:") {
+                var pathname = window.location.pathname.replace(/\\/g, "/");
+                var inViews = pathname.toLowerCase().includes("/views/");
+                var publicPrefix = inViews ? "./public/" : "public/";
+                var viewsPrefix = inViews ? "./" : "views/";
+
+                ["style.css"].forEach(function(c) {
+                    var link = document.createElement("link");
+                    link.rel = "stylesheet";
+                    link.href = publicPrefix + "css/" + c;
+                    document.head.appendChild(link);
+                });
+
+                function fixAssets() {
+                    document.querySelectorAll("img").forEach(function(img) {
+                        var src = img.getAttribute("src") || "";
+                        if (src.startsWith("/images/") || src.startsWith("./images/") || src.startsWith("images/")) {
+                            var filename = src.split("/").pop();
+                            img.src = publicPrefix + "images/" + filename;
+                        }
+                    });
+                    document.querySelectorAll("a[href]").forEach(function(a) {
+                        var href = a.getAttribute("href") || "";
+                        if (href.startsWith("/") && !href.startsWith("//")) {
+                            if (href === "/") {
+                                a.href = inViews ? "./index.html" : "./index.html";
+                            } else if (href.includes(".html")) {
+                                var clean = href.replace(/^\//, "");
+                                a.href = inViews ? ("./" + clean) : (viewsPrefix + clean);
+                            }
+                        }
+                    });
+                }
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", fixAssets);
+                } else {
+                    fixAssets();
+                }
+            }
+        })();
+    </script>
+
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login - E-Commerce</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/login.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         LOGIN PAGE
+    =========================================== -->
+
+    <div class="login-page">
+
+
+        <!-- ======================================
+             LEFT SIDE
+        ======================================= -->
+
+        <!-- <div class="login-left">
+
+            <div class="brand-content">
+
+                <h1>
+                    E-Commerce Store
+                </h1>
+
+                <p>
+                    Welcome back!
+                </p>
+
+                <p class="brand-description">
+                    Login to continue shopping,
+                    manage your account and
+                    view your orders.
+                </p>
+
+            </div>
+
+        </div> -->
+
+
+        <!-- ======================================
+             RIGHT SIDE
+        ======================================= -->
+
+        <div class="login-right">
+
+
+            <div class="login-box">
+
+
+                <!-- ==================================
+                     LOGIN TYPE BUTTONS
+                =================================== -->
+
+                <div class="login-tabs">
+
+                    <button
+                        type="button"
+                        id="userTab"
+                        class="login-tab active"
+                    >
+                        User Login
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="adminTab"
+                        class="login-tab"
+                    >
+                        Admin Login
+                    </button>
+
+                </div>
+
+
+                <!-- ==================================
+                     USER LOGIN
+                =================================== -->
+
+                <div
+                    id="userLoginSection"
+                    class="login-section active"
+                >
+
+                    <h2>
+                        User Login
+                    </h2>
+
+                    <p class="login-subtitle">
+                        Login to your customer account
+                    </p>
+
+
+                    <form
+                        id="userLoginForm"
+                    >
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="userEmail">
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="userEmail"
+                                name="email"
+                                placeholder="Enter your email"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="form-group">
+
+                            <label for="userPassword">
+                                Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="userPassword"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- MESSAGE -->
+
+                        <div
+                            id="userLoginMessage"
+                            class="login-message"
+                        ></div>
+
+
+                        <!-- LOGIN BUTTON -->
+
+                        <button
+                            type="submit"
+                            class="login-button user-button"
+                        >
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+                        </button>
+
+
+                    </form>
+
+
+                    <!-- REGISTER -->
+
+                    <p class="register-text">
+
+                        Don't have an account?
+
+                        <a href="./register.html">
+                            Register
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- ==================================
+                     ADMIN LOGIN
+                =================================== -->
+
+                <div
+                    id="adminLoginSection"
+                    class="login-section"
+                >
+
+                    <h2>
+                        Admin Login
+                    </h2>
+
+                    <p class="login-subtitle">
+                        Login to the administration panel
+                    </p>
+
+
+                    <form
+                        id="adminLoginForm"
+                    >
+
+
+                        <!-- ADMIN EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="adminEmail">
+                                Admin Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="adminEmail"
+                                name="email"
+                                placeholder="Enter admin email"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- ADMIN PASSWORD -->
+
+                        <div class="form-group">
+
+                            <label for="adminPassword">
+                                Admin Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="adminPassword"
+                                name="password"
+                                placeholder="Enter admin password"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- MESSAGE -->
+
+                        <div
+                            id="adminLoginMessage"
+                            class="login-message"
+                        ></div>
+
+
+                        <!-- ADMIN LOGIN -->
+
+                        <button
+                            type="submit"
+                            class="login-button admin-button"
+                        >
+                            <i class="fa-solid fa-shield-halved"></i> Admin Login
+                        </button>
+
+
+                    </form>
+
+
+                    <!-- BACK TO USER -->
+
+                    <button
+                        type="button"
+                        id="backToUser"
+                        class="back-button"
+                    >
+                        <i class="fa-solid fa-arrow-left"></i> Back to User Login
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
+
+    <script src="./public/js/login.js?v=10"></script>
+<script src="/js/login.js?v=10"></script>
+
+
+</body>
+
+</html>

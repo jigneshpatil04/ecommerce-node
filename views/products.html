@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <!-- Offline / Local File & Server Path Compatibility Adapter -->
+    <script>
+        (function() {
+            if (window.location.protocol === "file:") {
+                var pathname = window.location.pathname.replace(/\\/g, "/");
+                var inViews = pathname.toLowerCase().includes("/views/");
+                var publicPrefix = inViews ? "../public/" : "public/";
+                var viewsPrefix = inViews ? "./" : "views/";
+
+                // Immediately ensure CSS stylesheets are loaded
+                ["style.css", "category-bar.css", "product.css"].forEach(function(css) {
+                    var link = document.createElement("link");
+                    link.rel = "stylesheet";
+                    link.href = publicPrefix + "css/" + css;
+                    document.head.appendChild(link);
+                });
+
+                function fixAllOfflineAssets() {
+                    document.querySelectorAll("img").forEach(function(img) {
+                        var src = img.getAttribute("src") || "";
+                        if (src.startsWith("/images/") || src.startsWith("./images/") || src.startsWith("images/")) {
+                            var filename = src.split("/").pop();
+                            img.src = publicPrefix + "images/" + filename;
+                        }
+                    });
+
+                    document.querySelectorAll("a[href]").forEach(function(a) {
+                        var href = a.getAttribute("href") || "";
+                        if (href.startsWith("/") && !href.startsWith("//")) {
+                            if (href === "/") {
+                                a.href = inViews ? "./index.html" : "./index.html";
+                            } else if (href.includes(".html")) {
+                                var clean = href.replace(/^\//, "");
+                                a.href = inViews ? ("./" + clean) : (viewsPrefix + clean);
+                            }
+                        }
+                    });
+                }
+
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", fixAllOfflineAssets);
+                } else {
+                    fixAllOfflineAssets();
+                }
+            }
+        })();
+    </script>
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shop — MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../public/css/style.css?v=14">
+    <link rel="stylesheet" href="/css/style.css?v=14">
+    <link rel="stylesheet" href="../public/css/product.css?v=30">
+    <link rel="stylesheet" href="../public/css/category-bar.css?v=8">
+    <link rel="stylesheet" href="/css/product.css?v=30">
+    <link rel="stylesheet" href="/css/category-bar.css?v=8">
+
+</head>
+
+<body>
+
+
+    <!-- ==========================================
+         ANNOUNCEMENT BAR
+    =========================================== -->
+
+    <div class="announcement-bar">
+        <i class="fa-solid fa-truck-fast"></i> Free Shipping on all orders over <span>₹999</span>
+    </div>
+
+
+    <!-- ==========================================
+         NAVBAR
+    =========================================== -->
+
+        <nav class="navbar">
+
+        <!-- Logo -->
+        <div class="logo">
+            <a href="./index.html">
+                My<span>Store</span>
+            </a>
+        </div>
+
+        <!-- Pill Search Bar (With Camera & Mic icons) -->
+        <div class="nav-search-bar" id="navSearchBar">
+            <form class="nav-search-form" id="navSearchForm" onsubmit="handleNavSearch(event)">
+                <button type="submit" class="nav-search-btn" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <input 
+                    type="text" 
+                    class="nav-search-input" 
+                    id="navSearchInput" 
+                    placeholder="Search for shirts, styles, brands..." 
+                    autocomplete="off" 
+                    spellcheck="false"
+                >
+                <div class="nav-search-actions">
+                    <button type="button" class="nav-search-action-btn camera" id="navSearchCameraBtn" title="Search by image" aria-label="Search by image" onclick="triggerNavImageSearch(event)">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
+                    <button type="button" class="nav-search-action-btn mic" id="navSearchMicBtn" title="Voice search" aria-label="Search by voice" onclick="triggerNavVoiceSearch(event)">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                </div>
+            </form>
+            <input type="file" id="navSearchFileInput" accept="image/*" style="display:none;" onchange="handleNavImageSelected(event)">
+            <div class="nav-search-dropdown" id="navSearchDropdown"></div>
+        </div>
+
+        <!-- 5 Right Action Icons (Matching Tanishq Reference: Diamond, Stores, Wishlist, Account, Cart) -->
+        <div class="nav-actions">
+            <!-- 1. Diamond / Trending -->
+            <a href="./products.html?badge=Trending" class="nav-action-icon" title="Trending Collections">
+                <i class="fa-solid fa-gem"></i>
+            </a>
+
+            <!-- 2. Stores & Support -->
+            <a href="#" onclick="openCustomerSupportModal(event)" class="nav-action-icon" title="Stores & Support">
+                <i class="fa-solid fa-store"></i>
+            </a>
+
+            <!-- 3. Wishlist -->
+            <a href="./wishlist.html" class="nav-action-icon " title="Wishlist">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+
+            <!-- 4. Account / Login -->
+            <a href="./login.html" class="nav-action-icon " id="loginBtn" title="Account / Login">
+                <i class="fa-regular fa-user"></i>
+            </a>
+            <!-- User Menu (shown when logged in) -->
+            <div class="user-menu" id="userMenu" style="display: none;">
+                <a href="./orders.html" class="nav-action-icon " title="My Orders & Profile">
+                    <i class="fa-solid fa-user-check"></i>
+                </a>
+                <span class="user-name" id="userName" style="display: none;"></span>
+                <button type="button" class="nav-action-icon logout-icon-btn" id="logoutBtn" title="Logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+
+            <!-- 5. Cart / Bag with Badge -->
+            <a href="./cart.html" class="nav-action-icon nav-cart-icon " title="Shopping Bag">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span id="cart-count" class="cart-badge">0</span>
+            </a>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button type="button" class="menu-btn" id="menuBtn" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer Links (Only shown when toggled on mobile) -->
+        <div class="nav-links mobile-drawer">
+            <a href="./index.html" class="nav-link ">Home</a>
+            <a href="./categories.html" class="nav-link ">Categories</a>
+            <a href="./products.html" class="nav-link active">Shop</a>
+            <a href="./wishlist.html" class="nav-link ">Wishlist</a>
+            <a href="./orders.html" class="nav-link ">My Orders</a>
+            <a href="#" onclick="openCustomerSupportModal(event)" class="nav-link"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+
+    </nav>
+
+        <!-- ==========================================
+         SUB-NAVIGATION STRIP (ROW 2: HOME | ALL PRODUCTS | CATEGORIES MEGA MENU | T-SHIRTS | SHIRTS | PANTS | SHORTS | HOODIES | JACKETS | SHOES | ACCESSORIES)
+    =========================================== -->
+    <div class="header-sub-strip">
+        <div class="header-sub-container">
+            <!-- 1. Home -->
+            <a href="./index.html" class="header-sub-link ">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+
+            <!-- 2. All Products -->
+            <a href="./products.html" class="header-sub-link active">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> All Products
+            </a>
+
+            <!-- 3. Categories (With Luxury Mega Menu) -->
+            <div class="header-sub-item mega-dropdown-trigger">
+                <a href="javascript:void(0)" class="header-sub-link mega-trigger-link " role="button" title="View Categories">
+                    <i class="fa-solid fa-layer-group"></i> Categories <i class="fa-solid fa-chevron-down nav-caret"></i>
+                </a>
+                
+                <!-- Mega Menu Dropdown -->
+                <div class="nav-mega-menu">
+                    <div class="mega-menu-grid">
+                        
+                        <!-- Col 1: Vertical Category & Filter Tabs -->
+                        <div class="mega-tabs-col">
+                            <button type="button" class="mega-tab-btn active" data-target="megaPaneCategory" data-link="./products.html"
+                                data-featured-img="../public/images/jacket1.jpg" 
+                                data-featured-title="Discover Timeless Crafted Luxury Wear." 
+                                data-featured-link="./products.html">
+                                All Categories
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneTShirts" data-link="./products.html?category=T-Shirts"
+                                data-featured-img="../public/images/tshirt1.jpg" 
+                                data-featured-title="Luxury Cotton & Vintage Polo T-Shirts." 
+                                data-featured-link="./products.html?category=T-Shirts">
+                                T-Shirts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShirts" data-link="./products.html?category=Shirts"
+                                data-featured-img="../public/images/shirt2.jpg" 
+                                data-featured-title="Impeccable Formal & Casual Italian Shirts." 
+                                data-featured-link="./products.html?category=Shirts">
+                                Shirts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPanePants" data-link="./products.html?category=Pants"
+                                data-featured-img="../public/images/cargo_pants.jpg" 
+                                data-featured-title="Tailored Trousers, Chinos & Tactical Cargo Pants." 
+                                data-featured-link="./products.html?category=Pants">
+                                Pants
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneJeans" data-link="./products.html?category=Jeans"
+                                data-featured-img="../public/images/denim_jeans.jpg" 
+                                data-featured-title="Premium Slim Fit, Black & Vintage Denim Jeans." 
+                                data-featured-link="./products.html?category=Jeans">
+                                Jeans
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShorts" data-link="./products.html?category=Shorts"
+                                data-featured-img="../public/images/shorts.jpg" 
+                                data-featured-title="Relaxed Chino, Cargo & Casual Shorts." 
+                                data-featured-link="./products.html?category=Shorts">
+                                Shorts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneHoodies" data-link="./products.html?category=Hoodies"
+                                data-featured-img="../public/images/hoodie.jpg" 
+                                data-featured-title="Premium Heavyweight Streetwear Hoodies." 
+                                data-featured-link="./products.html?category=Hoodies">
+                                Hoodies
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneJackets" data-link="./products.html?category=Jackets"
+                                data-featured-img="../public/images/jacket1.jpg" 
+                                data-featured-title="Signature Outerwear, Blazers & Biker Jackets." 
+                                data-featured-link="./products.html?category=Jackets">
+                                Jackets
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShoes" data-link="./products.html?category=Shoes"
+                                data-featured-img="../public/images/shoes.jpg" 
+                                data-featured-title="Handcrafted Leather Loafers & Casual Sneakers." 
+                                data-featured-link="./products.html?search=Shoes">
+                                Shoes & Loafers
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneAccessories" data-link="./products.html?category=Accessories"
+                                data-featured-img="../public/images/accessories.jpg" 
+                                data-featured-title="Handcrafted Wallets, Watches & Accessories." 
+                                data-featured-link="./products.html?category=Accessories">
+                                Accessories
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPanePrice" data-link="./products.html"
+                                data-featured-img="../public/images/shirt3.jpg" 
+                                data-featured-title="Curated Value Drops For Every Budget." 
+                                data-featured-link="./products.html">
+                                By Price
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneOccasion" data-link="./products.html"
+                                data-featured-img="../public/images/jacket2.jpg" 
+                                data-featured-title="Styles Selected For Every Grand Occasion." 
+                                data-featured-link="./products.html">
+                                Occasions
+                            </button>
+                        </div>
+
+                        <!-- Col 2: Middle Subcategories & Quick Links -->
+                        <div class="mega-middle-col">
+                            
+                            <!-- Pane 1: All Categories (With Real Photos) -->
+                            <div class="mega-tab-pane active" id="megaPaneCategory">
+                                <div class="mega-subcategories-grid">
+                                    <!-- Column 1: Shirts & Tops -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="All Clothing" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Clothing</span>
+                                        </a>
+                                        <a href="./products.html?category=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="Formal Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt3.jpg" alt="Casual Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Shirts</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Linen Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=T-Shirts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt2.jpg" alt="Cotton T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Cotton T-Shirts</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Column 2: T-Shirts, Pants, Shorts, Jeans -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Polo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Polo T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Polo T-Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Chinos & Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Chinos & Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Casual Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Shorts</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Denim Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Denim Jeans</span>
+                                        </a>
+                                        <a href="./products.html?search=Cargo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Cargo Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Cargo Pants</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Column 3: Hoodies, Jackets, Shoes & Accessories -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Hoodies" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Winter Hoodies" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Winter Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?category=Jackets" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="Luxury Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Jackets</span>
+                                        </a>
+                                        <a href="./products.html?search=Shoes" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Sneakers & Shoes" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Sneakers & Shoes</span>
+                                        </a>
+                                        <a href="./products.html?search=Loafers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Loafers & Footwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Loafers & Footwear</span>
+                                        </a>
+                                        <a href="./products.html?category=Accessories" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Accessories" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Accessories</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 2: T-Shirts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneTShirts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=T-Shirts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="All T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All T-Shirts</span>
+                                        </a>
+                                        <a href="./products.html?search=Polo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Polo Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Premium Polo Tees</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Cotton" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt2.jpg" alt="Cotton Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Cotton Tees</span>
+                                        </a>
+                                        <a href="./products.html?search=Oversized" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt.jpg" alt="Oversized Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Oversized Fit Tees</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Graphic" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt3.jpg" alt="Graphic Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Graphic Print Tees</span>
+                                        </a>
+                                        <a href="./products.html?search=Striped" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt4.jpg" alt="Striped Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Striped Casual Tees</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 3: Shirts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShirts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Shirts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="All Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="Formal Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Executive Formal</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt3.jpg" alt="Casual Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Spread Collar</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Pure Linen Shirts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Checked" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt10.jpg" alt="Checked Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Checked & Plaid</span>
+                                        </a>
+                                        <a href="./products.html?search=Oxford" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt.jpg" alt="Oxford Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Oxford</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 4: Pants Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPanePants">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="All Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Cargo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="Cargo Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Utility Cargo Pants</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants&search=Chinos" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/chino_pants.jpg" alt="Chinos" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Chino Casual Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Trousers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/chino_pants.jpg" alt="Formal Trousers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Tailored Pants</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants&search=Relaxed" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Relaxed Fit" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Relaxed Fit Cargos</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Cotton" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="Cotton Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Stretch Cotton Pants</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 4B: Jeans Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneJeans">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/denim_jeans.jpg" alt="All Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Jeans</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Slim" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/denim_jeans.jpg" alt="Slim Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Slim Straight Denim</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans&search=Black" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/black_jeans.jpg" alt="Black Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Sleek Black Denim</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Skinny" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/black_jeans.jpg" alt="Skinny Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Urban Skinny Jeans</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans&search=Straight" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Classic Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Straight Jeans</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Vintage" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans3.jpg" alt="Vintage Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Vintage Washed Denim</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 5: Shorts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShorts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Shorts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="All Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Chino+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Chino Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Chino Shorts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Cargo+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Cargo Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Utility Cargo Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Denim+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Denim Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Denim Cut-off Shorts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Sweat+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Sweat Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Athletic Sweat Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Summer Linen Shorts</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 6: Hoodies Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneHoodies">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Hoodies" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="All Hoodies" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Pullover" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Pullover" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Pullover Fleece Hoodies</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Zip-Up" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Zip-Up" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Zip-Up Casual Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Oversized+Hoodie" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Oversized" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Oversized Street Hoodies</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Heavyweight" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Heavyweight" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Winter Thermal Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Athletic" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Athletic" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Athletic Training Hoodies</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 7: Jackets Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneJackets">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jackets" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="All Outerwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Outerwear</span>
+                                        </a>
+                                        <a href="./products.html?search=Leather" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="Leather Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Biker Jackets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Blazer" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket2.jpg" alt="Blazers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Designer Blazers</span>
+                                        </a>
+                                        <a href="./products.html?search=Bomber" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Bombers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Urban Bomber Jackets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Denim" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket4.jpg" alt="Denim Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Denim Jackets</span>
+                                        </a>
+                                        <a href="./products.html?search=Puffer" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket6.jpg" alt="Puffers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Thermal Puffer Jackets</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 8: Shoes Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShoes">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Shoes" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="All Footwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Footwear</span>
+                                        </a>
+                                        <a href="./products.html?search=Sneakers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Sneakers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury White Sneakers</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Loafers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Loafers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Handcrafted Loafers</span>
+                                        </a>
+                                        <a href="./products.html?search=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Slip-ons" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Slip-on Shoes</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Formal Shoes" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Leather Oxfords</span>
+                                        </a>
+                                        <a href="./products.html?search=Trainers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Trainers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Minimalist Trainers</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 9: Accessories Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneAccessories">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Accessories" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="All Accessories" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Accessories</span>
+                                        </a>
+                                        <a href="./products.html?search=Wallet" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Wallets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Genuine Leather Wallets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Watch" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Watches" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Chrono Watches</span>
+                                        </a>
+                                        <a href="./products.html?search=Sunglasses" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Sunglasses" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Designer Sunglasses</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Belt" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Belts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Italian Leather Belts</span>
+                                        </a>
+                                        <a href="./products.html?search=Caps" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Caps" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Signature Caps & Hats</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 10: Price Filters -->
+                            <div class="mega-tab-pane" id="megaPanePrice">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?maxPrice=499" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">Under ₹499</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=500&maxPrice=999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹500 — ₹999</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?minPrice=1000&maxPrice=1499" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹1,000 — ₹1,499</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=1500&maxPrice=1999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹1,500 — ₹1,999</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?minPrice=2000&maxPrice=2999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹2,000 — ₹2,999</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=3000" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-crown"></i></span>
+                                            <span class="mega-item-name">Luxury Above ₹3,000</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 11: Occasion Filters -->
+                            <div class="mega-tab-pane" id="megaPaneOccasion">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Casual" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-mug-saucer"></i></span>
+                                            <span class="mega-item-name">Everyday Casual</span>
+                                        </a>
+                                        <a href="./products.html?search=Office" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-briefcase"></i></span>
+                                            <span class="mega-item-name">Office & Boardroom</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Party" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-champagne-glasses"></i></span>
+                                            <span class="mega-item-name">Party & Night Out</span>
+                                        </a>
+                                        <a href="./products.html?search=Vacation" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-plane-departure"></i></span>
+                                            <span class="mega-item-name">Weekend Vacation</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Festive" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-sparkles"></i></span>
+                                            <span class="mega-item-name">Festive Celebrations</span>
+                                        </a>
+                                        <a href="./products.html?search=Wedding" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-heart"></i></span>
+                                            <span class="mega-item-name">Wedding & Reception</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Promo Banner Strip (Matching Reference) -->
+                            <div class="mega-bottom-banner">
+                                <div class="mega-banner-left">
+                                    <div class="mega-banner-thumbs">
+                                        <img src="../public/images/hoodie.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/jacket1.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/accessories.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/shorts.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                    </div>
+                                    <div class="mega-banner-info">
+                                        <strong>Fashion for Every Moment — See It All Here!</strong>
+                                        <span>500+ handcrafted luxury designs to explore</span>
+                                    </div>
+                                </div>
+                                <a href="./products.html" class="mega-banner-btn">View All</a>
+                            </div>
+
+                        </div>
+
+                        <!-- Col 3: Right Featured Card (Matching Reference) -->
+                        <div class="mega-featured-col">
+                            <a href="./products.html?badge=Trending" class="mega-featured-card">
+                                <div class="mega-featured-img-wrap">
+                                    <img src="../public/images/jacket1.jpg" alt="Featured Craft" class="mega-featured-img">
+                                </div>
+                                <h4 class="mega-featured-title">Discover Timeless Crafted Luxury Wear.</h4>
+                                <span class="mega-featured-link">Explore Now <i class="fa-solid fa-arrow-trend-up"></i></span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PAGE HEADER STRIP
+    =========================================== -->
+    <div class="page-header-strip">
+        <div class="page-header-container">
+            <div class="breadcrumb">
+                <a href="./index.html">Home</a>
+                <span class="breadcrumb-sep">›</span>
+                <span>Shop</span>
+            </div>
+            <h1>All Products</h1>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         PRODUCTS PAGE
+    =========================================== -->
+
+        <main class="products-page">
+
+        <!-- Mobile Filter Bar Toggle (<= 992px) -->
+        <div class="mobile-filter-bar">
+            <button type="button" class="mobile-filter-toggle-btn" id="mobileFilterToggleBtn" onclick="toggleAmazonSidebar(true)">
+                <i class="fa-solid fa-sliders"></i> Filters &amp; Refine (<span id="activeFilterBadge">0</span>)
+            </button>
+            <div class="mobile-sort-select-wrap">
+                <select id="mobileSortSelect" onchange="syncSortFilter(this.value)">
+                    <option value="default">Sort: Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Avg. Customer Review</option>
+                    <option value="newest">Newest First</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 2-COLUMN AMAZON SHOP LAYOUT -->
+        <div class="shop-page-layout">
+
+            <!-- ==============================================
+                 AMAZON LEFT REFINEMENT SIDEBAR
+            =============================================== -->
+            <aside class="amazon-filter-sidebar" id="amazonFilterSidebar">
+                <!-- Mobile Header with Close 'X' -->
+                <div class="amazon-sidebar-mobile-header">
+                    <h3>Filters &amp; Refine</h3>
+                    <button type="button" class="amazon-sidebar-close-btn" onclick="toggleAmazonSidebar(false)" aria-label="Close filters">✕</button>
+                </div>
+
+                <!-- 1. CATEGORY HIERARCHY -->
+                <div class="amazon-filter-block" id="sidebarCategoryBlock">
+                    <h4 class="amazon-filter-title">Category</h4>
+                    <div class="amazon-category-nav" id="sidebarCategoryNav">
+                        <!-- Rendered dynamically by products.js per active category -->
+                    </div>
+                    <!-- Hidden select for compatibility -->
+                    <select id="categoryFilter" style="display: none;">
+                        <option value="all">All Categories</option>
+                        <option value="t-shirts">T-Shirts</option>
+                        <option value="shirts">Shirts</option>
+                        <option value="jeans">Jeans</option>
+                        <option value="pants">Pants</option>
+                        <option value="jackets">Jackets</option>
+                        <option value="hoodies">Hoodies</option>
+                        <option value="shorts">Shorts</option>
+                        <option value="shoes">Shoes</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+
+                
+                <!-- 3. BRANDS -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Brands</h4>
+                    <div class="amazon-checkbox-list" id="sidebarBrandList">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Amazon Brand - Symbol" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Amazon Brand - Symbol</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Allen Solly" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Allen Solly</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Van Heusen" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Van Heusen</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Peter England" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Peter England</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="U.S. POLO ASSN." class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>U.S. POLO ASSN.</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Levi's" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Levi's</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Louis Philippe" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Louis Philippe</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="THE INDIAN GARAGE CO" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>THE INDIAN GARAGE CO</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Lymio" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Lymio</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Symbol Premium" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Symbol Premium</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Nike" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Nike</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Adidas" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Adidas</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Puma" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Puma</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Zara" class="amazon-brand-checkbox" onchange="applySidebarFilters()"><span>Zara</span></label>
+                    </div>
+                    <select id="brandFilter" style="display: none;"><option value="all">All Brands</option></select>
+                </div>
+
+                <!-- 4. PRICE -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Price</h4>
+                    <ul class="amazon-link-list" id="sidebarPriceList">
+                        <li><a href="javascript:void(0)" class="amazon-filter-link price-link" data-price="0-300" onclick="setSidebarPrice('0-300', this)">Under ₹300</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link price-link" data-price="300-500" onclick="setSidebarPrice('300-500', this)">₹300 - ₹500</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link price-link" data-price="500-1000" onclick="setSidebarPrice('500-1000', this)">₹500 - ₹1,000</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link price-link" data-price="1000-1500" onclick="setSidebarPrice('1000-1500', this)">₹1,000 - ₹1,500</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link price-link" data-price="1500+" onclick="setSidebarPrice('1500+', this)">Over ₹1,500</a></li>
+                    </ul>
+                    <div class="amazon-price-custom-row">
+                        <input type="number" id="customPriceMin" placeholder="₹ Min" min="0">
+                        <span>—</span>
+                        <input type="number" id="customPriceMax" placeholder="₹ Max" min="0">
+                        <button type="button" id="customPriceGoBtn" onclick="applyCustomPriceFilter()">Go</button>
+                    </div>
+                    <select id="priceFilter" style="display: none;"><option value="all">All Prices</option></select>
+                </div>
+
+                <!-- 5. CUSTOMER REVIEWS -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Customer Reviews</h4>
+                    <ul class="amazon-rating-filter-list">
+                        <li>
+                            <a href="javascript:void(0)" class="amazon-filter-link rating-link" data-rating="4" onclick="setSidebarRating(4, this)">
+                                <span class="amazon-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span>
+                                <span class="amazon-rating-label">&amp; Up</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="amazon-filter-link rating-link" data-rating="3" onclick="setSidebarRating(3, this)">
+                                <span class="amazon-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span>
+                                <span class="amazon-rating-label">&amp; Up</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="amazon-filter-link rating-link" data-rating="2" onclick="setSidebarRating(2, this)">
+                                <span class="amazon-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span>
+                                <span class="amazon-rating-label">&amp; Up</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="amazon-filter-link rating-link" data-rating="1" onclick="setSidebarRating(1, this)">
+                                <span class="amazon-stars"><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span>
+                                <span class="amazon-rating-label">&amp; Up</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 6. DEALS & DISCOUNTS -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Deals &amp; Discounts</h4>
+                    <ul class="amazon-link-list">
+                        <li><a href="javascript:void(0)" class="amazon-filter-link deals-link" data-deal="festival" onclick="toggleDealsFilter('festival', this)">Great Indian Festival</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link deals-link" data-deal="todays" onclick="toggleDealsFilter('todays', this)">Today's Deals</a></li>
+                    </ul>
+                </div>
+
+                <!-- 7. AVAILABILITY -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Availability</h4>
+                    <label class="amazon-checkbox-label">
+                        <input type="checkbox" id="includeOutOfStock" class="amazon-filter-checkbox" onchange="applySidebarFilters()">
+                        <span>Include Out of Stock</span>
+                    </label>
+                </div>
+
+                <!-- 8. CUSTOMIZABLE PRODUCTS -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Customizable Products</h4>
+                    <label class="amazon-checkbox-label">
+                        <input type="checkbox" id="customizableProductFilter" class="amazon-filter-checkbox" onchange="applySidebarFilters()">
+                        <span>Customizable</span>
+                    </label>
+                </div>
+
+                <!-- 9. LIFESTYLE -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Lifestyle</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Business Casual" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Business Casual</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Business Professional" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Business Professional</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Casual" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Casual</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Comfort" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Comfort</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Dress" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Dress</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Evening" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Evening</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Formal" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Formal</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Themed" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Themed</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Work Utility" class="amazon-lifestyle-checkbox" onchange="applySidebarFilters()"><span>Work Utility</span></label>
+                    </div>
+                </div>
+
+                <!-- 10. SELLER -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Seller</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Cocoblu Retail" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>Cocoblu Retail</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="ADITYA BIRLA LIFESTYLE BRANDS LIMITED" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>ADITYA BIRLA LIFESTYLE BRANDS LIMITED</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="RAYMOND LIFESTYLE LIMITED" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>RAYMOND LIFESTYLE LIMITED</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="The Souled Store" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>The Souled Store</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Arvind Lifestyle Brands Limited Core" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>Arvind Lifestyle Brands Limited Core</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Leotude Lifestyle Private Limited" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>Leotude Lifestyle Private Limited</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="BodyGlove Apparel Online" class="amazon-seller-checkbox" onchange="applySidebarFilters()"><span>BodyGlove Apparel Online</span></label>
+                    </div>
+                </div>
+
+                <!-- 11. AMAZON FASHION -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Amazon Fashion</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Top Brands" class="amazon-fashion-checkbox" onchange="applySidebarFilters()"><span>Top Brands</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Made for Amazon" class="amazon-fashion-checkbox" onchange="applySidebarFilters()"><span>Made for Amazon</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Premium Brands" class="amazon-fashion-checkbox" onchange="applySidebarFilters()"><span>Premium Brands</span></label>
+                    </div>
+                </div>
+
+                <!-- 12. CARE INSTRUCTIONS -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Care Instructions</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Dry Clean Only" class="amazon-care-checkbox" onchange="applySidebarFilters()"><span>Dry Clean Only</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Hand Wash Only" class="amazon-care-checkbox" onchange="applySidebarFilters()"><span>Hand Wash Only</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Machine Wash" class="amazon-care-checkbox" onchange="applySidebarFilters()"><span>Machine Wash</span></label>
+                    </div>
+                </div>
+
+                <!-- 13. DISCOUNT -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Discount</h4>
+                    <ul class="amazon-link-list">
+                        <li><a href="javascript:void(0)" class="amazon-filter-link discount-link" data-discount="10" onclick="setSidebarDiscount(10, this)">10% Off or more</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link discount-link" data-discount="25" onclick="setSidebarDiscount(25, this)">25% Off or more</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link discount-link" data-discount="35" onclick="setSidebarDiscount(35, this)">35% Off or more</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link discount-link" data-discount="50" onclick="setSidebarDiscount(50, this)">50% Off or more</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link discount-link" data-discount="60" onclick="setSidebarDiscount(60, this)">60% Off or more</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link discount-link" data-discount="70" onclick="setSidebarDiscount(70, this)">70% Off or more</a></li>
+                    </ul>
+                </div>
+
+                <!-- 14. SLEEVE CUFF STYLE -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Sleeve Cuff Style</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Single Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span>Single Cuff</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Round Cut Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span class="highlight-orange">Round Cut Cuff</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Ribbed Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span>Ribbed Cuff</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Angle Cut Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span>Angle Cut Cuff</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Barrel Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span>Barrel Cuff</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Double Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span>Double Cuff</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="French Cuff" class="amazon-cuff-checkbox" onchange="applySidebarFilters()"><span>French Cuff</span></label>
+                    </div>
+                </div>
+
+                <!-- 15. NEW ARRIVALS -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">New Arrivals</h4>
+                    <ul class="amazon-link-list">
+                        <li><a href="javascript:void(0)" class="amazon-filter-link arrivals-link" data-days="30" onclick="setSidebarArrivals(30, this)">Last 30 days</a></li>
+                        <li><a href="javascript:void(0)" class="amazon-filter-link arrivals-link" data-days="90" onclick="setSidebarArrivals(90, this)">Last 90 days</a></li>
+                    </ul>
+                </div>
+
+                <!-- 16. POCKET DESCRIPTION -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Pocket Description</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Patch Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Patch Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Flap Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Flap Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Cargo Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Cargo Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Coin Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Coin Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Jetted Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Jetted Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Kangaroo Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Kangaroo Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Round Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span class="highlight-orange">Round Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Seam Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Seam Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Slant Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Slant Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Slit Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Slit Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Straight Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Straight Pocket</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Welt Pocket" class="amazon-pocket-checkbox" onchange="applySidebarFilters()"><span>Welt Pocket</span></label>
+                    </div>
+                </div>
+
+                <!-- 17. SLEEVE LENGTH DESCRIPTION -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Sleeve Length Description</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Sleeveless" class="amazon-sleeve-checkbox" onchange="applySidebarFilters()"><span>Sleeveless</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Short Sleeve" class="amazon-sleeve-checkbox" onchange="applySidebarFilters()"><span>Short Sleeve</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Half Sleeve" class="amazon-sleeve-checkbox" onchange="applySidebarFilters()"><span>Half Sleeve</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="3/4 Sleeve" class="amazon-sleeve-checkbox" onchange="applySidebarFilters()"><span>3/4 Sleeve</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Bracelet Sleeve" class="amazon-sleeve-checkbox" onchange="applySidebarFilters()"><span>Bracelet Sleeve</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Long Sleeve" class="amazon-sleeve-checkbox" onchange="applySidebarFilters()"><span>Long Sleeve</span></label>
+                    </div>
+                </div>
+
+                <!-- 18. COLOUR -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Colour</h4>
+                    <div class="amazon-color-swatch-grid" id="sidebarColorPalette">
+                        <!-- Row 1 -->
+                        <button type="button" class="amazon-color-swatch-btn" data-color="black" title="Black" onclick="toggleSidebarColor('black', this)" style="background-color: #000000;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="grey" title="Grey" onclick="toggleSidebarColor('grey', this)" style="background-color: #757575;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="white" title="White" onclick="toggleSidebarColor('white', this)" style="background-color: #ffffff; border: 1.5px solid #d5d9d9;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="brown" title="Brown" onclick="toggleSidebarColor('brown', this)" style="background-color: #5c3a1e;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="beige" title="Beige" onclick="toggleSidebarColor('beige', this)" style="background-color: #b5a682;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="red" title="Red" onclick="toggleSidebarColor('red', this)" style="background-color: #b30000;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="pink" title="Pink" onclick="toggleSidebarColor('pink', this)" style="background-color: #f8c4c4;"></button>
+                        
+                        <!-- Row 2 -->
+                        <button type="button" class="amazon-color-swatch-btn" data-color="orange" title="Orange" onclick="toggleSidebarColor('orange', this)" style="background-color: #f39c38;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="yellow" title="Yellow" onclick="toggleSidebarColor('yellow', this)" style="background-color: #feed3b;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="cream" title="Cream / Off-white" onclick="toggleSidebarColor('cream', this)" style="background-color: #f9f9e0; border: 1px solid #d5d9d9;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="green" title="Green" onclick="toggleSidebarColor('green', this)" style="background-color: #5bb82a;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="teal" title="Teal" onclick="toggleSidebarColor('teal', this)" style="background-color: #25a2a6;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="blue" title="Blue" onclick="toggleSidebarColor('blue', this)" style="background-color: #1a529e;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="purple" title="Purple" onclick="toggleSidebarColor('purple', this)" style="background-color: #8522d4;"></button>
+                        
+                        <!-- Row 3 -->
+                        <button type="button" class="amazon-color-swatch-btn" data-color="gold" title="Gold / Tan" onclick="toggleSidebarColor('gold', this)" style="background-color: #d4b26f;"></button>
+                        <button type="button" class="amazon-color-swatch-btn" data-color="silver" title="Light Grey / Silver" onclick="toggleSidebarColor('silver', this)" style="background-color: #dadada;"></button>
+                        <button type="button" class="amazon-color-swatch-btn multicolor-swatch" data-color="multicolor" title="Multicolor" onclick="toggleSidebarColor('multicolor', this)"></button>
+                        <button type="button" class="amazon-color-swatch-btn striped-swatch" data-color="pattern" title="Patterned / Striped" onclick="toggleSidebarColor('pattern', this)"></button>
+                    </div>
+                </div>
+
+                <!-- 19. PAY ON DELIVERY -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Pay On Delivery</h4>
+                    <label class="amazon-checkbox-label">
+                        <input type="checkbox" id="podFilter" class="amazon-filter-checkbox" onchange="applySidebarFilters()">
+                        <span>Eligible for Pay On Delivery</span>
+                    </label>
+                </div>
+
+                <!-- 20. CLOSURE TYPE -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Closure Type</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Button" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Button</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Pull On" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Pull On</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Zipper" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Zipper</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Snap" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Snap</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Buckle" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Buckle</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Double Ring" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Double Ring</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Drawstring" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Drawstring</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Hook and Loop" class="amazon-closure-checkbox" onchange="applySidebarFilters()"><span>Hook and Loop</span></label>
+                    </div>
+                </div>
+
+                <!-- 21. OCCASION -->
+                <div class="amazon-filter-block">
+                    <h4 class="amazon-filter-title">Occasion</h4>
+                    <div class="amazon-checkbox-list">
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="New Year" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>New Year</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Birthday" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Birthday</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Valentine's Day" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Valentine's Day</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Anniversary" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Anniversary</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Baby Shower" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Baby Shower</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Bachelor Party" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Bachelor Party</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Bachelorette Party" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Bachelorette Party</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Baptism" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Baptism</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Christmas" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Christmas</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Communion" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Communion</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Diwali" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Diwali</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Easter" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Easter</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Engagement" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Engagement</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Father's Day" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Father's Day</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Gender Reveal" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Gender Reveal</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Graduation" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Graduation</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Halloween" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Halloween</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Honeymoon" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Honeymoon</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Independence Day" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Independence Day</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Mother's Day" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Mother's Day</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="New Baby" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>New Baby</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Prom Homecoming" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Prom Homecoming</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Thanksgiving" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Thanksgiving</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Wedding" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Wedding</span></label>
+                        <label class="amazon-checkbox-label"><input type="checkbox" value="Women's Day" class="amazon-occasion-checkbox" onchange="applySidebarFilters()"><span>Women's Day</span></label>
+                    </div>
+                </div>
+
+                <!-- SIDEBAR RESET BUTTON -->
+                <div class="amazon-sidebar-reset-block">
+                    <button type="button" class="amazon-sidebar-reset-btn" id="resetFilters" onclick="clearAllSidebarFilters()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Clear All Filters
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Backdrop for Mobile Sidebar -->
+            <div class="amazon-sidebar-backdrop" id="amazonSidebarBackdrop" onclick="toggleAmazonSidebar(false)"></div>
+
+            <!-- ==============================================
+                 RIGHT COLUMN: TOP BAR, CHIPS & PRODUCTS GRID
+            =============================================== -->
+            <div class="shop-main-content">
+                <!-- Top Result & Sort Bar -->
+                <div class="shop-top-bar">
+                    <div class="shop-results-info">
+                        <span id="resultCount">Loading products...</span>
+                    </div>
+
+                    <div class="shop-top-controls">
+                        <!-- Quick In-Page Keyword Search -->
+                        <div class="shop-quick-search-wrap">
+                            <input type="text" id="searchInput" placeholder="Search in results..." autocomplete="off">
+                            <button type="button" id="searchBtn" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="shop-sort-wrap">
+                            <label for="sortFilter">Sort by:</label>
+                            <select id="sortFilter" onchange="filterProducts()">
+                                <option value="default">Featured</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="rating">Avg. Customer Review</option>
+                                <option value="name-az">Name: A to Z</option>
+                                <option value="name-za">Name: Z to A</option>
+                                <option value="newest">Newest Arrivals</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Filter Chips Bar -->
+                <div class="active-filter-chips-row" id="activeFilterChipsRow" style="display: none;"></div>
+
+                <!-- Products Grid -->
+                <div class="product-grid-wrapper">
+                    <section id="productContainer" class="product-container">
+                        <!-- Loaded dynamically by products.js -->
+                    </section>
+                </div>
+
+                <!-- Amazon Style Pagination Bar (Matching Screenshot) -->
+                <nav class="amazon-pagination-wrapper" id="amazonPaginationWrapper" aria-label="Products Pagination" style="display: none;">
+                    <div class="amazon-pagination-bar" id="amazonPaginationBar">
+                        <!-- Rendered dynamically by products.js -->
+                    </div>
+                </nav>
+
+                <!-- No Products Found -->
+                <div id="noProducts" class="no-products" style="display: none;">
+                    <div class="no-products-icon">🔍</div>
+                    <h2>No Products Found</h2>
+                    <p>Try clearing some filters or searching for something else.</p>
+                    <button type="button" class="clear-filters-cta-btn" onclick="clearAllSidebarFilters()">Clear all filters</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Hidden compat elements for size -->
+        <select id="sizeFilter" style="display: none;"><option value="all">All Sizes</option></select>
+    </main>
+
+
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo-text">My<span>Store</span></div>
+                <p>Your one-stop destination for fashion, lifestyle and accessories.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <a href="./products.html">All Products</a>
+                <a href="./categories.html">Categories</a>
+                <a href="./wishlist.html">Wishlist</a>
+            </div>
+            <div class="footer-col">
+                <h4>Account</h4>
+                <a href="./login.html">Login</a>
+                <a href="./register.html">Register</a>
+                <a href="/orders.html">My Orders</a>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <a href="#">Contact Us</a>
+                <a href="#">Returns</a>
+                <a href="#">FAQs</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 <a href="./index.html">MyStore</a>. All rights reserved.</span>
+            <span>Made with ❤️ in India</span>
+        </div>
+    </footer>
+
+
+    <!-- ==========================================
+         MOBILE NAVIGATION
+    =========================================== -->
+
+    <script>
+        const menuBtn = document.getElementById("menuBtn");
+        const navLinks = document.querySelector(".nav-links");
+        if (menuBtn && navLinks) {
+            menuBtn.addEventListener("click", function () {
+                navLinks.classList.toggle("mobile-active");
+                menuBtn.textContent = navLinks.classList.contains("mobile-active") ? "✕" : "☰";
+            });
+        }
+    </script>
+
+
+    <!-- ==========================================
+         PRODUCT IMAGE HELPER
+    =========================================== -->
+
+    <script>
+
+        function normalizeProductImagePath(image) {
+            const value = String(image || "").trim();
+            if (!value) return "/images/tshirt1.jpg";
+            if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("/")) return value;
+            return `/images/${value}`;
+        }
+
+        window.normalizeProductImagePath = normalizeProductImagePath;
+
+        function getProductImage(product) {
+
+            const defaultImage = "/images/shirts1.jpg";
+
+            let image = product.image;
+
+            if (!image || String(image).trim() === "") {
+                return defaultImage;
+            }
+
+            image = String(image).trim();
+
+            if (image.startsWith("[") && image.endsWith("]")) {
+                try {
+                    const parsed = JSON.parse(image);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        image = String(parsed[0] || "").trim();
+                    }
+                } catch (e) {}
+            }
+
+            if (image.startsWith("http://") || image.startsWith("https://")) {
+                return image;
+            }
+
+            if (image.startsWith("/")) {
+                return image;
+            }
+
+            if (image.startsWith("images/")) {
+                return `/${image}`;
+            }
+
+            return `/images/${image}`;
+        }
+
+        window.getProductImage = getProductImage;
+
+    </script>
+
+
+    <!-- ==========================================
+         PRODUCTS JAVASCRIPT
+    =========================================== -->
+
+    <script src="../public/js/products.js?v=28"></script>
+    <script src="/js/products.js?v=28"></script>
+    <script src="../public/js/category-bar.js?v=8"></script>
+    <script src="/js/category-bar.js?v=8"></script>
+    <script src="../public/js/customer-support.js?v=2"></script>
+    <script src="/js/customer-support.js?v=2"></script>
+
+
+    <script src="../public/js/navbar-search.js?v=1"></script>
+    <script src="/js/navbar-search.js?v=1"></script>
+    <script src="../public/js/mega-menu.js?v=1"></script>
+    <script src="/js/mega-menu.js?v=1"></script>
+</body>
+
+</html>

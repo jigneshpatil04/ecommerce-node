@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Order Successful</title>
+    <title>Order Successful — MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="/css/order-success.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="success-container">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+
+        <h1>
+            Order Placed Successfully!
+        </h1>
+
+
+        <p>
+            Thank you for shopping with
+            
+        </p>
+
+
+        <p id="orderId">
+            Your Order ID: -
+        </p>
+
+
+        <a
+            href="/products"
+            class="btn"
+        >
+            Continue Shopping
+        </a>
+
+    </div>
+
+
+    <script>
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const orderId =
+            params.get("orderId");
+
+
+        const orderElement =
+            document.getElementById(
+                "orderId"
+            );
+
+
+        if (orderId) {
+
+            orderElement.textContent =
+                "Your Order ID: #" +
+                orderId;
+
+        }
+
+    </script>
+
+</body>
+
+</html> 

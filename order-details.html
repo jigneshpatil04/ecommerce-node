@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Order Details - SQUAD Fashion</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/orders.css"
+    >
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+     NAVBAR
+========================================== -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        <a href="/">
+            My<span>Store</span>
+        </a>
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/" class="nav-link">
+            Home
+        </a>
+
+        <a href="/products.html" class="nav-link">
+            Products
+        </a>
+
+        <a href="/wishlist.html" class="nav-link">
+           Wishlist
+        </a>
+
+        <!-- <a href="/cart.html" class="nav-link">
+            🛒 Cart
+        </a> -->
+
+        <a
+            href="/orders.html"
+            class="nav-link active"
+        >
+            My Orders
+        </a>
+
+    </div>
+
+    <div class="nav-actions">
+        <a href="/cart.html" class="cart-link">
+            🛒 Cart
+            <span id="cart-count" class="cart-count">0</span>
+        </a>
+        <a href="/login.html" class="login-btn">Login</a>
+    </div>
+
+    <button type="button" class="menu-btn" id="menuBtn">☰</button>
+
+</nav>
+
+<script>
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.querySelector(".nav-links");
+    if (menuBtn && navLinks) {
+        menuBtn.addEventListener("click", function () {
+            navLinks.classList.toggle("mobile-active");
+        });
+    }
+</script>
+
+</header>
+
+
+<!-- ==========================================
+     ORDER DETAILS
+========================================== -->
+
+<main class="orders-page">
+
+
+    <div
+        id="orderLoading"
+        class="orders-loading"
+    >
+        Loading order details...
+    </div>
+
+
+    <div
+        id="orderDetailsContainer"
+        style="display:none;"
+    >
+
+
+        <div class="orders-header">
+
+            <h1>
+                📦 Order Details
+            </h1>
+
+            <p id="orderTitle">
+                Order
+            </p>
+
+        </div>
+
+
+        <!-- ORDER SUMMARY -->
+
+        <div
+            id="orderSummary"
+            class="order-card"
+        >
+        </div>
+
+
+        <!-- ==========================================
+             TRACKING
+        ========================================== -->
+
+        <div
+            class="order-card"
+            style="margin-top:20px;"
+        >
+
+            <h2>
+                🚚 Order Tracking
+            </h2>
+
+
+            <div
+                id="trackingContainer"
+                class="tracking-container"
+            >
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             ORDER ITEMS
+        ========================================== -->
+
+        <div
+            class="order-card"
+            style="margin-top:20px;"
+        >
+
+            <h2>
+                🛍️ Ordered Products
+            </h2>
+
+
+            <div
+                id="orderItems"
+                class="order-items"
+            >
+            </div>
+
+        </div>
+
+
+        <br>
+
+
+        <a
+            href="/orders.html"
+            class="shop-button"
+        >
+            ← Back to My Orders
+        </a>
+
+
+    </div>
+
+</main>
+
+
+<script src="/js/order-details.js"></script>
+
+</body>
+
+</html>

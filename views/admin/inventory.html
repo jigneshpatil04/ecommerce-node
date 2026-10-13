@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin  Inventory Management | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Base admin theme -->
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <!-- Inventory CSS -->
+    <link rel="stylesheet" href="/css/admin-inventory.css?v=1">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- ======================================
+         SIDEBAR
+    ======================================= -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY (ACTIVE) -->
+            <a href="/admin/inventory.html" class="nav-item active">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports & Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- ======================================
+         MAIN CONTENT
+    ======================================= -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu">â˜°</button>
+
+            <div class="topbar-title">
+                <h1>Inventory Management</h1>
+                <p>Track stock levels, size-wise & color-wise variants, and restock alerts</p>
+            </div>
+
+            <div class="inventory-header-actions">
+                <!-- Low-Stock Threshold Setting -->
+                <div class="threshold-control" title="Units threshold to trigger low-stock alert">
+                    <label for="thresholdInput">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i>
+                        Alert Below:
+                    </label>
+                    <input type="number" id="thresholdInput" class="threshold-input" value="5" min="1" max="50">
+                    <span>units</span>
+                </div>
+
+                <!-- Refresh Button -->
+                <button id="refreshBtn" class="btn-refresh" type="button">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body" style="padding: 24px;">
+
+            <!-- ======================================
+                 CRITICAL ALERT BANNER (Conditional)
+            ======================================= -->
+            <div id="criticalAlertBanner" class="critical-alert-banner" style="display: none;">
+                <div class="alert-content">
+                    <div class="alert-icon-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <h4 class="alert-title" id="alertBannerTitle">Inventory Attention Required!</h4>
+                        <p class="alert-desc" id="alertBannerDesc">Several items or size/color variants are low on stock or completely sold out.</p>
+                    </div>
+                </div>
+                <div class="alert-actions">
+                    <button id="btnViewLowStock" class="btn-alert-action" type="button">
+                        <i class="fa-solid fa-filter"></i> View Critical Items
+                    </button>
+                    <button id="btnDismissAlert" class="btn-alert-dismiss" type="button" title="Dismiss banner">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ======================================
+                 KPI SUMMARY STATS
+            ======================================= -->
+            <div class="inventory-stats-grid">
+                <!-- Total Warehouse Stock -->
+                <div class="inv-stat-card" data-filter="all">
+                    <div class="inv-stat-icon icon-units">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    <div class="inv-stat-content">
+                        <div class="inv-stat-label">Total Stock Units</div>
+                        <div class="inv-stat-number" id="statTotalUnits">0</div>
+                        <div class="inv-stat-subtext" id="statValuation">Valuation: ₹0</div>
+                    </div>
+                </div>
+
+                <!-- In Stock Items -->
+                <div class="inv-stat-card" data-filter="in_stock">
+                    <div class="inv-stat-icon icon-instock">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="inv-stat-content">
+                        <div class="inv-stat-label">Healthy Stock</div>
+                        <div class="inv-stat-number" id="statInStock">0</div>
+                        <div class="inv-stat-subtext">Comfortable supply</div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alerts -->
+                <div class="inv-stat-card" data-filter="low_stock">
+                    <div class="inv-stat-icon icon-lowstock">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="inv-stat-content">
+                        <div class="inv-stat-label">Low-Stock Alerts</div>
+                        <div class="inv-stat-number" id="statLowStock" style="color: var(--warning);">0</div>
+                        <div class="inv-stat-subtext" id="statLowStockSub">â‰¤ 5 units remaining</div>
+                    </div>
+                </div>
+
+                <!-- Out of Stock -->
+                <div class="inv-stat-card" data-filter="out_of_stock">
+                    <div class="inv-stat-icon icon-outofstock">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </div>
+                    <div class="inv-stat-content">
+                        <div class="inv-stat-label">Out of Stock</div>
+                        <div class="inv-stat-number" id="statOutOfStock" style="color: var(--danger);">0</div>
+                        <div class="inv-stat-subtext">Depleted / Restock needed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================================
+                 TOOLBAR / FILTERS
+            ======================================= -->
+            <div class="inventory-toolbar-card">
+                <!-- Status Filter Tabs -->
+                <div class="inventory-filter-tabs">
+                    <button class="inv-tab-btn active" data-status="all" type="button">
+                        <span>All Products</span>
+                        <span class="tab-badge" id="badgeAll">0</span>
+                    </button>
+                    <button class="inv-tab-btn" data-status="in_stock" type="button">
+                        <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 11px;"></i>
+                        <span>In Stock</span>
+                        <span class="tab-badge" id="badgeInStock">0</span>
+                    </button>
+                    <button class="inv-tab-btn" data-status="low_stock" type="button">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--warning); font-size: 11px;"></i>
+                        <span>Low Stock</span>
+                        <span class="tab-badge" id="badgeLowStock">0</span>
+                    </button>
+                    <button class="inv-tab-btn" data-status="out_of_stock" type="button">
+                        <i class="fa-solid fa-circle-xmark" style="color: var(--danger); font-size: 11px;"></i>
+                        <span>Out of Stock</span>
+                        <span class="tab-badge" id="badgeOutOfStock">0</span>
+                    </button>
+                </div>
+
+                <!-- Search & Category -->
+                <div class="inventory-search-group">
+                    <div class="search-input-wrap">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="invSearchInput" class="inv-search-input" placeholder="Search by name, category, or color...">
+                    </div>
+
+                    <select id="invCategorySelect" class="inv-category-select">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ======================================
+                 MASTER INVENTORY TABLE
+            ======================================= -->
+            <div class="inventory-table-card">
+                <div class="inv-card-header">
+                    <div>
+                        <h3 class="inv-card-title">Stock Overview & Variant Breakdowns</h3>
+                        <p style="margin: 3px 0 0 0; font-size: 12px; color: var(--text-muted);" id="tableSubtitle">Showing all products</p>
+                    </div>
+                </div>
+
+                <div class="inv-table-wrap">
+                    <table class="inv-table">
+                        <thead>
+                            <tr>
+                                <th>Product Details</th>
+                                <th>Category</th>
+                                <th>Base Price</th>
+                                <th>Available Stock</th>
+                                <th>Status</th>
+                                <th>Size & Color Breakdown</th>
+                                <th style="text-align: right;">Quick Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    <i class="fa-solid fa-spinner fa-spin fa-2x mb-2"></i>
+                                    <p>Loading inventory items...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<!-- ======================================
+     RESTOCK / STOCK UPDATE MODAL
+======================================= -->
+<div id="restockModal" class="inv-modal-overlay">
+    <div class="inv-modal">
+        <div class="inv-modal-header">
+            <h3 class="inv-modal-title" id="modalTitle">Update Product Stock</h3>
+            <button class="inv-modal-close" id="modalCloseBtn" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="inv-modal-body">
+            <div id="modalItemSummary" style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding: 12px; background: #f8fafc; border-radius: var(--radius-md);">
+                <img id="modalItemImg" src="/images/shirt2.jpg" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;" alt="Item">
+                <div>
+                    <strong id="modalItemName" style="font-size: 14px; color: var(--dark);">Product Name</strong>
+                    <div id="modalItemMeta" style="font-size: 12px; color: var(--text-muted);">Category â€¢ Current Stock: 10</div>
+                </div>
+            </div>
+
+            <!-- Set Exact Stock -->
+            <div class="form-group-inv">
+                <label for="modalExactStock">Set New Exact Stock Quantity</label>
+                <input type="number" id="modalExactStock" class="form-input-inv" min="0" placeholder="Enter new quantity">
+            </div>
+
+            <!-- Quick Add Presets -->
+            <div class="form-group-inv">
+                <label>Or Quick Add (+Units to Current Stock)</label>
+                <div class="preset-buttons">
+                    <button type="button" class="btn-preset" data-add="5">+5</button>
+                    <button type="button" class="btn-preset" data-add="10">+10</button>
+                    <button type="button" class="btn-preset" data-add="25">+25</button>
+                    <button type="button" class="btn-preset" data-add="50">+50</button>
+                    <button type="button" class="btn-preset" data-add="100">+100</button>
+                </div>
+            </div>
+
+            <div id="modalVariantSyncOption" class="form-group-inv" style="display: none;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                    <input type="checkbox" id="modalSyncVariantsCheck" checked>
+                    <span>Distribute stock equally across all variants</span>
+                </label>
+            </div>
+        </div>
+        <div class="inv-modal-footer">
+            <button type="button" id="modalCancelBtn" class="btn-refresh">Cancel</button>
+            <button type="button" id="modalSaveBtn" class="btn-alert-action" style="background: var(--dark); padding: 9px 18px;">
+                <i class="fa-solid fa-floppy-disk"></i> Save Stock
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="invToastContainer" class="inv-toast-container"></div>
+
+<!-- JavaScript -->
+<script src="/js/admin-inventory.js?v=1"></script>
+
+<script src="/js/admin-order-badge.js"></script>
+</body>
+</html>
+

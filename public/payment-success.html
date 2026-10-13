@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful — MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="/css/style.css?v=6">
+
+    <style>
+        .success-page {
+            min-height: calc(100vh - 140px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: #FAF7F2;
+        }
+
+        .success-card {
+            background: #FFFFFF;
+            max-width: 540px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 48px 36px;
+            text-align: center;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+            border: 1px solid #ECE5DD;
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .success-icon-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #e6f7ec;
+            color: #1e8e3e;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            margin-bottom: 24px;
+        }
+
+        .success-card h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 30px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+
+        .success-card p {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .order-badge {
+            display: inline-block;
+            background: #F4EBE1;
+            color: #832729;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 18px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-continue {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #832729;
+            color: #FFFFFF;
+            padding: 13px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-continue:hover {
+            background: #6a1f21;
+            transform: translateY(-1px);
+            color: #FFFFFF;
+        }
+
+        .btn-orders {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: #333333;
+            border: 1px solid #D5C9BD;
+            padding: 13px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-orders:hover {
+            border-color: #832729;
+            color: #832729;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/">My<span>Store</span></a>
+        </div>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/categories.html" class="nav-link">Categories</a>
+            <a href="/products.html" class="nav-link">Shop</a>
+            <a href="/wishlist.html" class="nav-link">Wishlist</a>
+        </div>
+        <div class="nav-actions">
+            <a href="/cart.html" class="cart-link">
+                <i class="fa-solid fa-bag-shopping"></i> Cart
+                <span id="cart-count" class="cart-count">0</span>
+            </a>
+            <a href="/login.html" class="login-btn" id="loginBtn">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+            </a>
+        </div>
+    </nav>
+
+    <!-- SUCCESS CONTENT -->
+    <main class="success-page">
+        <div class="success-card">
+            <div class="success-icon-wrap">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h1>Payment Successful!</h1>
+
+            <p>
+                Your payment has been received.<br>
+                Thank you for your purchase!
+            </p>
+
+            <div id="orderBadge" class="order-badge" style="display: none;">
+                Order ID: <span id="orderIdText"></span>
+            </div>
+
+            <div class="success-actions">
+                <a href="/products.html" class="btn-continue">
+                    <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+                </a>
+                <a href="/orders.html" class="btn-orders">
+                    <i class="fa-solid fa-box-open"></i> View Orders
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Clear cart from local storage since payment succeeded
+        try {
+            localStorage.removeItem("cart");
+        } catch (e) {}
+
+        // Read query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get("order_id") || urlParams.get("orderId") || localStorage.getItem("lastOrderId");
+
+        if (orderId) {
+            const badge = document.getElementById("orderBadge");
+            const orderIdText = document.getElementById("orderIdText");
+            if (badge && orderIdText) {
+                orderIdText.textContent = "#" + orderId;
+                badge.style.display = "inline-block";
+            }
+        }
+    </script>
+
+    <script src="/js/category-bar.js?v=4"></script>
+
+</body>
+
+</html>
+

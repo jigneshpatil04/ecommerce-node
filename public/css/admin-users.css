@@ -1,0 +1,217 @@
+/* ============================================================
+   ADMIN USERS PAGE — MODERN THEME
+============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('/css/admin-dashboard.css');
+
+
+/* ============================================================
+   USERS TABLE
+============================================================ */
+
+.users-section {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 8px rgba(0, 0, 0, 0.04), 0 10px 24px -4px rgba(0, 0, 0, 0.04);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.users-section:hover {
+    transform: translateY(-4px);
+    box-shadow: inset 0 1px 0 #ffffff, 0 18px 36px -6px rgba(0, 0, 0, 0.09), 0 4px 18px rgba(254, 76, 80, 0.08);
+}
+
+.users-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.users-table thead th {
+    background: #f7f7f9;
+    padding: 13px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.users-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #1a1a2e;
+    vertical-align: middle;
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.users-table tbody tr:hover td {
+    background: rgba(232,69,90,0.03);
+}
+
+
+/* ============================================================
+   USER AVATAR
+============================================================ */
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e8455a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info-cell .user-name {
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.user-info-cell .user-email {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+
+/* ============================================================
+   USERS TOOLBAR
+============================================================ */
+
+.users-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.users-toolbar h2 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.user-search {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f7f7f9;
+    height: 38px;
+    transition: all 0.25s ease;
+}
+
+.user-search:focus-within {
+    border-color: #e8455a;
+    box-shadow: 0 0 0 3px rgba(232,69,90,0.10);
+    background: #ffffff;
+}
+
+.user-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 14px;
+    font-size: 13px;
+    color: #1a1a2e;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    min-width: 200px;
+}
+
+.user-search input::placeholder { color: #9ca3af; }
+
+.user-search button {
+    width: 38px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.user-search button:hover { color: #e8455a; }
+
+
+/* ============================================================
+   ROLE BADGE
+============================================================ */
+
+.role-admin {
+    background: rgba(232,69,90,0.10);
+    color: #e8455a;
+}
+
+.role-user {
+    background: rgba(26,26,46,0.08);
+    color: #1a1a2e;
+}
+
+
+/* ============================================================
+   ACTION BUTTONS
+============================================================ */
+
+.user-action-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.25s ease;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-action-delete {
+    background: rgba(220,38,38,0.08);
+    color: #dc2626;
+}
+
+.user-action-delete:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.user-action-edit {
+    background: rgba(26,26,46,0.08);
+    color: #1a1a2e;
+}
+
+.user-action-edit:hover {
+    background: #1a1a2e;
+    color: #ffffff;
+}

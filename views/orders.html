@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Orders - SQUAD Fashion</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css?v=6"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/orders.css?v=2"
+        href="/css/orders.css?v=3"
+        href="/css/orders.css?v=4"
+        href="/css/orders.css?v=5"
+    >
+
+</head>
+
+<body>
+
+<!-- ==========================================
+     NAVBAR
+========================================== -->
+
+    <nav class="navbar">
+
+        <!-- Logo -->
+        <div class="logo">
+            <a href="./index.html">
+                My<span>Store</span>
+            </a>
+        </div>
+
+        <!-- Pill Search Bar (With Camera & Mic icons) -->
+        <div class="nav-search-bar" id="navSearchBar">
+            <form class="nav-search-form" id="navSearchForm" onsubmit="handleNavSearch(event)">
+                <button type="submit" class="nav-search-btn" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <input 
+                    type="text" 
+                    class="nav-search-input" 
+                    id="navSearchInput" 
+                    placeholder="Search for shirts, styles, brands..." 
+                    autocomplete="off" 
+                    spellcheck="false"
+                >
+                <div class="nav-search-actions">
+                    <button type="button" class="nav-search-action-btn camera" id="navSearchCameraBtn" title="Search by image" aria-label="Search by image" onclick="triggerNavImageSearch(event)">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
+                    <button type="button" class="nav-search-action-btn mic" id="navSearchMicBtn" title="Voice search" aria-label="Search by voice" onclick="triggerNavVoiceSearch(event)">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                </div>
+            </form>
+            <input type="file" id="navSearchFileInput" accept="image/*" style="display:none;" onchange="handleNavImageSelected(event)">
+            <div class="nav-search-dropdown" id="navSearchDropdown"></div>
+        </div>
+
+        <!-- 5 Right Action Icons (Matching Tanishq Reference: Diamond, Stores, Wishlist, Account, Cart) -->
+        <div class="nav-actions">
+            <!-- 1. Diamond / Trending -->
+            <a href="./products.html?badge=Trending" class="nav-action-icon" title="Trending Collections">
+                <i class="fa-solid fa-gem"></i>
+            </a>
+
+            <!-- 2. Stores & Support -->
+            <a href="#" onclick="openCustomerSupportModal(event)" class="nav-action-icon" title="Stores & Support">
+                <i class="fa-solid fa-store"></i>
+            </a>
+
+            <!-- 3. Wishlist -->
+            <a href="./wishlist.html" class="nav-action-icon " title="Wishlist">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+
+            <!-- 4. Account / Login -->
+            <a href="./login.html" class="nav-action-icon " id="loginBtn" title="Account / Login">
+                <i class="fa-regular fa-user"></i>
+            </a>
+            <!-- User Menu (shown when logged in) -->
+            <div class="user-menu" id="userMenu" style="display: none;">
+                <a href="./orders.html" class="nav-action-icon active" title="My Orders & Profile">
+                    <i class="fa-solid fa-user-check"></i>
+                </a>
+                <span class="user-name" id="userName" style="display: none;"></span>
+                <button type="button" class="nav-action-icon logout-icon-btn" id="logoutBtn" title="Logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+
+            <!-- 5. Cart / Bag with Badge -->
+            <a href="./cart.html" class="nav-action-icon nav-cart-icon " title="Shopping Bag">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span id="cart-count" class="cart-badge">0</span>
+            </a>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button type="button" class="menu-btn" id="menuBtn" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer Links (Only shown when toggled on mobile) -->
+        <div class="nav-links mobile-drawer">
+            <a href="./index.html" class="nav-link ">Home</a>
+            <a href="./categories.html" class="nav-link ">Categories</a>
+            <a href="./products.html" class="nav-link ">Shop</a>
+            <a href="./wishlist.html" class="nav-link ">Wishlist</a>
+            <a href="./orders.html" class="nav-link active">My Orders</a>
+            <a href="#" onclick="openCustomerSupportModal(event)" class="nav-link"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+
+    </nav>
+
+        <!-- ==========================================
+         SUB-NAVIGATION STRIP (ROW 2: HOME | ALL PRODUCTS | CATEGORIES MEGA MENU | T-SHIRTS | SHIRTS | PANTS | SHORTS | HOODIES | JACKETS | SHOES | ACCESSORIES)
+    =========================================== -->
+    <div class="header-sub-strip">
+        <div class="header-sub-container">
+            <!-- 1. Home -->
+            <a href="./index.html" class="header-sub-link ">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+
+            <!-- 2. All Products -->
+            <a href="./products.html" class="header-sub-link ">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> All Products
+            </a>
+
+            <!-- 3. Categories (With Luxury Mega Menu) -->
+            <div class="header-sub-item mega-dropdown-trigger">
+                <a href="javascript:void(0)" class="header-sub-link mega-trigger-link " role="button" title="View Categories">
+                    <i class="fa-solid fa-layer-group"></i> Categories <i class="fa-solid fa-chevron-down nav-caret"></i>
+                </a>
+                
+                <!-- Mega Menu Dropdown -->
+                <div class="nav-mega-menu">
+                    <div class="mega-menu-grid">
+                        
+                        <!-- Col 1: Vertical Category & Filter Tabs -->
+                        <div class="mega-tabs-col">
+                            <button type="button" class="mega-tab-btn active" data-target="megaPaneCategory" data-link="./products.html"
+                                data-featured-img="../public/images/jacket1.jpg" 
+                                data-featured-title="Discover Timeless Crafted Luxury Wear." 
+                                data-featured-link="./products.html">
+                                All Categories
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneTShirts" data-link="./products.html?category=T-Shirts"
+                                data-featured-img="../public/images/tshirt1.jpg" 
+                                data-featured-title="Luxury Cotton & Vintage Polo T-Shirts." 
+                                data-featured-link="./products.html?category=T-Shirts">
+                                T-Shirts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShirts" data-link="./products.html?category=Shirts"
+                                data-featured-img="../public/images/shirt2.jpg" 
+                                data-featured-title="Impeccable Formal & Casual Italian Shirts." 
+                                data-featured-link="./products.html?category=Shirts">
+                                Shirts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPanePants" data-link="./products.html?category=Pants"
+                                data-featured-img="../public/images/cargo_pants.jpg" 
+                                data-featured-title="Tailored Trousers, Chinos & Tactical Cargo Pants." 
+                                data-featured-link="./products.html?category=Pants">
+                                Pants
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneJeans" data-link="./products.html?category=Jeans"
+                                data-featured-img="../public/images/denim_jeans.jpg" 
+                                data-featured-title="Premium Slim Fit, Black & Vintage Denim Jeans." 
+                                data-featured-link="./products.html?category=Jeans">
+                                Jeans
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShorts" data-link="./products.html?category=Shorts"
+                                data-featured-img="../public/images/shorts.jpg" 
+                                data-featured-title="Relaxed Chino, Cargo & Casual Shorts." 
+                                data-featured-link="./products.html?category=Shorts">
+                                Shorts
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneHoodies" data-link="./products.html?category=Hoodies"
+                                data-featured-img="../public/images/hoodie.jpg" 
+                                data-featured-title="Premium Heavyweight Streetwear Hoodies." 
+                                data-featured-link="./products.html?category=Hoodies">
+                                Hoodies
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneJackets" data-link="./products.html?category=Jackets"
+                                data-featured-img="../public/images/jacket1.jpg" 
+                                data-featured-title="Signature Outerwear, Blazers & Biker Jackets." 
+                                data-featured-link="./products.html?category=Jackets">
+                                Jackets
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneShoes" data-link="./products.html?category=Shoes"
+                                data-featured-img="../public/images/shoes.jpg" 
+                                data-featured-title="Handcrafted Leather Loafers & Casual Sneakers." 
+                                data-featured-link="./products.html?search=Shoes">
+                                Shoes & Loafers
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneAccessories" data-link="./products.html?category=Accessories"
+                                data-featured-img="../public/images/accessories.jpg" 
+                                data-featured-title="Handcrafted Wallets, Watches & Accessories." 
+                                data-featured-link="./products.html?category=Accessories">
+                                Accessories
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPanePrice" data-link="./products.html"
+                                data-featured-img="../public/images/shirt3.jpg" 
+                                data-featured-title="Curated Value Drops For Every Budget." 
+                                data-featured-link="./products.html">
+                                By Price
+                            </button>
+                            <button type="button" class="mega-tab-btn" data-target="megaPaneOccasion" data-link="./products.html"
+                                data-featured-img="../public/images/jacket2.jpg" 
+                                data-featured-title="Styles Selected For Every Grand Occasion." 
+                                data-featured-link="./products.html">
+                                Occasions
+                            </button>
+                        </div>
+
+                        <!-- Col 2: Middle Subcategories & Quick Links -->
+                        <div class="mega-middle-col">
+                            
+                            <!-- Pane 1: All Categories (With Real Photos) -->
+                            <div class="mega-tab-pane active" id="megaPaneCategory">
+                                <div class="mega-subcategories-grid">
+                                    <!-- Column 1: Shirts & Tops -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="All Clothing" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Clothing</span>
+                                        </a>
+                                        <a href="./products.html?category=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="Formal Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt3.jpg" alt="Casual Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Shirts</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Linen Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=T-Shirts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt2.jpg" alt="Cotton T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Cotton T-Shirts</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Column 2: T-Shirts, Pants, Shorts, Jeans -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Polo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Polo T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Polo T-Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Chinos & Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Chinos & Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Casual Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Shorts</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Denim Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Denim Jeans</span>
+                                        </a>
+                                        <a href="./products.html?search=Cargo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Cargo Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Cargo Pants</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Column 3: Hoodies, Jackets, Shoes & Accessories -->
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Hoodies" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Winter Hoodies" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Winter Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?category=Jackets" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="Luxury Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Jackets</span>
+                                        </a>
+                                        <a href="./products.html?search=Shoes" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Sneakers & Shoes" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Sneakers & Shoes</span>
+                                        </a>
+                                        <a href="./products.html?search=Loafers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Loafers & Footwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Loafers & Footwear</span>
+                                        </a>
+                                        <a href="./products.html?category=Accessories" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Accessories" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Accessories</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 2: T-Shirts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneTShirts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=T-Shirts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="All T-Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All T-Shirts</span>
+                                        </a>
+                                        <a href="./products.html?search=Polo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Polo Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Premium Polo Tees</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Cotton" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt2.jpg" alt="Cotton Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Cotton Tees</span>
+                                        </a>
+                                        <a href="./products.html?search=Oversized" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt.jpg" alt="Oversized Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Oversized Fit Tees</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Graphic" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt3.jpg" alt="Graphic Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Graphic Print Tees</span>
+                                        </a>
+                                        <a href="./products.html?search=Striped" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt4.jpg" alt="Striped Tees" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Striped Casual Tees</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 3: Shirts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShirts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Shirts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="All Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Shirts</span>
+                                        </a>
+                                        <a href="./products.html?category=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt2.jpg" alt="Formal Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Executive Formal</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt3.jpg" alt="Casual Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Spread Collar</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Pure Linen Shirts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Checked" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt10.jpg" alt="Checked Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Checked & Plaid</span>
+                                        </a>
+                                        <a href="./products.html?search=Oxford" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt.jpg" alt="Oxford Shirts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Oxford</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 4: Pants Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPanePants">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="All Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Cargo" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="Cargo Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Utility Cargo Pants</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants&search=Chinos" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/chino_pants.jpg" alt="Chinos" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Chino Casual Pants</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Trousers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/chino_pants.jpg" alt="Formal Trousers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Tailored Pants</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Pants&search=Relaxed" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Relaxed Fit" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Relaxed Fit Cargos</span>
+                                        </a>
+                                        <a href="./products.html?category=Pants&search=Cotton" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/cargo_pants.jpg" alt="Cotton Pants" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Stretch Cotton Pants</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 4B: Jeans Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneJeans">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/denim_jeans.jpg" alt="All Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Jeans</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Slim" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/denim_jeans.jpg" alt="Slim Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Slim Straight Denim</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans&search=Black" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/black_jeans.jpg" alt="Black Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Sleek Black Denim</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Skinny" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/black_jeans.jpg" alt="Skinny Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Urban Skinny Jeans</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jeans&search=Straight" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Classic Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Classic Straight Jeans</span>
+                                        </a>
+                                        <a href="./products.html?category=Jeans&search=Vintage" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans3.jpg" alt="Vintage Jeans" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Vintage Washed Denim</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 5: Shorts Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShorts">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Shorts" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="All Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Chino+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Chino Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Chino Shorts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Cargo+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/pants cargo.jpg" alt="Cargo Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Utility Cargo Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Denim+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jeans.jpg" alt="Denim Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Denim Cut-off Shorts</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Sweat+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shorts.jpg" alt="Sweat Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Athletic Sweat Shorts</span>
+                                        </a>
+                                        <a href="./products.html?search=Linen+Shorts" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shirt4.jpg" alt="Linen Shorts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Summer Linen Shorts</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 6: Hoodies Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneHoodies">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Hoodies" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="All Hoodies" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Pullover" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Pullover" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Pullover Fleece Hoodies</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Zip-Up" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Zip-Up" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Zip-Up Casual Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Oversized+Hoodie" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Oversized" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Oversized Street Hoodies</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Heavyweight" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Heavyweight" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Winter Thermal Hoodies</span>
+                                        </a>
+                                        <a href="./products.html?search=Athletic" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/hoodie.jpg" alt="Athletic" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Athletic Training Hoodies</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 7: Jackets Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneJackets">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Jackets" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="All Outerwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Outerwear</span>
+                                        </a>
+                                        <a href="./products.html?search=Leather" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket1.jpg" alt="Leather Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Biker Jackets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Blazer" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket2.jpg" alt="Blazers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Designer Blazers</span>
+                                        </a>
+                                        <a href="./products.html?search=Bomber" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket3.jpg" alt="Bombers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Urban Bomber Jackets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Denim" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket4.jpg" alt="Denim Jackets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Denim Jackets</span>
+                                        </a>
+                                        <a href="./products.html?search=Puffer" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/jacket6.jpg" alt="Puffers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Thermal Puffer Jackets</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 8: Shoes Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneShoes">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Shoes" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="All Footwear" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Footwear</span>
+                                        </a>
+                                        <a href="./products.html?search=Sneakers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Sneakers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury White Sneakers</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Loafers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Loafers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Handcrafted Loafers</span>
+                                        </a>
+                                        <a href="./products.html?search=Casual" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Slip-ons" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Casual Slip-on Shoes</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Formal" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Formal Shoes" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Formal Leather Oxfords</span>
+                                        </a>
+                                        <a href="./products.html?search=Trainers" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/shoes.jpg" alt="Trainers" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Minimalist Trainers</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 9: Accessories Subcategories with Photos -->
+                            <div class="mega-tab-pane" id="megaPaneAccessories">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?category=Accessories" class="mega-item-link featured-pill">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="All Accessories" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">All Accessories</span>
+                                        </a>
+                                        <a href="./products.html?search=Wallet" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Wallets" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Genuine Leather Wallets</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Watch" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Watches" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Luxury Chrono Watches</span>
+                                        </a>
+                                        <a href="./products.html?search=Sunglasses" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/accessories.jpg" alt="Sunglasses" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Designer Sunglasses</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Belt" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/loafers.jpg" alt="Belts" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Italian Leather Belts</span>
+                                        </a>
+                                        <a href="./products.html?search=Caps" class="mega-item-link">
+                                            <span class="mega-item-thumb-wrap"><img src="../public/images/tshirt1.jpg" alt="Caps" class="mega-item-thumb"></span>
+                                            <span class="mega-item-name">Signature Caps & Hats</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 10: Price Filters -->
+                            <div class="mega-tab-pane" id="megaPanePrice">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?maxPrice=499" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">Under ₹499</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=500&maxPrice=999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹500 — ₹999</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?minPrice=1000&maxPrice=1499" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹1,000 — ₹1,499</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=1500&maxPrice=1999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹1,500 — ₹1,999</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?minPrice=2000&maxPrice=2999" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-tag"></i></span>
+                                            <span class="mega-item-name">₹2,000 — ₹2,999</span>
+                                        </a>
+                                        <a href="./products.html?minPrice=3000" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-crown"></i></span>
+                                            <span class="mega-item-name">Luxury Above ₹3,000</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pane 11: Occasion Filters -->
+                            <div class="mega-tab-pane" id="megaPaneOccasion">
+                                <div class="mega-subcategories-grid">
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Casual" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-mug-saucer"></i></span>
+                                            <span class="mega-item-name">Everyday Casual</span>
+                                        </a>
+                                        <a href="./products.html?search=Office" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-briefcase"></i></span>
+                                            <span class="mega-item-name">Office & Boardroom</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Party" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-champagne-glasses"></i></span>
+                                            <span class="mega-item-name">Party & Night Out</span>
+                                        </a>
+                                        <a href="./products.html?search=Vacation" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-plane-departure"></i></span>
+                                            <span class="mega-item-name">Weekend Vacation</span>
+                                        </a>
+                                    </div>
+                                    <div class="mega-sub-col">
+                                        <a href="./products.html?search=Festive" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-sparkles"></i></span>
+                                            <span class="mega-item-name">Festive Celebrations</span>
+                                        </a>
+                                        <a href="./products.html?search=Wedding" class="mega-item-link">
+                                            <span class="mega-item-icon"><i class="fa-solid fa-heart"></i></span>
+                                            <span class="mega-item-name">Wedding & Reception</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Promo Banner Strip (Matching Reference) -->
+                            <div class="mega-bottom-banner">
+                                <div class="mega-banner-left">
+                                    <div class="mega-banner-thumbs">
+                                        <img src="../public/images/hoodie.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/jacket1.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/accessories.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                        <img src="../public/images/shorts.jpg" alt="Style Preview" class="mega-banner-thumb">
+                                    </div>
+                                    <div class="mega-banner-info">
+                                        <strong>Fashion for Every Moment — See It All Here!</strong>
+                                        <span>500+ handcrafted luxury designs to explore</span>
+                                    </div>
+                                </div>
+                                <a href="./products.html" class="mega-banner-btn">View All</a>
+                            </div>
+
+                        </div>
+
+                        <!-- Col 3: Right Featured Card (Matching Reference) -->
+                        <div class="mega-featured-col">
+                            <a href="./products.html?badge=Trending" class="mega-featured-card">
+                                <div class="mega-featured-img-wrap">
+                                    <img src="../public/images/jacket1.jpg" alt="Featured Craft" class="mega-featured-img">
+                                </div>
+                                <h4 class="mega-featured-title">Discover Timeless Crafted Luxury Wear.</h4>
+                                <span class="mega-featured-link">Explore Now <i class="fa-solid fa-arrow-trend-up"></i></span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<!-- ==========================================
+     ORDERS PAGE
+========================================== -->
+
+<main class="orders-page">
+
+    <div class="orders-header">
+
+        <h1>
+            📦 My Orders
+        </h1>
+
+        <p>
+            View and manage your orders
+        </p>
+
+        <div id="ordersHeaderActions" class="orders-header-actions" style="display: none;">
+            <button type="button" class="clear-all-orders-btn" onclick="clearAllOrders()">
+                <i class="fa-solid fa-trash-can"></i> Clear All Orders
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+        id="ordersLoading"
+        class="orders-loading"
+    >
+        Loading your orders...
+    </div>
+
+
+    <!-- EMPTY ORDERS -->
+
+    <div
+        id="emptyOrders"
+        class="empty-orders"
+        style="display: none;"
+    >
+
+        <div class="empty-order-icon">
+            📦
+        </div>
+
+        <h2>
+            No Orders Yet
+        </h2>
+
+        <p>
+            You haven't placed any orders yet.
+        </p>
+
+        <a
+            href="/products.html"
+            class="shop-button"
+        >
+            Start Shopping
+        </a>
+
+    </div>
+
+
+    <!-- ORDERS CONTAINER -->
+
+    <div
+        id="ordersContainer"
+        class="orders-container"
+    >
+    </div>
+
+</main>
+
+
+<script src="/js/orders.js?v=5"></script>
+<script src="/js/category-bar.js?v=7"></script>
+<script src="../public/js/customer-support.js?v=2"></script>
+<script src="/js/customer-support.js?v=2"></script>
+
+    <script src="../public/js/navbar-search.js?v=1"></script>
+    <script src="/js/navbar-search.js?v=1"></script>
+    <script src="../public/js/mega-menu.js?v=1"></script>
+    <script src="/js/mega-menu.js?v=1"></script>
+</body>
+
+</html>

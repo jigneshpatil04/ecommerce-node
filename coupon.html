@@ -1,0 +1,398 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title></title>
+    <title>Coupons & Offers — MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="/css/coupon.css"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     PAGE
+===================================================== -->
+
+<div class="coupon-page">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header class="coupon-header">
+
+        <div class="header-content">
+
+            <a
+                href="/"
+                class="logo"
+            >
+                SQUAD Fashion
+            </a>
+
+            <a
+                href="/checkout.html"
+                class="back-link"
+            >
+                ← Back to Checkout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main class="coupon-container">
+
+
+        <!-- =================================================
+             AVAILABLE OFFERS
+        ================================================== -->
+
+        <section class="offers-section">
+
+            <div class="section-heading">
+
+                <span class="offer-icon">🎁</span>
+
+                <div>
+
+                    <h1>Discount & Offers</h1>
+
+                    <p>
+                        Save more on your SQUAD Fashion order
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- OFFER CARD 1 -->
+
+            <div
+                class="offer-card"
+                data-code="SQUAD10"
+            >
+
+                <div class="offer-left">
+
+                    <div class="offer-badge">
+                        10% OFF
+                    </div>
+
+                </div>
+
+
+                <div class="offer-info">
+
+                    <h3>
+                        Get 10% OFF
+                    </h3>
+
+                    <p>
+                        Get 10% discount on your order.
+                    </p>
+
+                    <span class="minimum-order">
+                        Minimum order ₹500
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="use-offer-btn"
+                    data-code="SQUAD10"
+                >
+                    Apply
+                </button>
+
+            </div>
+
+
+            <!-- OFFER CARD 2 -->
+
+            <div
+                class="offer-card"
+                data-code="SAVE100"
+            >
+
+                <div class="offer-left">
+
+                    <div class="offer-badge fixed">
+                        ₹100 OFF
+                    </div>
+
+                </div>
+
+
+                <div class="offer-info">
+
+                    <h3>
+                        Flat ₹100 OFF
+                    </h3>
+
+                    <p>
+                        Save ₹100 on qualifying orders.
+                    </p>
+
+                    <span class="minimum-order">
+                        Minimum order ₹1,000
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="use-offer-btn"
+                    data-code="SAVE100"
+                >
+                    Apply
+                </button>
+
+            </div>
+
+
+            <!-- OFFER CARD 3 -->
+
+            <div
+                class="offer-card"
+                data-code="WELCOME15"
+            >
+
+                <div class="offer-left">
+
+                    <div class="offer-badge">
+                        15% OFF
+                    </div>
+
+                </div>
+
+
+                <div class="offer-info">
+
+                    <h3>
+                        Welcome Offer
+                    </h3>
+
+                    <p>
+                        Get 15% OFF on your first order.
+                    </p>
+
+                    <span class="minimum-order">
+                        Minimum order ₹1,500
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="use-offer-btn"
+                    data-code="WELCOME15"
+                >
+                    Apply
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             COUPON BOX
+        ================================================== -->
+
+        <section class="coupon-box">
+
+            <h2>
+                Have a Coupon Code?
+            </h2>
+
+            <p class="coupon-description">
+                Enter your coupon code below.
+            </p>
+
+
+            <div class="coupon-input-wrapper">
+
+                <input
+                    type="text"
+                    id="couponInput"
+                    placeholder="Enter coupon code"
+                    maxlength="30"
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="applyCouponButton"
+                >
+                    Apply
+                </button>
+
+            </div>
+
+
+            <p
+                id="couponMessage"
+                class="coupon-message"
+            ></p>
+
+
+            <!-- APPLIED COUPON -->
+
+            <div
+                id="appliedCoupon"
+                class="applied-coupon hidden"
+            >
+
+                <div class="applied-icon">
+                    ✓
+                </div>
+
+
+                <div class="applied-info">
+
+                    <strong id="appliedCouponCode">
+                        SQUAD10
+                    </strong>
+
+                    <span id="appliedCouponText">
+                        Coupon applied successfully
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="removeCouponButton"
+                >
+                    Remove
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ORDER SUMMARY
+        ================================================== -->
+
+        <section class="summary-box">
+
+            <h2>
+                Price Details
+            </h2>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <strong id="subtotalAmount">
+                    ₹2,000.00
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Shipping
+                </span>
+
+                <strong id="shippingAmount">
+                    ₹50.00
+                </strong>
+
+            </div>
+
+
+            <div
+                id="discountRow"
+                class="summary-row discount-row hidden"
+            >
+
+                <span>
+                    Coupon Discount
+                </span>
+
+                <strong id="discountAmount">
+                    -₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="summary-divider"></div>
+
+
+            <div class="summary-row total-row">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="totalAmount">
+                    ₹2,050.00
+                </strong>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="checkoutButton"
+                class="checkout-button"
+            >
+                Continue to Checkout
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<script src="/js/coupon.js"></script>
+
+</body>
+
+</html>
+```

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Payments &amp; Transactions | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Admin Base & Payment CSS -->
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <link rel="stylesheet" href="/css/admin-shipping.css">
+    <link rel="stylesheet" href="/css/admin-payments.css?v=2">
+</head>
+
+<body>
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+
+            <!-- PAYMENTS (ACTIVE) -->
+            <a href="/admin/payments.html" class="nav-item active">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+            <div class="nav-sub-group" style="margin-left: 28px; border-left: 2px solid rgba(16,185,129,0.3); padding-left: 16px; margin-bottom: 8px;">
+                <a href="#all" class="nav-sub-item active-sub" onclick="switchTab('all')">
+                    <i class="fa-solid fa-list"></i> All Payments
+                </a>
+                <a href="#successful" class="nav-sub-item" onclick="switchTab('Successful')">
+                    <i class="fa-solid fa-circle-check"></i> Successful
+                </a>
+                <a href="#pending" class="nav-sub-item" onclick="switchTab('Pending')">
+                    <i class="fa-solid fa-clock"></i> Pending
+                </a>
+                <a href="#failed" class="nav-sub-item" onclick="switchTab('Failed')">
+                    <i class="fa-solid fa-circle-xmark"></i> Failed
+                </a>
+                <a href="#refunds" class="nav-sub-item" onclick="switchTab('refunds')">
+                    <i class="fa-solid fa-rotate-left"></i> Refunds
+                </a>
+            </div>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ====== MAIN CONTENT ====== -->
+    <main class="main-content">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-credit-card" style="color: #10b981;"></i> Payment &amp; Transaction Management</h1>
+                <p>Track revenues, payment methods, gateway statuses and refund requests</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar" style="background:#10b981;">₹</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body" style="padding: 24px;">
+
+            <!-- PAGE HEADER -->
+            <div class="pay-page-header">
+                <h1><i class="fa-solid fa-wallet" style="color:#10b981;"></i> Payment Overview</h1>
+                <div class="pay-header-actions">
+                    <button class="btn-export-excel" onclick="exportData('excel')">
+                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                    </button>
+                    <button class="btn-export-pdf" onclick="exportData('pdf')">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI STATS CARDS -->
+            <div class="pay-stats-grid">
+                <div class="pay-stat-card active" onclick="switchTab('all')">
+                    <div class="pay-stat-icon icon-revenue"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    <div class="pay-stat-content">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-val" id="statRevenue">₹0</div>
+                        <div class="stat-sub" id="statTxnCount">0 successful orders</div>
+                    </div>
+                </div>
+
+                <div class="pay-stat-card" onclick="filterByMethod('Online')">
+                    <div class="pay-stat-icon icon-online"><i class="fa-solid fa-globe"></i></div>
+                    <div class="pay-stat-content">
+                        <div class="stat-label">Online Payments</div>
+                        <div class="stat-val" id="statOnline">₹0</div>
+                        <div class="stat-sub">Stripe / UPI / Cards</div>
+                    </div>
+                </div>
+
+                <div class="pay-stat-card" onclick="filterByMethod('COD')">
+                    <div class="pay-stat-icon icon-cod"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <div class="pay-stat-content">
+                        <div class="stat-label">Cash on Delivery</div>
+                        <div class="stat-val" id="statCOD">₹0</div>
+                        <div class="stat-sub">Paid upon delivery</div>
+                    </div>
+                </div>
+
+                <div class="pay-stat-card" onclick="switchTab('refunds')">
+                    <div class="pay-stat-icon icon-refund"><i class="fa-solid fa-rotate-left"></i></div>
+                    <div class="pay-stat-content">
+                        <div class="stat-label">Refunds Issued</div>
+                        <div class="stat-val" id="statRefunds">₹0</div>
+                        <div class="stat-sub" id="statRefundCount">0 refunded</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHART & BREAKDOWN ROW -->
+            <div class="pay-overview-row">
+                <!-- Bar Chart -->
+                <div class="pay-card">
+                    <div class="pay-card-header">
+                        <h3><i class="fa-solid fa-chart-column" style="color:#10b981;"></i> Payment Overview (Last 7 Days)</h3>
+                        <span style="font-size:0.8rem;color:#94a3b8;">Daily Revenue Trend</span>
+                    </div>
+                    <div class="chart-container" id="barChartContainer">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Method Distribution Card -->
+                <div class="pay-card">
+                    <div class="pay-card-header">
+                        <h3><i class="fa-solid fa-pie-chart" style="color:#818cf8;"></i> Payment Methods</h3>
+                    </div>
+                    <div class="method-breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-meta">
+                                <span class="title"><i class="fa-solid fa-bolt" style="color:#818cf8;margin-right:6px;"></i> Online Payment</span>
+                                <span class="amount" id="barOnlineTxt">₹0 (0%)</span>
+                            </div>
+                            <div class="breakdown-progress">
+                                <div class="breakdown-progress-bar" id="barOnlineProgress" style="width: 0%; background: #818cf8;"></div>
+                            </div>
+                        </div>
+
+                        <div class="breakdown-item">
+                            <div class="breakdown-meta">
+                                <span class="title"><i class="fa-solid fa-truck" style="color:#f59e0b;margin-right:6px;"></i> Cash on Delivery</span>
+                                <span class="amount" id="barCODTxt">₹0 (0%)</span>
+                            </div>
+                            <div class="breakdown-progress">
+                                <div class="breakdown-progress-bar" id="barCODProgress" style="width: 0%; background: #f59e0b;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:10px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.8rem;color:#94a3b8;">
+                            <i class="fa-solid fa-shield-halved" style="color:#10b981;margin-right:6px;"></i>
+                            Both <strong>Online Payment</strong> and <strong>Cash on Delivery</strong> are active in checkout.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="pay-tabs">
+                <button class="pay-tab active" data-tab="all" onclick="switchTab('all')">
+                    <i class="fa-solid fa-list"></i> All Payments <span class="pay-tab-badge" id="tabBadgeAll">0</span>
+                </button>
+                <button class="pay-tab" data-tab="Successful" onclick="switchTab('Successful')">
+                    <i class="fa-solid fa-circle-check"></i> Successful <span class="pay-tab-badge" id="tabBadgeSuccess">0</span>
+                </button>
+                <button class="pay-tab" data-tab="Pending" onclick="switchTab('Pending')">
+                    <i class="fa-solid fa-clock"></i> Pending <span class="pay-tab-badge" id="tabBadgePending">0</span>
+                </button>
+                <button class="pay-tab" data-tab="Failed" onclick="switchTab('Failed')">
+                    <i class="fa-solid fa-circle-xmark"></i> Failed <span class="pay-tab-badge" id="tabBadgeFailed">0</span>
+                </button>
+                <button class="pay-tab" data-tab="refunds" onclick="switchTab('refunds')">
+                    <i class="fa-solid fa-rotate-left"></i> Refund Requests <span class="pay-tab-badge" id="tabBadgeRefunds">0</span>
+                </button>
+            </div>
+
+            <!-- FILTER TOOLBAR -->
+            <div class="pay-toolbar">
+                <div class="pay-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search Payment ID, Order ID, Customer, TXN...">
+                </div>
+
+                <!-- Date Range Filter -->
+                <select class="pay-select" id="dateFilter">
+                    <option value="all">Date: All Time</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="last7days">Last 7 Days</option>
+                    <option value="thismonth">This Month</option>
+                    <option value="lastmonth">Last Month</option>
+                    <option value="custom">Custom Date Range...</option>
+                </select>
+
+                <!-- Custom Date Range picker (hidden unless selected) -->
+                <div class="date-custom-group" id="customDateGroup" style="display:none;">
+                    <input type="date" id="startDateInput" class="date-input">
+                    <span style="color:#94a3b8;">to</span>
+                    <input type="date" id="endDateInput" class="date-input">
+                </div>
+
+                <!-- Payment Method Filter -->
+                <select class="pay-select" id="methodFilter">
+                    <option value="all">Method: All</option>
+                    <option value="Online">Online</option>
+                    <option value="COD">Cash on Delivery</option>
+                </select>
+
+                <!-- Status Filter (for Payments table) -->
+                <select class="pay-select" id="statusFilter">
+                    <option value="all">Status: All</option>
+                    <option value="Successful">Successful</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Failed">Failed</option>
+                    <option value="Refunded">Refunded</option>
+                </select>
+
+                <button class="btn-primary" onclick="applyFilters()" style="background:#10b981;">
+                    <i class="fa-solid fa-filter"></i> Apply
+                </button>
+                <button class="btn-secondary" onclick="resetFilters()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Reset
+                </button>
+            </div>
+
+            <!-- TABLE WRAPPER -->
+            <div class="pay-table-wrap">
+                <!-- Standard Payments Table -->
+                <table class="pay-table" id="paymentsTable">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTableBody">
+                        <tr>
+                            <td colspan="8">
+                                <div class="ship-loading">
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading transactions...
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Refunds Table (visible when Refunds tab is active) -->
+                <table class="pay-table" id="refundsTable" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Refund ID</th>
+                            <th>Payment ID</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Refund Amount</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="refundsTableBody">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+
+                <!-- Pagination Bar -->
+                <div class="ship-pagination" id="paginationBar" style="display:none;">
+                    <span id="pageInfo">Showing 0 of 0</span>
+                    <div style="display:flex;gap:8px;">
+                        <button id="prevBtn" onclick="changePage(-1)" disabled>← Prev</button>
+                        <button id="nextBtn" onclick="changePage(1)">Next →</button>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end content-body -->
+    </main>
+</div><!-- end admin-container -->
+
+<!-- ====== PAYMENT DETAILS MODAL ====== -->
+<div class="pay-modal-overlay" id="payDetailModal">
+    <div class="pay-modal">
+        <div class="pay-modal-header">
+            <h3><i class="fa-solid fa-receipt" style="color:#10b981;"></i> Payment Details</h3>
+            <button class="modal-close-btn" onclick="closePayModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div id="modalBody">
+            <!-- Populated via JS -->
+        </div>
+
+        <!-- Action / Status Update Bar -->
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--pay-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div style="display:flex;align-items:center;gap:8px;" id="codActionWrapper">
+                <!-- If COD is pending, give instant Mark as Paid button -->
+            </div>
+            <div style="display:flex;gap:8px;margin-left:auto;">
+                <button class="btn-secondary" id="btnInitiateRefund">
+                    <i class="fa-solid fa-rotate-left"></i> Initiate Refund
+                </button>
+                <button class="btn-primary" onclick="closePayModal()" style="background:#10b981;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== REFUND ACTION MODAL ====== -->
+<div class="pay-modal-overlay" id="refundActionModal">
+    <div class="pay-modal" style="max-width:440px;">
+        <div class="pay-modal-header">
+            <h3><i class="fa-solid fa-rotate-left" style="color:#ef4444;"></i> Process Refund</h3>
+            <button class="modal-close-btn" onclick="closeRefundModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="refundModalBody">
+            <!-- Form -->
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="payToastContainer"></div>
+
+<!-- Payment JS -->
+<script src="/js/admin-payments.js?v=3"></script>
+
+<script>
+    // Logout
+    document.getElementById("logoutButton").addEventListener("click", () => {
+        localStorage.removeItem("adminToken");
+        window.location.href = "/login.html";
+    });
+    // Mobile menu
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
+    if (menuBtn) menuBtn.addEventListener("click", () => sidebar.classList.toggle("open"));
+</script>
+<script src="/js/admin-order-badge.js"></script>
+</body>
+</html>

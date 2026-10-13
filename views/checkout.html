@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Checkout — MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/css/style.css?v=6">
+
+    <!-- Checkout CSS -->
+    <link rel="stylesheet" href="/css/checkout.css?v=2">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     ANNOUNCEMENT BAR
+=========================================== -->
+
+<div class="announcement-bar">
+    🚚 Free Shipping on all orders over <span>₹999</span>
+</div>
+
+
+<!-- ==========================================
+     NAVBAR
+=========================================== -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        <a href="/">My<span>Store</span></a>
+    </div>
+
+    <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/categories.html" class="nav-link">Categories</a>
+        <a href="/products.html" class="nav-link">Shop</a>
+    </div>
+
+    <div class="nav-actions">
+        <a href="/cart.html" class="cart-link">🛒 Cart</a>
+    </div>
+
+    <button type="button" class="menu-btn" id="menuBtn">☰</button>
+
+</nav>
+
+
+
+
+
+<!-- ==========================================
+     CHECKOUT PAGE
+=========================================== -->
+
+<main class="checkout-page">
+
+
+    <!-- ======================================
+         CHECKOUT HEADER
+    ======================================= -->
+
+    <div class="checkout-header">
+
+        <h1>
+            Checkout
+        </h1>
+
+        <p>
+            Complete your order
+        </p>
+
+    </div>
+
+
+
+    <!-- ======================================
+         CHECKOUT CONTAINER
+    ======================================= -->
+
+    <div class="checkout-container">
+
+
+        <!-- ==================================
+             CUSTOMER INFORMATION
+        =================================== -->
+
+        <div class="checkout-card customer-details">
+
+            <h2>
+                Delivery Information
+            </h2>
+
+
+            <form id="checkoutForm">
+
+
+                <!-- FULL NAME -->
+
+                <div class="form-group">
+
+                    <label for="customerName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="customerName"
+                        name="customerName"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Enter your phone number"
+                        autocomplete="tel"
+                        maxlength="10"
+                        pattern="[0-9]{10}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ADDRESS -->
+
+                <div class="form-group">
+
+                    <label for="address">
+                        Address
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        placeholder="Enter your complete address"
+                        autocomplete="street-address"
+                        rows="4"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- CITY -->
+
+                <div class="form-group">
+
+                    <label for="city">
+                        City
+                    </label>
+
+                    <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        placeholder="Enter your city"
+                        autocomplete="address-level2"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- PINCODE -->
+
+                <div class="form-group">
+
+                    <label for="pincode">
+                        Pincode
+                    </label>
+
+                    <input
+                        type="text"
+                        id="pincode"
+                        name="pincode"
+                        placeholder="Enter 6 digit pincode"
+                        autocomplete="postal-code"
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- PAYMENT METHOD -->
+
+                <div class="form-group">
+
+                    <label for="paymentMethod">
+                        Payment Method
+                    </label>
+
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="Online">Online Payment</option>
+                    </select>
+
+                </div>
+
+
+
+                <!-- PLACE ORDER BUTTON -->
+
+                <button
+                    type="submit"
+                    id="placeOrderBtn"
+                    class="place-order-btn"
+                >
+
+                    <span id="buttonText">
+                        Place Order
+                    </span>
+
+                    <span
+                        id="buttonLoader"
+                        class="button-loader"
+                    ></span>
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- ==================================
+             ORDER SUMMARY
+        =================================== -->
+
+        <div class="checkout-card order-summary">
+
+            <h2>
+                Order Summary
+            </h2>
+
+
+            <!-- CART ITEMS -->
+
+            <div
+                id="checkoutItems"
+                class="checkout-items"
+            >
+
+                Loading cart...
+
+            </div>
+
+
+
+            <!-- SUBTOTAL -->
+
+            <div class="summary-row">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <strong id="subtotal">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+
+            <!-- SHIPPING -->
+
+            <div class="summary-row">
+
+                <span>
+                    Shipping
+                </span>
+
+                <strong id="shipping">
+                    ₹50.00
+                </strong>
+
+            </div>
+
+
+
+            <!-- DIVIDER -->
+
+            <div class="summary-divider"></div>
+
+
+
+            <!-- TOTAL -->
+
+            <div class="summary-row total-row">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="total">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- ==========================================
+     ORDER SUCCESS OVERLAY
+=========================================== -->
+
+<div
+    id="orderSuccessOverlay"
+    class="order-success-overlay"
+>
+
+
+    <!-- ======================================
+         SUCCESS BOX
+    ======================================= -->
+
+    <div class="success-box">
+
+
+        <!-- ==================================
+             GREEN SUCCESS CIRCLE
+        =================================== -->
+
+        <div class="success-circle">
+
+            <svg
+                class="check-icon"
+                viewBox="0 0 52 52"
+                aria-hidden="true"
+            >
+
+                <circle
+                    class="check-circle"
+                    cx="26"
+                    cy="26"
+                    r="25"
+                    fill="none"
+                />
+
+                <path
+                    class="check-mark"
+                    fill="none"
+                    d="M14 27 L22 35 L39 17"
+                />
+
+            </svg>
+
+        </div>
+
+
+
+        <!-- ==================================
+             SUCCESS TITLE
+        =================================== -->
+
+        <h1>
+            Order Confirmed!
+        </h1>
+
+
+
+        <!-- ==================================
+             SUCCESS MESSAGE
+        =================================== -->
+
+        <p class="success-message">
+
+            Your order has been placed successfully.
+
+        </p>
+
+
+
+        <!-- ==================================
+             ORDER ID
+        =================================== -->
+
+        <p class="order-number">
+
+            Order ID:
+
+            <strong id="successOrderId">
+                #0000
+            </strong>
+
+        </p>
+
+
+
+        <!-- ==================================
+             THANK YOU MESSAGE
+        =================================== -->
+
+        <p class="success-delivery">
+
+            🎉 Thank you for shopping with us!
+
+        </p>
+
+
+
+        <!-- ==================================
+             RATING BUTTON
+        =================================== -->
+
+        <button
+            type="button"
+            id="ratingButton"
+            class="rating-main-btn"
+        >
+            Rating
+
+        </button>
+
+
+
+        <!-- ==================================
+             CONTINUE SHOPPING
+        =================================== -->
+<!-- 
+        <button
+            type="button"
+            id="continueShoppingBtn"
+            class="continue-shopping-btn"
+        >
+
+            Continue Shopping
+
+        </button> -->
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==========================================
+     RATING OVERLAY
+=========================================== -->
+
+<div
+    id="ratingOverlay"
+    class="rating-overlay"
+>
+</div>
+
+
+
+<!-- ==========================================
+     RATING BOTTOM SHEET
+=========================================== -->
+
+<div
+    id="ratingBottomSheet"
+    class="rating-bottom-sheet"
+>
+
+
+    <!-- ======================================
+         RATING HEADER
+    ======================================= -->
+
+    <div class="rating-header">
+
+        <h2>
+            Rate Your Order
+        </h2>
+
+
+        <button
+            type="button"
+            id="closeRating"
+            class="close-rating"
+            aria-label="Close rating"
+        >
+
+            ×
+
+        </button>
+
+    </div>
+
+
+
+    <!-- ======================================
+         RATING TITLE
+    ======================================= -->
+
+    <p class="rating-title">
+
+        How was your shopping experience?
+
+    </p>
+
+
+
+    <!-- ======================================
+         RATING STARS
+    ======================================= -->
+
+    <div
+        id="ratingStars"
+        class="rating-stars"
+    >
+
+
+        <button
+            type="button"
+            class="star"
+            data-rating="1"
+            aria-label="1 star"
+        >
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            class="star"
+            data-rating="2"
+            aria-label="2 stars"
+        >
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            class="star"
+            data-rating="3"
+            aria-label="3 stars"
+        >
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            class="star"
+            data-rating="4"
+            aria-label="4 stars"
+        >
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            class="star"
+            data-rating="5"
+            aria-label="5 stars"
+        >
+            ★
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ======================================
+         RATING TEXT
+    ======================================= -->
+
+    <p
+        id="ratingText"
+        class="rating-text"
+    >
+
+        Select a rating
+
+    </p>
+
+
+
+    <!-- ======================================
+         REVIEW
+    ======================================= -->
+
+    <div class="review-box">
+
+        <label for="ratingReview">
+
+            Write a review
+
+        </label>
+
+
+        <textarea
+            id="ratingReview"
+            rows="4"
+            placeholder="Tell us about your experience..."
+        ></textarea>
+
+    </div>
+
+
+
+    <!-- ======================================
+         SUBMIT RATING
+    ======================================= -->
+
+    <button
+        type="button"
+        id="submitRating"
+        class="submit-rating-btn"
+    >
+
+        Submit Rating
+
+    </button>
+
+
+</div>
+
+
+
+<!-- ==========================================
+     CHECKOUT JAVASCRIPT
+=========================================== -->
+
+<script src="/js/checkout.js?v=2"></script>
+<script src="/js/category-bar.js?v=7"></script>
+
+
+</body>
+
+</html>

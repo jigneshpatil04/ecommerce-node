@@ -1,0 +1,914 @@
+/* ============================================================
+   ADMIN SHIPPING MODULE CSS — MODERN LIGHT THEME
+   Matches Dashboard Design System & Coloshop Palette
+   ============================================================ */
+
+:root {
+    --ship-primary:       #6366f1;
+    --ship-primary-hover: #4f46e5;
+    --ship-accent:        #fe4c50;
+    --ship-success:       #10b981;
+    --ship-warning:       #f59e0b;
+    --ship-danger:        #ef4444;
+    --ship-info:          #0284c7;
+    --ship-transit:       #8b5cf6;
+
+    /* Theme Palette: Crisp, High-Contrast Light Theme */
+    --ship-bg-canvas:     #f4f5f8;
+    --ship-surface:       #ffffff;
+    --ship-surface2:      #f8fafc;
+    --ship-border:        #e2e8f0;
+    --ship-border-subtle: #f1f5f9;
+    --ship-text:          #0f172a;
+    --ship-text-body:     #334155;
+    --ship-muted:         #64748b;
+    --ship-radius:        14px;
+    --ship-radius-sm:     8px;
+    --ship-shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    --ship-shadow-md:     0 4px 16px rgba(0, 0, 0, 0.06);
+    --ship-shadow-lg:     0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   PAGE HEADER
+   ============================================================ */
+.ship-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.ship-page-header h1 {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: var(--ship-text) !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.ship-page-header h1 i {
+    color: var(--ship-primary);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+    background: var(--ship-primary);
+    color: #ffffff !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--ship-radius-sm);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.btn-primary:hover {
+    background: var(--ship-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+}
+
+.btn-secondary {
+    background: var(--ship-surface);
+    color: var(--ship-text-body) !important;
+    border: 1.5px solid var(--ship-border);
+    padding: 9px 18px;
+    border-radius: var(--ship-radius-sm);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--ship-shadow-sm);
+}
+
+.btn-secondary:hover {
+    background: var(--ship-surface2);
+    border-color: #cbd5e1;
+    color: var(--ship-text) !important;
+}
+
+.btn-danger {
+    background: #fff1f2;
+    color: var(--ship-danger) !important;
+    border: 1px solid #fecdd3;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: var(--ship-danger);
+    color: #ffffff !important;
+    border-color: var(--ship-danger);
+}
+
+/* ============================================================
+   STATS CARDS GRID
+   ============================================================ */
+.ship-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ship-stat-card {
+    background: var(--ship-surface);
+    border: 1.5px solid var(--ship-border);
+    border-radius: var(--ship-radius);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    box-shadow: var(--ship-shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.ship-stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background 0.2s ease;
+}
+
+.ship-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ship-shadow-md);
+    border-color: #cbd5e1;
+}
+
+.ship-stat-card.active {
+    border-color: var(--ship-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), var(--ship-shadow-md);
+    background: #ffffff;
+}
+
+.ship-stat-card.active::before {
+    background: var(--ship-primary);
+}
+
+.ship-stat-card .stat-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ship-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ship-stat-card .stat-value {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--ship-text);
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.ship-stat-card.s-all       .stat-value { color: var(--ship-primary); }
+.ship-stat-card.s-pending   .stat-value { color: #d97706; }
+.ship-stat-card.s-processing .stat-value { color: #0284c7; }
+.ship-stat-card.s-shipped   .stat-value { color: #6366f1; }
+.ship-stat-card.s-transit   .stat-value { color: #7c3aed; }
+.ship-stat-card.s-delivered .stat-value { color: #059669; }
+
+/* ============================================================
+   FILTER TOOLBAR
+   ============================================================ */
+.ship-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.ship-search-box {
+    flex: 1;
+    min-width: 260px;
+    position: relative;
+}
+
+.ship-search-box input {
+    width: 100%;
+    background: var(--ship-surface);
+    border: 1.5px solid var(--ship-border);
+    color: var(--ship-text);
+    padding: 11px 16px 11px 40px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    box-shadow: var(--ship-shadow-sm);
+}
+
+.ship-search-box input:focus {
+    border-color: var(--ship-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.ship-search-box input::placeholder {
+    color: #94a3b8;
+}
+
+.ship-search-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.ship-select {
+    background: var(--ship-surface);
+    border: 1.5px solid var(--ship-border);
+    color: var(--ship-text);
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    box-shadow: var(--ship-shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.ship-select:focus {
+    border-color: var(--ship-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* ============================================================
+   SHIPMENTS DATA TABLE
+   ============================================================ */
+.ship-table-wrap {
+    background: var(--ship-surface);
+    border: 1px solid var(--ship-border);
+    border-radius: var(--ship-radius);
+    overflow: hidden;
+    box-shadow: var(--ship-shadow-sm);
+}
+
+.ship-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--ship-surface);
+}
+
+.ship-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1.5px solid var(--ship-border);
+}
+
+.ship-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--ship-border-subtle);
+    color: var(--ship-text-body);
+    font-size: 0.88rem;
+    vertical-align: middle;
+}
+
+.ship-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ship-table tr:hover td {
+    background: #f8fafc;
+}
+
+.order-id-cell {
+    font-weight: 700;
+    color: var(--ship-primary);
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.ship-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.badge-pending {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-processing {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+
+.badge-shipped {
+    background: #eef2ff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+}
+
+.badge-in_transit {
+    background: #f3e8ff;
+    color: #7e22ce;
+    border: 1px solid #e9d5ff;
+}
+
+.badge-delivered {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* Action buttons */
+.ship-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ship-actions button,
+.ship-actions a {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.ship-actions button:hover,
+.ship-actions a:hover {
+    border-color: var(--ship-primary);
+    color: var(--ship-primary);
+    background: #eef2ff;
+}
+
+.ship-actions button.del-btn {
+    border-color: #fecdd3;
+    color: #e11d48;
+}
+
+.ship-actions button.del-btn:hover {
+    background: #ffe4e6;
+    border-color: #fb7185;
+    color: #be123c;
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.ship-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-top: 1.5px solid var(--ship-border);
+    color: var(--ship-muted);
+    font-size: 0.84rem;
+    background: #ffffff;
+}
+
+.ship-pagination button {
+    background: #ffffff;
+    border: 1.5px solid var(--ship-border);
+    color: var(--ship-text-body);
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.ship-pagination button:hover:not(:disabled) {
+    background: var(--ship-primary);
+    color: #ffffff;
+    border-color: var(--ship-primary);
+}
+
+.ship-pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+   MODALS (DETAIL, TIMELINE, EDIT)
+   ============================================================ */
+.ship-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.ship-modal-overlay.active {
+    display: flex;
+}
+
+.ship-modal {
+    background: #ffffff;
+    border: 1px solid var(--ship-border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 580px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--ship-shadow-lg);
+    animation: slideUp 0.22s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.ship-modal h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--ship-text);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--ship-muted);
+    font-size: 1.25rem;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--ship-text);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--ship-border-subtle);
+    font-size: 0.88rem;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row .label {
+    color: var(--ship-muted);
+    font-weight: 600;
+}
+
+.detail-row .value {
+    color: var(--ship-text);
+    font-weight: 700;
+}
+
+.status-change-wrap {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1.5px solid var(--ship-border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.status-change-wrap label {
+    color: var(--ship-text);
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.status-change-wrap select {
+    flex: 1;
+    background: #ffffff;
+    border: 1.5px solid var(--ship-border);
+    color: var(--ship-text);
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    outline: none;
+}
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+.timeline {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 28px;
+    bottom: 0;
+    width: 2px;
+    background: var(--ship-border);
+}
+
+.timeline-item.completed:not(:last-child)::before {
+    background: var(--ship-success);
+}
+
+.tl-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.timeline-item.completed .tl-icon {
+    background: #10b981;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.timeline-item:not(.completed) .tl-icon {
+    background: #f1f5f9;
+    color: #94a3b8;
+    border: 2px solid var(--ship-border);
+}
+
+.tl-content {
+    padding-top: 3px;
+}
+
+.tl-content .tl-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--ship-text);
+}
+
+.timeline-item:not(.completed) .tl-label {
+    color: var(--ship-muted);
+}
+
+.tl-content .tl-date {
+    font-size: 0.78rem;
+    color: var(--ship-muted);
+    margin-top: 2px;
+}
+
+/* ============================================================
+   FORM CARDS (CREATE SHIPMENT & SETTINGS)
+   ============================================================ */
+.ship-form-card {
+    background: var(--ship-surface);
+    border: 1.5px solid var(--ship-border);
+    border-radius: var(--ship-radius);
+    padding: 28px;
+    max-width: 760px;
+    box-shadow: var(--ship-shadow-sm);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-grid .full {
+    grid-column: 1 / -1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    background: #ffffff;
+    border: 1.5px solid var(--ship-border);
+    color: var(--ship-text);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--ship-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* ============================================================
+   SETTINGS TOGGLE & ZONES
+   ============================================================ */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 800px;
+}
+
+.settings-grid .full {
+    grid-column: 1 / -1;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border: 1.5px solid var(--ship-border);
+    border-radius: 10px;
+}
+
+.toggle-row .toggle-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ship-text);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #cbd5e1;
+    border-radius: 26px;
+    transition: 0.3s;
+}
+
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+input:checked + .toggle-slider {
+    background: var(--ship-primary);
+}
+
+input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* Zones table */
+.zones-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.zones-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 11px 16px;
+    text-align: left;
+    border-bottom: 1.5px solid var(--ship-border);
+}
+
+.zones-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--ship-border-subtle);
+    color: var(--ship-text-body);
+    font-size: 0.88rem;
+}
+
+.zones-table td:last-child {
+    text-align: right;
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+#shipToastContainer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.ship-toast {
+    background: #ffffff;
+    border: 1px solid var(--ship-border);
+    color: var(--ship-text);
+    border-radius: 10px;
+    padding: 14px 18px;
+    min-width: 280px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--ship-shadow-lg);
+    animation: toastIn 0.3s ease;
+    pointer-events: auto;
+}
+
+.ship-toast.success {
+    border-left: 5px solid var(--ship-success);
+}
+
+.ship-toast.error {
+    border-left: 5px solid var(--ship-danger);
+}
+
+.ship-toast.info {
+    border-left: 5px solid var(--ship-info);
+}
+
+@keyframes toastIn {
+    from { transform: translateX(50px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ============================================================
+   EMPTY / LOADING STATES
+   ============================================================ */
+.ship-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    color: var(--ship-muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+    gap: 10px;
+}
+
+.ship-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ship-muted);
+}
+
+.ship-empty i {
+    font-size: 3rem;
+    margin-bottom: 14px;
+    color: #cbd5e1;
+    display: block;
+}
+
+.ship-empty p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+}
+
+.section-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--ship-text);
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title i {
+    color: var(--ship-primary);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+@media (max-width: 768px) {
+    .ship-stats { grid-template-columns: repeat(2, 1fr); }
+    .ship-toolbar { flex-direction: column; }
+    .ship-table-wrap { overflow-x: auto; }
+    .ship-table { min-width: 700px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .settings-grid { grid-template-columns: 1fr; }
+}
