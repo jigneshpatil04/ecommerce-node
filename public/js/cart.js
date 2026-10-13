@@ -144,109 +144,71 @@ async function loadCart() {
     }
 
 
+    let products = [];
     try {
+        const response = await fetch("/api/products");
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.success && Array.isArray(data.products)) {
+                products = data.products;
+            }
+        }
+    } catch (fetchErr) {
+        console.warn("Could not fetch /api/products, using local cart data:", fetchErr);
+    }
 
-        // Get products from API
+    try {
+        // Combine cart with products or use stored cart item data
+        const cartProducts = cart.map(cartItem => {
+            const product = products.find(p => Number(p.id) === Number(cartItem.id));
 
-        const response =
-            await fetch(
-                "/api/products"
-            );
+            if (product) {
+                return {
+                    ...product,
+                    quantity: Number(cartItem.quantity) || 1,
+                    size: cartItem.size || product.size || null,
+                    color: cartItem.color || null,
+                    price: Number(cartItem.price) || Number(product.display_price ?? product.price ?? 0) || 0,
+                    image: cartItem.image || product.image || "/images/tshirt1.jpg"
+                };
+            }
 
+            // Fallback: use the stored cartItem data directly
+            return {
+                id: cartItem.id,
+                name: cartItem.name || "Product",
+                price: Number(cartItem.price) || 0,
+                quantity: Number(cartItem.quantity) || 1,
+                size: cartItem.size || null,
+                color: cartItem.color || null,
+                image: cartItem.image || "/images/tshirt1.jpg",
+                stock: 99
+            };
+        }).filter(Boolean);
 
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            container.innerHTML =
-                "<p>Unable to load products.</p>";
-
+        if (cartProducts.length === 0) {
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <h2>Your cart is empty</h2>
+                    <p>Looks like you haven't added anything yet.</p>
+                    <a href="./products.html" class="checkout-btn" style="display:inline-block;margin-top:15px;text-decoration:none;">Start Shopping</a>
+                </div>
+            `;
+            updateSummary([]);
+            updateCartCount();
             return;
-
         }
 
-
-        const products =
-            data.products;
-
-
-        // Combine cart with products
-
-        const cartProducts =
-            cart.map(cartItem => {
-
-                const product =
-                    products.find(
-                        p =>
-                            Number(p.id) ===
-                            Number(cartItem.id)
-                    );
-
-
-                if (!product) {
-
-                    return null;
-
-                }
-
-
-                return {
-
-                    ...product,
-
-                    quantity:
-                        cartItem.quantity,
-
-                    size:
-                        cartItem.size ||
-                        product.size ||
-                        null,
-
-                    color:
-                        cartItem.color ||
-                        null,
-
-                    price:
-                        Number(
-                            cartItem.price
-                        ) ||
-                        Number(
-                            product.display_price ??
-                            product.price ?? 0
-                        ) || 0
-
-                };
-
-            }).filter(Boolean);
-
-
         displayCart(cartProducts);
-
-
         updateSummary(cartProducts);
-
-
         updateCartCount();
 
-
     } catch (error) {
-
-        console.error(
-            "Cart Error:",
-            error
-        );
-
-
+        console.error("Cart Error:", error);
         container.innerHTML = `
-
-            <p>
-                Unable to load cart.
-            </p>
-
+            <p>Unable to load cart. Please refresh the page.</p>
         `;
-
     }
 
 }
