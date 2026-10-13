@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Create Shipment | MyStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../../public/css/admin-shipping.css?v=2">
+</head>
+<body>
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING (ACTIVE) -->
+            <a href="/admin/shipping.html" class="nav-item active">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+            <div class="nav-sub-group">
+                <a href="/admin/shipping.html" class="nav-sub-item">
+                    <i class="fa-solid fa-list"></i> All Shipments
+                </a>
+                <a href="/admin/shipping.html?status=Pending" class="nav-sub-item">
+                    <i class="fa-solid fa-clock"></i> Pending
+                </a>
+                <a href="/admin/shipping.html?status=Shipped" class="nav-sub-item">
+                    <i class="fa-solid fa-paper-plane"></i> Shipped
+                </a>
+                <a href="/admin/shipping.html?status=In_Transit" class="nav-sub-item">
+                    <i class="fa-solid fa-truck-fast"></i> In Transit
+                </a>
+                <a href="/admin/shipping.html?status=Delivered" class="nav-sub-item">
+                    <i class="fa-solid fa-circle-check"></i> Delivered
+                </a>
+                <a href="/admin/create-shipment.html" class="nav-sub-item active-sub">
+                    <i class="fa-solid fa-plus"></i> Create Shipment
+                </a>
+                <a href="/admin/shipping-settings.html" class="nav-sub-item">
+                    <i class="fa-solid fa-sliders"></i> Shipping Settings
+                </a>
+            </div>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Store</a>
+            <button id="logoutButton" class="logout-button" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-plus-circle" style="color: #6366f1;"></i> Create Shipment</h1>
+                <p>Fill order details and dispatch</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info"><strong>Admin</strong><span>Administrator</span></div>
+            </div>
+        </header>
+
+        <div class="content-body" style="padding:24px;">
+
+            <div class="ship-page-header">
+                <h1><i class="fa-solid fa-box-open"></i> New Shipment</h1>
+                <a href="/admin/shipping.html" class="btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Shipments
+                </a>
+            </div>
+
+            <!-- ORDER PREFILL -->
+            <div class="ship-form-card" style="margin-bottom:20px;max-width:100%;">
+                <p class="section-title"><i class="fa-solid fa-magnifying-glass"></i> Find Order</p>
+                <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+                    <div class="form-group" style="flex:1;min-width:200px;">
+                        <label>Select Order (Unshipped)</label>
+                        <select id="orderSelect">
+                            <option value="">-- Loading orders... --</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-primary" onclick="prefillFromOrder()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fill
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAIN FORM -->
+            <div class="ship-form-card" style="max-width:100%;">
+                <p class="section-title"><i class="fa-solid fa-file-invoice"></i> Shipment Details</p>
+
+                <form id="createShipmentForm">
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>Order ID *</label>
+                            <input type="number" id="order_id" name="order_id" placeholder="#1001" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Customer Name *</label>
+                            <input type="text" id="customer_name" name="customer_name" placeholder="Rahul Sharma" required>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Delivery Address *</label>
+                            <input type="text" id="address" name="address" placeholder="Mumbai, Maharashtra" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="phone" name="phone" placeholder="9876543210">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Courier *</label>
+                            <select id="courier_name" name="courier_name" required onchange="onCourierChange()">
+                                <option value="">-- Select Courier --</option>
+                                <option value="BlueDart">BlueDart</option>
+                                <option value="DTDC">DTDC</option>
+                                <option value="Delhivery">Delhivery</option>
+                                <option value="Ecom Express">Ecom Express</option>
+                                <option value="FedEx">FedEx</option>
+                                <option value="India Post">India Post</option>
+                                <option value="Shadowfax">Shadowfax</option>
+                                <option value="XpressBees">XpressBees</option>
+                                <option value="Ekart">Ekart</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <label for="tracking_number" style="margin:0;font-weight:600;">Tracking Number *</label>
+                                <button type="button" class="btn-gen-tracking" onclick="generateTrackingNumber(true)" title="Auto-generate tracking number">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Generate
+                                </button>
+                            </div>
+                            <div class="tracking-input-wrapper">
+                                <span class="tracking-courier-tag" id="trackingCourierTag">TRK</span>
+                                <input type="text" id="tracking_number" name="tracking_number" placeholder="EKRT0104829103" required spellcheck="false" autocomplete="off" style="text-transform:uppercase;font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-weight:700;letter-spacing:0.5px;padding-left:60px;padding-right:42px;">
+                                <button type="button" class="btn-tracking-copy" onclick="copyTrackingNumber()" title="Copy tracking number">
+                                    <i class="fa-regular fa-copy" id="copyIcon"></i>
+                                </button>
+                            </div>
+                            <div class="tracking-helper-text" id="trackingHelperText">
+                                <i class="fa-solid fa-bolt" style="color:#6366f1;"></i> Automatically generated based on selected courier and Order ID.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Shipping Date</label>
+                            <input type="date" id="shipping_date" name="shipping_date">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Expected Delivery</label>
+                            <input type="date" id="expected_delivery" name="expected_delivery">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Notes (optional)</label>
+                            <textarea id="notes" name="notes" placeholder="Any special delivery instructions..."></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- STATUS PIPELINE INFO -->
+                    <div style="margin:20px 0;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+                        <p style="color:#64748b;font-size:0.8rem;font-weight:700;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px;">Shipping Status Pipeline</p>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:0.82rem;font-weight:600;">
+                            <span style="background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;padding:4px 12px;border-radius:20px;">Pending</span>
+                            <i class="fa-solid fa-arrow-right" style="color:#6366f1;font-size:0.75rem;"></i>
+                            <span style="background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;padding:4px 12px;border-radius:20px;">Processing</span>
+                            <i class="fa-solid fa-arrow-right" style="color:#6366f1;font-size:0.75rem;"></i>
+                            <span style="background:#ede9fe;color:#7c3aed;border:1px solid #ddd6fe;padding:4px 12px;border-radius:20px;">Shipped</span>
+                            <i class="fa-solid fa-arrow-right" style="color:#6366f1;font-size:0.75rem;"></i>
+                            <span style="background:#f5f3ff;color:#6366f1;border:1px solid #e0e7ff;padding:4px 12px;border-radius:20px;">In Transit</span>
+                            <i class="fa-solid fa-arrow-right" style="color:#6366f1;font-size:0.75rem;"></i>
+                            <span style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;padding:4px 12px;border-radius:20px;">Delivered</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fa-solid fa-rocket"></i> Create Shipment
+                        </button>
+                        <a href="/admin/shipping.html" class="btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div id="shipToastContainer"></div>
+
+<style>
+.nav-sub-group{margin:0 0 8px;padding-left:20px;border-left:2px solid rgba(99,102,241,0.3);margin-left:28px;}
+.nav-sub-item{display:flex;align-items:center;gap:8px;padding:6px 10px;color:#94a3b8;font-size:.82rem;border-radius:6px;text-decoration:none;transition:all .2s;margin-bottom:2px;}
+.nav-sub-item:hover,.nav-sub-item.active-sub{color:#6366f1;background:rgba(99,102,241,.1);}
+
+/* TRACKING NUMBER GENERATOR STYLES */
+.btn-gen-tracking {
+    background: #eef2ff;
+    color: #4f46e5;
+    border: 1px solid #c7d2fe;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.btn-gen-tracking:hover {
+    background: #6366f1;
+    color: #ffffff;
+    border-color: #6366f1;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+    transform: translateY(-1px);
+}
+.btn-gen-tracking:active {
+    transform: translateY(0);
+}
+.tracking-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.tracking-courier-tag {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #e0e7ff;
+    color: #4338ca;
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid #c7d2fe;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    user-select: none;
+    z-index: 2;
+}
+.tracking-input-wrapper input#tracking_number {
+    width: 100%;
+    padding: 10px 44px 10px 65px !important;
+    font-family: 'SFMono-Regular', Consolas, Menlo, monospace !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    color: #1e293b !important;
+    background: #ffffff !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    text-transform: uppercase !important;
+}
+.tracking-input-wrapper input#tracking_number:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+    outline: none !important;
+}
+.btn-tracking-copy {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+.btn-tracking-copy:hover {
+    background: #eef2ff;
+    color: #4f46e5;
+    border-color: #c7d2fe;
+}
+.tracking-helper-text {
+    font-size: 0.76rem;
+    color: #64748b;
+    margin-top: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+</style>
+
+<script>
+// Set default dates
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("shipping_date").value = today;
+const plus5 = new Date(Date.now() + 5*24*60*60*1000).toISOString().split("T")[0];
+document.getElementById("expected_delivery").value = plus5;
+
+// Courier prefix map
+function getCourierPrefix(courierName) {
+    const courier = (courierName || "").toLowerCase().trim();
+    if (courier.includes("ekart")) return "EKRT";
+    if (courier.includes("blue") || courier.includes("bluedart")) return "BD";
+    if (courier.includes("delhivery")) return "DEL";
+    if (courier.includes("dtdc")) return "DTDC";
+    if (courier.includes("ecom")) return "ECOM";
+    if (courier.includes("fedex")) return "FDX";
+    if (courier.includes("india") || courier.includes("post")) return "IP";
+    if (courier.includes("shadowfax")) return "SFX";
+    if (courier.includes("xpress") || courier.includes("bees")) return "XB";
+    return "TRK";
+}
+
+function updateTrackingTag() {
+    const tag = document.getElementById("trackingCourierTag");
+    const courierSelect = document.getElementById("courier_name");
+    const courier = courierSelect ? courierSelect.value : "";
+    const prefix = getCourierPrefix(courier);
+    if (tag) tag.textContent = prefix;
+}
+
+function generateTrackingNumber(force = false) {
+    const input = document.getElementById("tracking_number");
+    if (!input) return;
+
+    const courierSelect = document.getElementById("courier_name");
+    const courier = (courierSelect && courierSelect.value) ? courierSelect.value : "Ekart";
+    const orderIdInput = document.getElementById("order_id");
+    const orderIdVal = orderIdInput ? orderIdInput.value : "";
+    const prefix = getCourierPrefix(courier);
+
+    const orderDigits = String(orderIdVal).replace(/\D/g, "");
+    const orderPad = orderDigits ? orderDigits.padStart(4, "0").slice(-4) : "0104";
+
+    let code = "";
+    if (prefix === "IP") {
+        const rand4 = Math.floor(1000 + Math.random() * 9000);
+        code = `${prefix}${orderPad}${rand4}IN`;
+    } else {
+        const rand6 = Math.floor(100000 + Math.random() * 900000);
+        code = `${prefix}${orderPad}${rand6}`;
+    }
+
+    input.value = code;
+    updateTrackingTag();
+
+    const helper = document.getElementById("trackingHelperText");
+    if (helper) {
+        helper.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Generated ${prefix} tracking number: <strong>${code}</strong>`;
+    }
+
+    if (force) {
+        showToast(`Tracking Generated: ${code}`, "info");
+    }
+}
+
+function onCourierChange() {
+    updateTrackingTag();
+    generateTrackingNumber(true);
+}
+
+function copyTrackingNumber() {
+    const input = document.getElementById("tracking_number");
+    if (!input || !input.value || !input.value.trim()) {
+        showToast("No tracking number to copy", "error");
+        return;
+    }
+    const val = input.value.trim();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val).then(() => {
+            showToast("Copied tracking: " + val, "success");
+            const icon = document.getElementById("copyIcon");
+            if (icon) {
+                icon.className = "fa-solid fa-check";
+                icon.style.color = "#10b981";
+                setTimeout(() => {
+                    icon.className = "fa-regular fa-copy";
+                    icon.style.color = "";
+                }, 1500);
+            }
+        }).catch(() => fallbackCopy(val));
+    } else {
+        fallbackCopy(val);
+    }
+}
+
+function fallbackCopy(text) {
+    const input = document.getElementById("tracking_number");
+    input.select();
+    document.execCommand("copy");
+    showToast("Copied to clipboard: " + text, "success");
+}
+
+// Load unshipped orders
+async function loadOrders() {
+    try {
+        const r = await fetch("/api/shipments/pending-orders");
+        const data = await r.json();
+        const sel = document.getElementById("orderSelect");
+        sel.innerHTML = '<option value="">-- Select an order --</option>';
+        (data.orders || []).forEach(o => {
+            sel.innerHTML += `<option value="${o.id}" data-customer="${o.customer_name||''}" data-phone="${o.phone||''}" data-address="${o.address||''} ${o.city||''} ${o.state||''}" data-tracking="${o.tracking_number||''}" data-courier="${o.courier_name||''}">#${o.id} — ${o.customer_name||'Unknown'} (₹${o.order_total||o.total||0})</option>`;
+        });
+        if (!data.orders || !data.orders.length) {
+            sel.innerHTML = '<option value="">No unshipped orders found</option>';
+        }
+
+        // Check if order_id is in URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const qOrderId = urlParams.get("order_id");
+        if (qOrderId) {
+            sel.value = qOrderId;
+            prefillFromOrder();
+        }
+    } catch(e) {
+        console.error(e);
+    }
+}
+loadOrders();
+
+function prefillFromOrder() {
+    const sel = document.getElementById("orderSelect");
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) return;
+    document.getElementById("order_id").value = opt.value;
+    document.getElementById("customer_name").value = opt.dataset.customer || "";
+    document.getElementById("address").value = (opt.dataset.address || "").trim();
+    document.getElementById("phone").value = opt.dataset.phone || "";
+
+    const courierSelect = document.getElementById("courier_name");
+    if (opt.dataset.courier && opt.dataset.courier.trim()) {
+        courierSelect.value = opt.dataset.courier.trim();
+    } else if (!courierSelect.value) {
+        courierSelect.value = "Ekart";
+    }
+
+    generateTrackingNumber(true);
+}
+
+// Event listeners
+document.getElementById("orderSelect").addEventListener("change", prefillFromOrder);
+document.getElementById("courier_name").addEventListener("change", onCourierChange);
+document.getElementById("order_id").addEventListener("input", function() {
+    generateTrackingNumber(false);
+});
+
+// Auto generate tracking number on initial page load if courier is set or default to Ekart
+window.addEventListener("DOMContentLoaded", function() {
+    if (!document.getElementById("courier_name").value) {
+        document.getElementById("courier_name").value = "Ekart";
+    }
+    updateTrackingTag();
+    if (!document.getElementById("tracking_number").value) {
+        generateTrackingNumber(false);
+    }
+});
+
+// Submit form
+document.getElementById("createShipmentForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    if (!document.getElementById("tracking_number").value.trim()) {
+        generateTrackingNumber(true);
+    }
+    const btn = e.target.querySelector("button[type=submit]");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating...';
+    try {
+        const body = {
+            order_id: document.getElementById("order_id").value,
+            customer_name: document.getElementById("customer_name").value,
+            address: document.getElementById("address").value,
+            phone: document.getElementById("phone").value,
+            courier_name: document.getElementById("courier_name").value,
+            tracking_number: document.getElementById("tracking_number").value,
+            shipping_date: document.getElementById("shipping_date").value,
+            expected_delivery: document.getElementById("expected_delivery").value,
+            notes: document.getElementById("notes").value
+        };
+        const r = await fetch("/api/shipments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        const data = await r.json();
+        if (data.success) {
+            showToast("Shipment created successfully!", "success");
+            setTimeout(() => window.location.href = "/admin/shipping.html", 1500);
+        } else {
+            showToast("Error: " + data.message, "error");
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Create Shipment';
+        }
+    } catch(err) {
+        showToast("Network error: " + err.message, "error");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Create Shipment';
+    }
+});
+
+function showToast(msg, type="info") {
+    const c = document.getElementById("shipToastContainer");
+    if (!c) return;
+    const t = document.createElement("div");
+    t.className = `ship-toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+}
+
+document.getElementById("logoutButton").addEventListener("click", () => {
+    localStorage.removeItem("adminToken");
+    window.location.href = "/login.html";
+});
+document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
+</script>
+<script src="../../public/js/admin-order-badge.js"></script>
+</body>
+</html>

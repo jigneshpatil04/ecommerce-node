@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Products | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Base admin theme (sidebar, topbar, buttons, tables) -->
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <!-- Products page overrides -->
+    <link rel="stylesheet" href="../../public/css/admin-products.css?v=22">
+
+    <style>
+        /* Immediate Infallible AI Dress Recolor Chips Styling */
+        .ai-dress-recolor-wrapper {
+            background: #f8fafc !important;
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 12px 14px !important;
+            margin: 8px 0 12px 0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        .ai-dress-color-chips {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+        }
+
+        .ai-dress-chip {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 7px !important;
+            padding: 6px 14px !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 20px !important;
+            background: #ffffff !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            cursor: pointer !important;
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            user-select: none !important;
+            outline: none !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+            line-height: 1.3 !important;
+        }
+
+        .ai-dress-chip:hover {
+            border-color: #8b5cf6 !important;
+            background: #faf5ff !important;
+            color: #6d28d9 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15) !important;
+        }
+
+        .ai-dress-chip.active {
+            border-color: #7c3aed !important;
+            background: #7c3aed !important;
+            color: #ffffff !important;
+            box-shadow: 0 3px 10px rgba(124, 58, 237, 0.35) !important;
+        }
+
+        .ai-dress-chip.active span {
+            color: #ffffff !important;
+        }
+
+        .ai-dress-chip .ai-chip-dot {
+            width: 12px !important;
+            height: 12px !important;
+            border-radius: 50% !important;
+            display: inline-block !important;
+            flex-shrink: 0 !important;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) !important;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="admin-container">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+    <aside id="sidebar" class="sidebar">
+
+        <!-- SIDEBAR HEADER -->
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <!-- SIDEBAR NAVIGATION -->
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item active">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports & Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <!-- SIDEBAR BOTTOM -->
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button type="button" id="logoutButton" class="logout-button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button">â˜°</button>
+            <div class="topbar-title">
+                <h1>Products</h1>
+                <p>Add and manage your store products & variants</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+
+
+
+    <!-- =================================================
+         PRODUCT FORM CARD
+    ================================================== -->
+
+    <section class="product-form-card">
+
+        <div class="form-header">
+
+            <h2>
+                <i class="fa-solid fa-box-open" style="color: var(--primary);"></i> Add New Product
+            </h2>
+
+            <p>
+                Enter product information and configure
+                product variants.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PRODUCT FORM
+        ================================================== -->
+
+        <form
+            id="productForm"
+            enctype="multipart/form-data"
+        >
+
+
+            <!-- =========================================
+                 PRODUCT NAME
+            ========================================== -->
+
+            <div class="form-group">
+
+                <label for="productName">
+                    Product Name
+                </label>
+
+                <input
+                    type="text"
+                    id="productName"
+                    name="name"
+                    placeholder="Enter product name"
+                    required
+                >
+
+            </div>
+
+
+
+            <!-- =========================================
+                 DESCRIPTION
+            ========================================== -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    placeholder="Enter product description"
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- =========================================
+                 PRICE / CATEGORY / STOCK
+            ========================================== -->
+
+            <div class="form-row">
+
+
+                <!-- BASE PRICE -->
+
+                <div class="form-group">
+
+                    <label for="price">
+                        Base Price (₹)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        min="0"
+                        step="0.01"
+                        placeholder="599"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CATEGORY -->
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Category
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                        <option value="T-Shirts">
+                            T-Shirts
+                        </option>
+
+                        <option value="Shirts">
+                            Shirts
+                        </option>
+
+                        <option value="Jeans">
+                            Jeans
+                        </option>
+
+                        <option value="Pants">
+                            Pants
+                        </option>
+
+                        <option value="Jackets">
+                            Jackets
+                        </option>
+
+                        <option value="Hoodies">
+                            Hoodies
+                        </option>
+
+                        <option value="Shorts">
+                            Shorts
+                        </option>
+
+                        <option value="Shoes">
+                            Shoes
+                        </option>
+
+                        <option value="Accessories">
+                            Accessories
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- MAIN STOCK -->
+
+                <div class="form-group">
+
+                    <label for="stock">
+                        Main Stock
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PRODUCT IMAGES
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label>
+                    Product Images
+                </label>
+
+
+                <div
+                    id="imageUploadArea"
+                    class="image-upload-area"
+                >
+
+                    <input
+                        type="file"
+                        id="productImages"
+                        name="productImages"
+                        accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif"
+                        multiple
+                        hidden
+                    >
+
+
+                    <div class="image-upload-btn-group" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
+                        <button
+                            type="button"
+                            id="openAiStudioBtn"
+                            class="ai-studio-trigger-btn"
+                        >
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Product Image
+                        </button>
+                    </div>
+
+
+                    <p>
+                        Select multiple product images at once.
+                    </p>
+
+                    <small>
+                        You can select up to 30 product photos. The first photo is used as the cover image.
+                    </small>
+
+                </div>
+
+
+
+                <!-- PRODUCT IMAGE PREVIEW -->
+
+                <div
+                    id="imagePreview"
+                    class="image-preview"
+                ></div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PRODUCT VARIANTS
+            ================================================== -->
+
+            <section
+                class="product-variants-section"
+            >
+
+
+                <!-- VARIANT HEADER -->
+
+                <div class="variants-header">
+
+                    <div>
+
+                        <h3>
+                            <i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> Product Variants
+                        </h3>
+
+                        <p>
+                            Select sizes and colors and configure
+                            size-wise prices.
+                        </p>
+
+                    </div>
+
+
+                    <span class="variant-badge">
+                        VARIANTS
+                    </span>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     BASE PRICE DISPLAY
+                ================================================== -->
+
+                <div class="base-price-box">
+
+                    <span>
+                        Base Product Price
+                    </span>
+
+                    <strong>
+
+                        ₹<span id="variantBasePrice">
+                            0.00
+                        </span>
+
+                    </strong>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     SIZE SELECTION
+                ================================================== -->
+
+                <div class="variant-group">
+
+                    <label class="variant-label">
+                        Select Size
+                    </label>
+
+
+                    <div class="variant-options">
+
+
+                        <!-- S -->
+
+                        <label class="variant-option">
+
+                            <input
+                                type="checkbox"
+                                name="sizes"
+                                value="S"
+                            >
+
+                            <span>
+                                S
+                            </span>
+
+                        </label>
+
+
+                        <!-- M -->
+
+                        <label class="variant-option">
+
+                            <input
+                                type="checkbox"
+                                name="sizes"
+                                value="M"
+                            >
+
+                            <span>
+                                M
+                            </span>
+
+                        </label>
+
+
+                        <!-- L -->
+
+                        <label class="variant-option">
+
+                            <input
+                                type="checkbox"
+                                name="sizes"
+                                value="L"
+                            >
+
+                            <span>
+                                L
+                            </span>
+
+                        </label>
+
+
+                        <!-- XL -->
+
+                        <label class="variant-option">
+
+                            <input
+                                type="checkbox"
+                                name="sizes"
+                                value="XL"
+                            >
+
+                            <span>
+                                XL
+                            </span>
+
+                        </label>
+
+
+                        <!-- XXL -->
+
+                        <label class="variant-option">
+
+                            <input
+                                type="checkbox"
+                                name="sizes"
+                                value="XXL"
+                            >
+
+                            <span>
+                                XXL
+                            </span>
+
+                        </label>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     SIZE-WISE EXTRA PRICE
+                ================================================== -->
+
+                <div class="variant-group">
+
+                    <label class="variant-label">
+
+                        Size-wise Extra Price
+
+                    </label>
+
+
+                    <div
+                        id="sizePriceContainer"
+                        class="size-price-container"
+                    >
+
+                        <p class="empty-message">
+
+                            Select a size to set its
+                            extra price.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     COLOR SELECTION
+                ================================================== -->
+
+                <div class="variant-group">
+
+                    <label class="variant-label">
+
+                        Select Color
+
+                    </label>
+
+
+                    <div class="variant-options">
+                        <label class="variant-option color-black" style="--swatch-color: #181818; ">
+                            <input type="checkbox" name="colors" value="Black">
+                            <span>Black</span>
+                        </label>
+                        <label class="variant-option color-white" style="--swatch-color: #ffffff; border: 1px solid #cbd5e1;">
+                            <input type="checkbox" name="colors" value="White">
+                            <span>White</span>
+                        </label>
+                        <label class="variant-option color-offwhite" style="--swatch-color: #faf9f6; border: 1px solid #cbd5e1;">
+                            <input type="checkbox" name="colors" value="Off White">
+                            <span>Off White</span>
+                        </label>
+                        <label class="variant-option color-ivory" style="--swatch-color: #fffff0; border: 1px solid #cbd5e1;">
+                            <input type="checkbox" name="colors" value="Ivory">
+                            <span>Ivory</span>
+                        </label>
+                        <label class="variant-option color-cream" style="--swatch-color: #fffdd0; ">
+                            <input type="checkbox" name="colors" value="Cream">
+                            <span>Cream</span>
+                        </label>
+                        <label class="variant-option color-blue" style="--swatch-color: #2563eb; ">
+                            <input type="checkbox" name="colors" value="Blue">
+                            <span>Blue</span>
+                        </label>
+                        <label class="variant-option color-lightblue" style="--swatch-color: #38bdf8; ">
+                            <input type="checkbox" name="colors" value="Light Blue">
+                            <span>Light Blue</span>
+                        </label>
+                        <label class="variant-option color-skyblue" style="--swatch-color: #0ea5e9; ">
+                            <input type="checkbox" name="colors" value="Sky Blue">
+                            <span>Sky Blue</span>
+                        </label>
+                        <label class="variant-option color-babyblue" style="--swatch-color: #89cff0; ">
+                            <input type="checkbox" name="colors" value="Baby Blue">
+                            <span>Baby Blue</span>
+                        </label>
+                        <label class="variant-option color-royalblue" style="--swatch-color: #1d4ed8; ">
+                            <input type="checkbox" name="colors" value="Royal Blue">
+                            <span>Royal Blue</span>
+                        </label>
+                        <label class="variant-option color-navy" style="--swatch-color: #1e3a8a; ">
+                            <input type="checkbox" name="colors" value="Navy">
+                            <span>Navy</span>
+                        </label>
+                        <label class="variant-option color-midnightblue" style="--swatch-color: #191970; ">
+                            <input type="checkbox" name="colors" value="Midnight Blue">
+                            <span>Midnight Blue</span>
+                        </label>
+                        <label class="variant-option color-cobaltblue" style="--swatch-color: #0047ab; ">
+                            <input type="checkbox" name="colors" value="Cobalt Blue">
+                            <span>Cobalt Blue</span>
+                        </label>
+                        <label class="variant-option color-indigo" style="--swatch-color: #4b0082; ">
+                            <input type="checkbox" name="colors" value="Indigo">
+                            <span>Indigo</span>
+                        </label>
+                        <label class="variant-option color-turquoise" style="--swatch-color: #40e0d0; ">
+                            <input type="checkbox" name="colors" value="Turquoise">
+                            <span>Turquoise</span>
+                        </label>
+                        <label class="variant-option color-teal" style="--swatch-color: #0d9488; ">
+                            <input type="checkbox" name="colors" value="Teal">
+                            <span>Teal</span>
+                        </label>
+                        <label class="variant-option color-cyan" style="--swatch-color: #06b6d4; ">
+                            <input type="checkbox" name="colors" value="Cyan">
+                            <span>Cyan</span>
+                        </label>
+                        <label class="variant-option color-aqua" style="--swatch-color: #00ffff; ">
+                            <input type="checkbox" name="colors" value="Aqua">
+                            <span>Aqua</span>
+                        </label>
+                        <label class="variant-option color-powderblue" style="--swatch-color: #b0e0e6; ">
+                            <input type="checkbox" name="colors" value="Powder Blue">
+                            <span>Powder Blue</span>
+                        </label>
+                        <label class="variant-option color-steelblue" style="--swatch-color: #4682b4; ">
+                            <input type="checkbox" name="colors" value="Steel Blue">
+                            <span>Steel Blue</span>
+                        </label>
+                        <label class="variant-option color-red" style="--swatch-color: #dc2626; ">
+                            <input type="checkbox" name="colors" value="Red">
+                            <span>Red</span>
+                        </label>
+                        <label class="variant-option color-crimson" style="--swatch-color: #990000; ">
+                            <input type="checkbox" name="colors" value="Crimson">
+                            <span>Crimson</span>
+                        </label>
+                        <label class="variant-option color-scarlet" style="--swatch-color: #ff2400; ">
+                            <input type="checkbox" name="colors" value="Scarlet">
+                            <span>Scarlet</span>
+                        </label>
+                        <label class="variant-option color-ruby" style="--swatch-color: #e0115f; ">
+                            <input type="checkbox" name="colors" value="Ruby">
+                            <span>Ruby</span>
+                        </label>
+                        <label class="variant-option color-cherry" style="--swatch-color: #d2042d; ">
+                            <input type="checkbox" name="colors" value="Cherry">
+                            <span>Cherry</span>
+                        </label>
+                        <label class="variant-option color-wine" style="--swatch-color: #722f37; ">
+                            <input type="checkbox" name="colors" value="Wine">
+                            <span>Wine</span>
+                        </label>
+                        <label class="variant-option color-burgundy" style="--swatch-color: #800020; ">
+                            <input type="checkbox" name="colors" value="Burgundy">
+                            <span>Burgundy</span>
+                        </label>
+                        <label class="variant-option color-maroon" style="--swatch-color: #832729; ">
+                            <input type="checkbox" name="colors" value="Maroon">
+                            <span>Maroon</span>
+                        </label>
+                        <label class="variant-option color-brickred" style="--swatch-color: #cb4154; ">
+                            <input type="checkbox" name="colors" value="Brick Red">
+                            <span>Brick Red</span>
+                        </label>
+                        <label class="variant-option color-rust" style="--swatch-color: #c2410c; ">
+                            <input type="checkbox" name="colors" value="Rust">
+                            <span>Rust</span>
+                        </label>
+                        <label class="variant-option color-coral" style="--swatch-color: #f97316; ">
+                            <input type="checkbox" name="colors" value="Coral">
+                            <span>Coral</span>
+                        </label>
+                        <label class="variant-option color-terracotta" style="--swatch-color: #e2725b; ">
+                            <input type="checkbox" name="colors" value="Terracotta">
+                            <span>Terracotta</span>
+                        </label>
+                        <label class="variant-option color-green" style="--swatch-color: #16a34a; ">
+                            <input type="checkbox" name="colors" value="Green">
+                            <span>Green</span>
+                        </label>
+                        <label class="variant-option color-darkgreen" style="--swatch-color: #14532d; ">
+                            <input type="checkbox" name="colors" value="Dark Green">
+                            <span>Dark Green</span>
+                        </label>
+                        <label class="variant-option color-forestgreen" style="--swatch-color: #228b22; ">
+                            <input type="checkbox" name="colors" value="Forest Green">
+                            <span>Forest Green</span>
+                        </label>
+                        <label class="variant-option color-emerald" style="--swatch-color: #059669; ">
+                            <input type="checkbox" name="colors" value="Emerald">
+                            <span>Emerald</span>
+                        </label>
+                        <label class="variant-option color-olive" style="--swatch-color: #65a30d; ">
+                            <input type="checkbox" name="colors" value="Olive">
+                            <span>Olive</span>
+                        </label>
+                        <label class="variant-option color-olivegreen" style="--swatch-color: #556b2f; ">
+                            <input type="checkbox" name="colors" value="Olive Green">
+                            <span>Olive Green</span>
+                        </label>
+                        <label class="variant-option color-militarygreen" style="--swatch-color: #4b5320; ">
+                            <input type="checkbox" name="colors" value="Military Green">
+                            <span>Military Green</span>
+                        </label>
+                        <label class="variant-option color-armygreen" style="--swatch-color: #454b1b; ">
+                            <input type="checkbox" name="colors" value="Army Green">
+                            <span>Army Green</span>
+                        </label>
+                        <label class="variant-option color-sage" style="--swatch-color: #84a98c; ">
+                            <input type="checkbox" name="colors" value="Sage">
+                            <span>Sage</span>
+                        </label>
+                        <label class="variant-option color-mint" style="--swatch-color: #6ee7b7; ">
+                            <input type="checkbox" name="colors" value="Mint">
+                            <span>Mint</span>
+                        </label>
+                        <label class="variant-option color-limegreen" style="--swatch-color: #84cc16; ">
+                            <input type="checkbox" name="colors" value="Lime Green">
+                            <span>Lime Green</span>
+                        </label>
+                        <label class="variant-option color-seagreen" style="--swatch-color: #2e8b57; ">
+                            <input type="checkbox" name="colors" value="Sea Green">
+                            <span>Sea Green</span>
+                        </label>
+                        <label class="variant-option color-pistachio" style="--swatch-color: #93c572; ">
+                            <input type="checkbox" name="colors" value="Pistachio">
+                            <span>Pistachio</span>
+                        </label>
+                        <label class="variant-option color-mossgreen" style="--swatch-color: #8a9a5b; ">
+                            <input type="checkbox" name="colors" value="Moss Green">
+                            <span>Moss Green</span>
+                        </label>
+                        <label class="variant-option color-pinegreen" style="--swatch-color: #01796f; ">
+                            <input type="checkbox" name="colors" value="Pine Green">
+                            <span>Pine Green</span>
+                        </label>
+                        <label class="variant-option color-jade" style="--swatch-color: #00a86b; ">
+                            <input type="checkbox" name="colors" value="Jade">
+                            <span>Jade</span>
+                        </label>
+                        <label class="variant-option color-yellow" style="--swatch-color: #eab308; ">
+                            <input type="checkbox" name="colors" value="Yellow">
+                            <span>Yellow</span>
+                        </label>
+                        <label class="variant-option color-mustard" style="--swatch-color: #d97706; ">
+                            <input type="checkbox" name="colors" value="Mustard">
+                            <span>Mustard</span>
+                        </label>
+                        <label class="variant-option color-lemonyellow" style="--swatch-color: #fef08a; ">
+                            <input type="checkbox" name="colors" value="Lemon Yellow">
+                            <span>Lemon Yellow</span>
+                        </label>
+                        <label class="variant-option color-gold" style="--swatch-color: #ffd700; ">
+                            <input type="checkbox" name="colors" value="Gold">
+                            <span>Gold</span>
+                        </label>
+                        <label class="variant-option color-ochre" style="--swatch-color: #cc7722; ">
+                            <input type="checkbox" name="colors" value="Ochre">
+                            <span>Ochre</span>
+                        </label>
+                        <label class="variant-option color-amber" style="--swatch-color: #f59e0b; ">
+                            <input type="checkbox" name="colors" value="Amber">
+                            <span>Amber</span>
+                        </label>
+                        <label class="variant-option color-honey" style="--swatch-color: #eb9605; ">
+                            <input type="checkbox" name="colors" value="Honey">
+                            <span>Honey</span>
+                        </label>
+                        <label class="variant-option color-orange" style="--swatch-color: #ea580c; ">
+                            <input type="checkbox" name="colors" value="Orange">
+                            <span>Orange</span>
+                        </label>
+                        <label class="variant-option color-peach" style="--swatch-color: #fb923c; ">
+                            <input type="checkbox" name="colors" value="Peach">
+                            <span>Peach</span>
+                        </label>
+                        <label class="variant-option color-tangerine" style="--swatch-color: #f28500; ">
+                            <input type="checkbox" name="colors" value="Tangerine">
+                            <span>Tangerine</span>
+                        </label>
+                        <label class="variant-option color-burntorange" style="--swatch-color: #cc5500; ">
+                            <input type="checkbox" name="colors" value="Burnt Orange">
+                            <span>Burnt Orange</span>
+                        </label>
+                        <label class="variant-option color-apricot" style="--swatch-color: #fbceb1; ">
+                            <input type="checkbox" name="colors" value="Apricot">
+                            <span>Apricot</span>
+                        </label>
+                        <label class="variant-option color-copper" style="--swatch-color: #b87333; ">
+                            <input type="checkbox" name="colors" value="Copper">
+                            <span>Copper</span>
+                        </label>
+                        <label class="variant-option color-bronze" style="--swatch-color: #cd7f32; ">
+                            <input type="checkbox" name="colors" value="Bronze">
+                            <span>Bronze</span>
+                        </label>
+                        <label class="variant-option color-pink" style="--swatch-color: #ec4899; ">
+                            <input type="checkbox" name="colors" value="Pink">
+                            <span>Pink</span>
+                        </label>
+                        <label class="variant-option color-babypink" style="--swatch-color: #f472b6; ">
+                            <input type="checkbox" name="colors" value="Baby Pink">
+                            <span>Baby Pink</span>
+                        </label>
+                        <label class="variant-option color-rosepink" style="--swatch-color: #fb7185; ">
+                            <input type="checkbox" name="colors" value="Rose Pink">
+                            <span>Rose Pink</span>
+                        </label>
+                        <label class="variant-option color-blushpink" style="--swatch-color: #fce7f3; ">
+                            <input type="checkbox" name="colors" value="Blush Pink">
+                            <span>Blush Pink</span>
+                        </label>
+                        <label class="variant-option color-dustypink" style="--swatch-color: #dcae96; ">
+                            <input type="checkbox" name="colors" value="Dusty Pink">
+                            <span>Dusty Pink</span>
+                        </label>
+                        <label class="variant-option color-hotpink" style="--swatch-color: #db2777; ">
+                            <input type="checkbox" name="colors" value="Hot Pink">
+                            <span>Hot Pink</span>
+                        </label>
+                        <label class="variant-option color-magenta" style="--swatch-color: #ff00ff; ">
+                            <input type="checkbox" name="colors" value="Magenta">
+                            <span>Magenta</span>
+                        </label>
+                        <label class="variant-option color-fuchsia" style="--swatch-color: #c026d3; ">
+                            <input type="checkbox" name="colors" value="Fuchsia">
+                            <span>Fuchsia</span>
+                        </label>
+                        <label class="variant-option color-salmon" style="--swatch-color: #fa8072; ">
+                            <input type="checkbox" name="colors" value="Salmon">
+                            <span>Salmon</span>
+                        </label>
+                        <label class="variant-option color-coralpink" style="--swatch-color: #f88379; ">
+                            <input type="checkbox" name="colors" value="Coral Pink">
+                            <span>Coral Pink</span>
+                        </label>
+                        <label class="variant-option color-purple" style="--swatch-color: #9333ea; ">
+                            <input type="checkbox" name="colors" value="Purple">
+                            <span>Purple</span>
+                        </label>
+                        <label class="variant-option color-lavender" style="--swatch-color: #a855f7; ">
+                            <input type="checkbox" name="colors" value="Lavender">
+                            <span>Lavender</span>
+                        </label>
+                        <label class="variant-option color-lilac" style="--swatch-color: #c8a2c8; ">
+                            <input type="checkbox" name="colors" value="Lilac">
+                            <span>Lilac</span>
+                        </label>
+                        <label class="variant-option color-violet" style="--swatch-color: #7c3aed; ">
+                            <input type="checkbox" name="colors" value="Violet">
+                            <span>Violet</span>
+                        </label>
+                        <label class="variant-option color-plum" style="--swatch-color: #8b5cf6; ">
+                            <input type="checkbox" name="colors" value="Plum">
+                            <span>Plum</span>
+                        </label>
+                        <label class="variant-option color-mauve" style="--swatch-color: #e0b0ff; ">
+                            <input type="checkbox" name="colors" value="Mauve">
+                            <span>Mauve</span>
+                        </label>
+                        <label class="variant-option color-eggplant" style="--swatch-color: #614051; ">
+                            <input type="checkbox" name="colors" value="Eggplant">
+                            <span>Eggplant</span>
+                        </label>
+                        <label class="variant-option color-grape" style="--swatch-color: #6f2da8; ">
+                            <input type="checkbox" name="colors" value="Grape">
+                            <span>Grape</span>
+                        </label>
+                        <label class="variant-option color-brown" style="--swatch-color: #78350f; ">
+                            <input type="checkbox" name="colors" value="Brown">
+                            <span>Brown</span>
+                        </label>
+                        <label class="variant-option color-chocolate" style="--swatch-color: #7b3f00; ">
+                            <input type="checkbox" name="colors" value="Chocolate">
+                            <span>Chocolate</span>
+                        </label>
+                        <label class="variant-option color-coffee" style="--swatch-color: #6f4e37; ">
+                            <input type="checkbox" name="colors" value="Coffee">
+                            <span>Coffee</span>
+                        </label>
+                        <label class="variant-option color-tan" style="--swatch-color: #d2b48c; ">
+                            <input type="checkbox" name="colors" value="Tan">
+                            <span>Tan</span>
+                        </label>
+                        <label class="variant-option color-camel" style="--swatch-color: #c19a6b; ">
+                            <input type="checkbox" name="colors" value="Camel">
+                            <span>Camel</span>
+                        </label>
+                        <label class="variant-option color-beige" style="--swatch-color: #d4b996; ">
+                            <input type="checkbox" name="colors" value="Beige">
+                            <span>Beige</span>
+                        </label>
+                        <label class="variant-option color-khaki" style="--swatch-color: #c3b091; ">
+                            <input type="checkbox" name="colors" value="Khaki">
+                            <span>Khaki</span>
+                        </label>
+                        <label class="variant-option color-sand" style="--swatch-color: #c2b280; ">
+                            <input type="checkbox" name="colors" value="Sand">
+                            <span>Sand</span>
+                        </label>
+                        <label class="variant-option color-caramel" style="--swatch-color: #af6e4d; ">
+                            <input type="checkbox" name="colors" value="Caramel">
+                            <span>Caramel</span>
+                        </label>
+                        <label class="variant-option color-chestnut" style="--swatch-color: #954535; ">
+                            <input type="checkbox" name="colors" value="Chestnut">
+                            <span>Chestnut</span>
+                        </label>
+                        <label class="variant-option color-grey" style="--swatch-color: #64748b; ">
+                            <input type="checkbox" name="colors" value="Grey">
+                            <span>Grey</span>
+                        </label>
+                        <label class="variant-option color-lightgrey" style="--swatch-color: #cbd5e1; ">
+                            <input type="checkbox" name="colors" value="Light Grey">
+                            <span>Light Grey</span>
+                        </label>
+                        <label class="variant-option color-darkgrey" style="--swatch-color: #475569; ">
+                            <input type="checkbox" name="colors" value="Dark Grey">
+                            <span>Dark Grey</span>
+                        </label>
+                        <label class="variant-option color-charcoal" style="--swatch-color: #334155; ">
+                            <input type="checkbox" name="colors" value="Charcoal">
+                            <span>Charcoal</span>
+                        </label>
+                        <label class="variant-option color-slategrey" style="--swatch-color: #708090; ">
+                            <input type="checkbox" name="colors" value="Slate Grey">
+                            <span>Slate Grey</span>
+                        </label>
+                        <label class="variant-option color-ashgrey" style="--swatch-color: #b2beb5; ">
+                            <input type="checkbox" name="colors" value="Ash Grey">
+                            <span>Ash Grey</span>
+                        </label>
+                        <label class="variant-option color-silver" style="--swatch-color: #c0c0c0; ">
+                            <input type="checkbox" name="colors" value="Silver">
+                            <span>Silver</span>
+                        </label>
+                        <label class="variant-option color-smokegrey" style="--swatch-color: #848884; ">
+                            <input type="checkbox" name="colors" value="Smoke Grey">
+                            <span>Smoke Grey</span>
+                        </label>
+                        <label class="variant-option color-taupe" style="--swatch-color: #483c32; ">
+                            <input type="checkbox" name="colors" value="Taupe">
+                            <span>Taupe</span>
+                        </label>
+                        <label class="variant-option color-multicolor" style="--swatch-color: linear-gradient(135deg, #f43f5e, #eab308, #10b981, #3b82f6); ">
+                            <input type="checkbox" name="colors" value="Multicolor">
+                            <span>Multicolor</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- =================================================
+                     VARIANT STOCK
+                ================================================== -->
+
+                <div class="variant-group">
+
+                    <label
+                        class="variant-label"
+                        for="variantStock"
+                    >
+
+                        Stock for Each Variant
+
+                    </label>
+
+
+                    <div
+                        id="colorStockContainer"
+                        class="color-stock-container"
+                    ></div>
+
+
+                    <p class="help-text">
+
+                        Adjust stock for each selected
+                        color below.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     CATEGORY & COLOR MATCHED PHOTOS (AUTO-FETCH)
+                ================================================== -->
+
+                <div class="variant-group">
+
+                    <div class="category-preview-header">
+                        <label class="variant-label" style="margin-bottom: 0;">
+                            <i class="fa-solid fa-wand-magic-sparkles" style="color: #c5a059;"></i> Auto-Matched Color Photos (Category Preview)
+                        </label>
+                        <span class="active-category-indicator" id="activeCategoryBadge">
+                            <i class="fa-solid fa-shirt"></i> Current: <strong>T-Shirts</strong>
+                        </span>
+                    </div>
+
+                    <!-- INTERACTIVE CATEGORY FILTER TABS -->
+                    <div class="category-preview-filter-bar" id="categoryPreviewFilterBar">
+                        <span class="filter-bar-title"><i class="fa-solid fa-filter"></i> Category Filter:</span>
+                        <div class="category-filter-pills" id="categoryFilterPills">
+                            <button type="button" class="cat-pill pill-uploaded" id="pillUploadedPhotos" data-category="__uploaded__" style="display: none;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Uploaded Photos (<span id="uploadedPhotosCount">0</span>)
+                            </button>
+                            <button type="button" class="cat-pill active" data-category="T-Shirts">
+                                <i class="fa-solid fa-shirt"></i> T-Shirts
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Shirts">
+                                <i class="fa-solid fa-vest"></i> Shirts
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Jeans">
+                                Jeans
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Pants">
+                                Pants
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Jackets">
+                                Jackets
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Hoodies">
+                                Hoodies
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Shorts">
+                                Shorts
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Shoes">
+                                Shoes
+                            </button>
+                            <button type="button" class="cat-pill" data-category="Accessories">
+                                Accessories
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        id="adminColorPhotoMatchContainer"
+                        class="color-photo-match-container"
+                    >
+                        <p class="empty-message">
+                            Select a category and colors to preview auto-matched photos.
+                        </p>
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     VARIANT IMAGES
+                ================================================== -->
+
+                <div class="variant-group">
+
+                    <label class="variant-label">
+                        Variant Images (Optional Custom Upload)
+                    </label>
+
+                    <div
+                        id="variantImageUploadArea"
+                        class="image-upload-area"
+                    >
+
+                        <input
+                            type="file"
+                            id="variantImages"
+                            name="variantImages"
+                            accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif"
+                            multiple
+                            hidden
+                        >
+
+                        <button
+                            type="button"
+                            id="chooseVariantImagesBtn"
+                            class="choose-images-btn"
+                        >
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Choose Custom Variant Images
+                        </button>
+
+                        <p>
+                            Optional: Upload custom photos to override auto-matched photos.
+                        </p>
+
+                        <small>
+                            Auto-matched photos will be saved automatically if no file is selected.
+                        </small>
+
+                    </div>
+
+                    <!-- VARIANT IMAGE PREVIEW -->
+
+                    <div
+                        id="variantImagePreview"
+                        class="variant-image-preview"
+                    ></div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     VARIANT PREVIEW
+                ================================================== -->
+
+                <div class="variant-preview-box">
+
+                    <h4>
+                        Variant Preview
+                    </h4>
+
+
+                    <div
+                        id="variantPreview"
+                        class="variant-preview"
+                    >
+
+                        <p class="empty-message">
+
+                            Select size and color to
+                            preview variants.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+            </section>
+
+            <!-- =================================================
+                 PRODUCT DETAILS & SPECIFICATIONS (AMAZON STYLE)
+            ================================================== -->
+            <section class="product-details-specs-section" style="margin-top: 24px; padding: 22px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-clipboard-list" style="color: #832729;"></i> Product Details Specifications (Amazon Style)
+                        </h3>
+                        <p style="margin: 4px 0 0; font-size: 13px; color: #64748b;">
+                            Top highlights, bullet points, and additional manufacturer information displayed on user side.
+                        </p>
+                    </div>
+                    <button type="button" id="autoAnalyzeProductBtn" class="ai-analyze-btn" style="background: linear-gradient(135deg, #832729, #a83232); color: #fff; border: none; padding: 9px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(131,39,41,0.25); transition: all 0.2s ease;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Analyze &amp; Fill Details
+                    </button>
+                </div>
+
+                <!-- Top Highlights Sub-section -->
+                <div style="margin-bottom: 22px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-star" style="color: #f59e0b; font-size: 13px;"></i> Top Highlights
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Material Composition</label>
+                            <input type="text" id="specMaterial" name="specMaterial" placeholder="e.g. 100% Cotton" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Fit Type</label>
+                            <input type="text" id="specFit" name="specFit" placeholder="e.g. Slim Fit" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Sleeve Type</label>
+                            <input type="text" id="specSleeve" name="specSleeve" placeholder="e.g. Half Sleeve" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Collar Style</label>
+                            <input type="text" id="specCollar" name="specCollar" placeholder="e.g. Polo Collar" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Length</label>
+                            <input type="text" id="specLength" name="specLength" placeholder="e.g. Standard Length" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Neck Style</label>
+                            <input type="text" id="specNeck" name="specNeck" placeholder="e.g. Round Neck" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Country of Origin</label>
+                            <input type="text" id="specOrigin" name="specOrigin" placeholder="e.g. India" value="India" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About This Item Sub-section -->
+                <div style="margin-bottom: 22px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-list-check" style="color: #059669; font-size: 13px;"></i> About This Item (Bullet Points, one per line)
+                    </h4>
+                    <textarea id="specAbout" name="specAbout" rows="5" placeholder="Hemline: Side slit for added comfort and ease of movement&#10;Cuff &amp; Collar Type: Contrast rib and solid rib collar for a stylish finish&#10;Placket Type: 3-button placket for a classic polo look&#10;Premium Fabric: Crafted from high-end pique in DCH cotton" style="width: 100%; padding: 10px 12px; font-size: 13px; line-height: 1.5; border: 1.5px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+
+                <!-- Additional Information Sub-section -->
+                <div>
+                    <h4 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-circle-info" style="color: #0284c7; font-size: 13px;"></i> Additional Information
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Manufacturer</label>
+                            <input type="text" id="specManufacturer" name="specManufacturer" placeholder="e.g. ABFRL, Aditya Birla Fashion &amp; Retail Ltd" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Packer</label>
+                            <input type="text" id="specPacker" name="specPacker" placeholder="e.g. Aditya Birla Fashion &amp; Retail Ltd" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Item Weight</label>
+                            <input type="text" id="specWeight" name="specWeight" placeholder="e.g. 300 g" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Item Dimensions (LxWxH)</label>
+                            <input type="text" id="specDimensions" name="specDimensions" placeholder="e.g. 27.5 x 22.5 x 3 Centimeters" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Net Quantity</label>
+                            <input type="text" id="specQuantity" name="specQuantity" placeholder="e.g. 1 Count" value="1 Count" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Generic Name</label>
+                            <input type="text" id="specGenericName" name="specGenericName" placeholder="e.g. T-Shirt" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style Sub-section -->
+                <div style="margin-top: 22px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-shirt" style="color: #6366f1; font-size: 13px;"></i> Style Specifications
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Colour</label>
+                            <input type="text" id="specStyleColour" name="specStyleColour" placeholder="e.g. White" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Fitting type</label>
+                            <input type="text" id="specStyleFitting" name="specStyleFitting" placeholder="e.g. Slim Fit" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Style Name</label>
+                            <input type="text" id="specStyleName" name="specStyleName" placeholder="e.g. Modern" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Neck Style</label>
+                            <input type="text" id="specStyleNeck" name="specStyleNeck" placeholder="e.g. Round Neck" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Sleeve Type</label>
+                            <input type="text" id="specStyleSleeve" name="specStyleSleeve" placeholder="e.g. Half Sleeve" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Shirt Form Type</label>
+                            <input type="text" id="specStyleShirtForm" name="specStyleShirtForm" placeholder="e.g. T-Shirt" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Collar Style</label>
+                            <input type="text" id="specStyleCollar" name="specStyleCollar" placeholder="e.g. Polo Collar" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Pattern</label>
+                            <input type="text" id="specStylePattern" name="specStylePattern" placeholder="e.g. Solid" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">top-style</label>
+                            <input type="text" id="specStyleTopStyle" name="specStyleTopStyle" placeholder="e.g. Polo" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Season</label>
+                            <input type="text" id="specStyleSeason" name="specStyleSeason" placeholder="e.g. Spring" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Apparel Closure Type</label>
+                            <input type="text" id="specStyleClosure" name="specStyleClosure" placeholder="e.g. Pull On" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Cuff Style</label>
+                            <input type="text" id="specStyleCuff" name="specStyleCuff" placeholder="e.g. Ribbed Cuff" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Apparel Occasion and Lifestyle</label>
+                            <input type="text" id="specStyleOccasion" name="specStyleOccasion" placeholder="e.g. Casual" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Back Style</label>
+                            <input type="text" id="specStyleBackStyle" name="specStyleBackStyle" placeholder="e.g. T Back" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item Details Sub-section -->
+                <div style="margin-top: 22px;">
+                    <h4 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-tags" style="color: #ea580c; font-size: 13px;"></i> Item Details
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Brand Name</label>
+                            <input type="text" id="specItemBrand" name="specItemBrand" placeholder="e.g. Louis Philippe" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Model Name</label>
+                            <input type="text" id="specItemModel" name="specItemModel" placeholder="e.g. LR Tshirt- 22_Best seller repeat" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Style Number</label>
+                            <input type="text" id="specItemStyleNumber" name="specItemStyleNumber" placeholder="e.g. LRKPNSLBZ25183" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Unit Count</label>
+                            <input type="text" id="specItemUnitCount" name="specItemUnitCount" placeholder="e.g. 1 Count" value="1 Count" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Country Of Origin</label>
+                            <input type="text" id="specItemOrigin" name="specItemOrigin" placeholder="e.g. India" value="India" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Global Trade Identification Number (GTIN)</label>
+                            <input type="text" id="specItemGtin" name="specItemGtin" placeholder="e.g. 08909158788810" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">number-of-items</label>
+                            <input type="text" id="specItemNumberOfItems" name="specItemNumberOfItems" placeholder="e.g. 1" value="1" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Age Range Description</label>
+                            <input type="text" id="specItemAgeRange" name="specItemAgeRange" placeholder="e.g. Adult" value="Adult" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Item Type Name</label>
+                            <input type="text" id="specItemTypeName" name="specItemTypeName" placeholder="e.g. T-Shirt" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Item Weight</label>
+                            <input type="text" id="specItemWeight" name="specItemWeight" placeholder="e.g. 300 Grams" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Manufacturer Contact Information</label>
+                            <input type="text" id="specItemManufacturerContact" name="specItemManufacturerContact" placeholder="e.g. Aditya Birla Fashion &amp; Retail Ltd..." style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Manufacturer</label>
+                            <input type="text" id="specItemManufacturer" name="specItemManufacturer" placeholder="e.g. ABFRL, Aditya Birla Fashion &amp; Retail Ltd..." style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Packer Contact Information</label>
+                            <input type="text" id="specItemPackerContact" name="specItemPackerContact" placeholder="e.g. Aditya Birla Fashion &amp; Retail Ltd..." style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Manufacturer Part Number</label>
+                            <input type="text" id="specItemPartNumber" name="specItemPartNumber" placeholder="e.g. LRKPNSLF475219_L" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">Best Sellers Rank</label>
+                            <input type="text" id="specItemRank" name="specItemRank" placeholder="e.g. #73 in Clothing &amp; Accessories..." style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #475569;">ASIN</label>
+                            <input type="text" id="specItemAsin" name="specItemAsin" placeholder="e.g. B0D4VPH1YB" style="padding: 9px 12px; font-size: 13px;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <!-- =================================================
+                 MESSAGE
+            ================================================== -->
+
+            <div
+                id="productMessage"
+                class="product-message"
+            ></div>
+
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+            ================================================== -->
+
+            <div class="form-actions">
+
+
+                <!-- SAVE -->
+
+                <button
+                    type="submit"
+                    id="saveProductBtn"
+                    class="save-product-btn"
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i> Save Product
+
+                </button>
+
+
+                <!-- RESET -->
+
+                <button
+                    type="button"
+                    id="resetProductBtn"
+                    class="reset-product-btn"
+                >
+
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+    </section>
+
+
+
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     EDIT VARIANT OPTIONS MODAL (Interactive Dialog)
+====================================================== -->
+<div id="variantEditModal" class="variant-modal-overlay" style="display: none;">
+    <div class="variant-modal-card">
+        <div class="variant-modal-header">
+            <div class="variant-modal-title-group">
+                <div class="variant-modal-icon" id="modalIconBox">
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+                <div>
+                    <h3 id="modalTitle">Edit Variant Options</h3>
+                    <p id="modalSubtitle">Add, remove, or customize options</p>
+                </div>
+            </div>
+            <button type="button" class="variant-modal-close-btn" id="closeVariantModalBtn" title="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="variant-modal-body">
+            <!-- ADD NEW ITEM -->
+            <div class="modal-input-group">
+                <label id="modalInputLabel" for="modalNewOptionInput">Add New Option</label>
+                <div class="modal-input-row">
+                    <input type="text" id="modalNewOptionInput" placeholder="Type an option and press Add">
+                    <button type="button" id="modalAddOptionBtn" class="modal-add-btn">
+                        <i class="fa-solid fa-plus"></i> Add
+                    </button>
+                </div>
+                <small class="modal-hint">You can also paste multiple values separated by commas (e.g. S, M, L, XL).</small>
+            </div>
+
+            <!-- CURRENT OPTIONS LIST -->
+            <div class="modal-options-section">
+                <label>Current Options (<span id="modalOptionCount">0</span>)</label>
+                <div id="modalOptionsList" class="modal-options-list">
+                    <!-- Dynamic chips -->
+                </div>
+            </div>
+
+            <!-- QUICK PRESETS -->
+            <div class="modal-presets-section" id="modalPresetsSection">
+                <label>Quick Presets (click to add)</label>
+                <div id="modalPresetsList" class="modal-presets-list">
+                    <!-- Preset buttons -->
+                </div>
+            </div>
+        </div>
+
+        <div class="variant-modal-footer">
+            <button type="button" id="modalCancelBtn" class="modal-btn-cancel">
+                Cancel
+            </button>
+            <button type="button" id="modalSaveBtn" class="modal-btn-save">
+                <i class="fa-solid fa-check"></i> Save & Apply
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<!-- =====================================================
+     AI PRODUCT STUDIO IMAGE GENERATION MODAL
+====================================================== -->
+<div id="aiStudioModal" class="ai-modal-overlay" style="display: none;">
+    <div class="ai-modal-card">
+        <div class="ai-modal-header">
+            <div class="ai-modal-title-group">
+                <div class="ai-modal-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h3>AI Product Studio & Background Changer</h3>
+                    <p>Change photo background, add clean studio lighting & centered packshot</p>
+                </div>
+            </div>
+            <button type="button" class="ai-modal-close-btn" id="closeAiStudioModalBtn" title="Close">Ã—</button>
+        </div>
+
+        <div class="ai-modal-body">
+            <!-- STEP 1: SELECT OR UPLOAD PHOTO -->
+            <div class="ai-step-block">
+                <label class="ai-step-label"><span class="ai-step-num">1</span> Upload or Choose Product Photo (e.g. normal bottle photo)</label>
+                
+                <div class="ai-source-container">
+                    <div id="aiUploadDropZone" class="ai-upload-dropzone">
+                        <input type="file" id="aiSourceFileInput" accept="image/jpeg,image/png,image/webp,image/jpg" hidden>
+                        <i class="fa-solid fa-cloud-arrow-up ai-dropzone-icon"></i>
+                        <div class="ai-dropzone-text">
+                            <strong>Click or Drag & Drop</strong> raw product photo here
+                            <small>JPG, PNG or WEBP (e.g. a normal bottle, shoes, shirt)</small>
+                        </div>
+                    </div>
+
+                    <!-- IF USER HAS ALREADY UPLOADED PRODUCT PHOTOS -->
+                    <div id="aiExistingPhotosRow" class="ai-existing-photos-row" style="display: none;">
+                        <span class="ai-existing-photos-label">Or choose from selected photos:</span>
+                        <div id="aiExistingPhotosList" class="ai-existing-photos-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: STUDIO STYLE & BACKGROUND REPLACEMENT PRESETS -->
+            <div class="ai-step-block">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                    <label class="ai-step-label"><span class="ai-step-num">2</span> Select New Background & Studio Lighting</label>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="font-size:12px;font-weight:700;color:#64748b;">Background Removal:</span>
+                        <select id="aiBgSensitivity" style="padding:4px 8px;border-radius:7px;border:1.5px solid #cbd5e1;font-size:11.5px;font-weight:700;color:#1e293b;background:#ffffff;">
+                            <option value="balanced" selected>Standard (Auto)</option>
+                            <option value="fine">Fine Edge (Crisp)</option>
+                            <option value="deep">Deep Clean (Aggressive)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ai-style-presets" id="aiStylePresets">
+                    <button type="button" class="ai-style-preset active" data-preset="luxury-dark">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-moon" style="color: #818cf8;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Luxury Dark Studio</strong>
+                            <small>Graphite studio slate, soft lighting & subtle reflection</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="studio-white">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-sun" style="color: #f59e0b;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Clean White Studio</strong>
+                            <small>Seamless solid white sweep, soft contact floor shadow</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="concrete-minimal">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-cube" style="color: #64748b;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Minimalist Concrete Studio</strong>
+                            <small>Cool architectural grey loft, soft directional daylight</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="warm-wood">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-tree" style="color: #b45309;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Warm Oak Table</strong>
+                            <small>Natural golden oak wooden surface, warm ambient fill</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="neon-cyber">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-bolt" style="color: #06b6d4;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Neon Glow Studio</strong>
+                            <small>Moody slate backdrop, cyan & magenta neon rim lighting</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="pastel-blush">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-heart" style="color: #f43f5e;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Soft Pastel Blush</strong>
+                            <small>Editorial fashion champagne peach blush, diffused light</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="sunlit-outdoor">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-cloud-sun" style="color: #f59e0b;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Sunlit Golden Hour</strong>
+                            <small>Warm late-afternoon sunlight & golden sun-dappled glow</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="velvet-luxury">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-crown" style="color: #10b981;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Royal Velvet Studio</strong>
+                            <small>Deep emerald-teal luxury velvet, rich spotlight vignette</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="studio-podium">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-shapes" style="color: #6366f1;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Studio Podium</strong>
+                            <small>Minimalist round pedestal, soft neutral studio glow</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="marble-table">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-gem" style="color: #0ea5e9;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Marble Countertop</strong>
+                            <small>Polished white marble, soft window ambient morning light</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="studio-grey">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-cloud" style="color: #64748b;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Modern Grey Studio</strong>
+                            <small>Soft overhead key light, subtle grey gradient backdrop</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="warm-ambient">
+                        <span class="ai-style-preset-icon"><i class="fa-solid fa-fire-flame-curved" style="color: #ea580c;"></i></span>
+                        <div class="ai-style-preset-info">
+                            <strong>Warm Ambient Studio</strong>
+                            <small>Golden soft diffused commercial lighting</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="ai-style-preset" data-preset="cinematic-sky">
+                        <span class="ai-style-preset-icon" style="display:flex;align-items:center;">
+                            <img src="/images/ai_presets/cinematic_sky_bg.jpg" alt="Dramatic Sky" style="width:28px;height:28px;border-radius:6px;object-fit:cover;border:1px solid #cbd5e1;box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                        </span>
+                        <div class="ai-style-preset-info">
+                            <strong>Dramatic Sky (Photo 2)</strong>
+                            <small>Moody cloudy sky, atmospheric ground mist & backlit rim glow</small>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PREVIEW / 3-STEP COMPARISON AREA -->
+            <div id="aiPreviewComparisonArea" class="ai-preview-comparison-area" style="display: none;">
+                <div class="ai-comparison-grid" id="aiComparisonGrid">
+                    <!-- CARD 1: ORIGINAL PHOTO -->
+                    <div class="ai-comparison-card">
+                        <div class="ai-comparison-tag original-tag">
+                            <span><i class="fa-solid fa-image"></i> 1. Original Raw Photo</span>
+                        </div>
+                        <div class="ai-comparison-img-wrapper">
+                            <img id="aiSourcePreviewImg" src="" alt="Original Photo">
+                        </div>
+                        <div class="ai-comparison-card-meta">
+                            <span>Raw uploaded product photo</span>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: STUDIO PACKSHOT -->
+                    <div class="ai-comparison-card" id="aiFinalStudioCard">
+                        <div class="ai-comparison-tag studio-tag">
+                            <span><i class="fa-solid fa-wand-magic-sparkles"></i> 2. AI Studio Packshot</span>
+                        </div>
+                        <div class="ai-comparison-img-wrapper">
+                            <img id="aiResultPreviewImg" src="" alt="AI Generated Packshot">
+                            <div id="aiGeneratingOverlay" class="ai-generating-overlay" style="display: none;">
+                                <div class="ai-loader-spinner">
+                                    <i class="fa-solid fa-wand-magic-sparkles fa-beat-fade"></i>
+                                </div>
+                                <div class="ai-progress-track">
+                                    <div id="aiProgressBar" class="ai-progress-bar"></div>
+                                </div>
+                                <span id="aiOverlayStepText" style="font-weight:700;color:#1e293b;font-size:13px;margin-top:2px;">1. AI identifying product & removing background...</span>
+                                <small id="aiOverlayDetailText" style="color:#64748b;font-size:11.5px;">Generating professional studio packshot with realistic shadows...</small>
+                            </div>
+                        </div>
+                        <div class="ai-comparison-card-meta">
+                            <span id="aiStudioMetaText">New background & shadows</span>
+                            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto;">
+                                <button type="button" id="aiDownloadCutoutBtn" class="ai-card-download-btn ai-download-png-btn" style="display: none; cursor: pointer;">
+                                    <i class="fa-solid fa-download"></i> Download PNG
+                                </button>
+                                <button type="button" id="aiDownloadStudioBtn" class="ai-card-download-btn" style="display: none; cursor: pointer;">
+                                    <i class="fa-solid fa-download"></i> Download JPG
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="aiStatusMessage" class="ai-status-message" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="ai-modal-footer">
+            <button type="button" id="aiModalCloseBottomBtn" class="modal-btn-cancel">Cancel</button>
+            <button type="button" id="startAiGenerateBtn" class="ai-generate-action-btn" disabled>
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Product Image
+            </button>
+            <button type="button" id="aiApplyToProductBtn" class="ai-apply-action-btn" style="display: none;">
+                <i class="fa-solid fa-check"></i> Use Studio Packshot
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script src="../../public/js/product-specs-helper.js?v=3"></script>
+<script src="../../public/js/admin-products.js?v=29"></script>
+
+
+<script src="../../public/js/admin-order-badge.js"></script>
+</body>
+
+</html>

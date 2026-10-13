@@ -241,22 +241,42 @@ function populateHomeSections(products) {
 
 function normalizeProductImagePath(image) {
     let value = String(image || "").trim();
-    if (!value) value = "tshirt1.jpg";
-    if (value.startsWith("http://") || value.startsWith("https://")) return value;
+    if (!value) value = "shirt2.jpg";
+    if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("data:")) return value;
+
+    // Handle stringified JSON array: '["/images/123.jpg"]'
+    if (value.startsWith("[") && value.endsWith("]")) {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                value = String(parsed[0] || "").trim();
+            }
+        } catch (e) {}
+    }
 
     const isStaticDeploy = (typeof window !== "undefined") && (
         window.location.hostname.endsWith("github.io") ||
-        window.location.protocol === "file:"
+        window.location.protocol === "file:" ||
+        window.location.pathname.includes("/ecommerce-node/")
     );
-    const cleanPath = value.replace(/^\/+/, "");
 
-    if (isStaticDeploy) {
-        if (cleanPath.startsWith("public/")) return "./" + cleanPath;
-        if (cleanPath.startsWith("images/")) return "./public/" + cleanPath;
-        return "./public/images/" + cleanPath;
+    let cleanPath = value.replace(/^\/+/, "");
+    if (cleanPath.startsWith("public/")) {
+        cleanPath = cleanPath.slice(7);
     }
 
-    if (cleanPath.startsWith("public/images/")) return "/" + cleanPath.slice(7);
+    if (isStaticDeploy) {
+        const pathname = (typeof window !== "undefined" && window.location.pathname) ? window.location.pathname.replace(/\\/g, "/") : "";
+        const inAdmin = pathname.includes("/admin/");
+        const inViews = pathname.includes("/views/");
+        const prefix = inAdmin ? (inViews ? "../../public/" : "../public/") : (inViews ? "../public/" : "./public/");
+        
+        if (cleanPath.startsWith("images/")) {
+            return prefix + cleanPath;
+        }
+        return prefix + "images/" + cleanPath;
+    }
+
     if (cleanPath.startsWith("images/")) return "/" + cleanPath;
     return "/images/" + cleanPath;
 }
@@ -551,9 +571,8 @@ function renderProductGrid(container, items, badgeClass, badgeLabel, baseRating)
             if (matchIdx >= 0) activeIdx = matchIdx;
         }
         const initialColor = colorSwatchesList.length > 0 ? colorSwatchesList[activeIdx].name : "";
-        const image = (colorSwatchesList.length > 0 && colorSwatchesList[activeIdx].image)
-            ? colorSwatchesList[activeIdx].image
-            : homeImg;
+        const rawImg = (colorSwatchesList.length > 0 && colorSwatchesList[activeIdx].image) ? colorSwatchesList[activeIdx].image : homeImg;
+        const image = normalizeProductImagePath(rawImg);
         const rating = (baseRating - (index * 0.1)).toFixed(1);
 
         const swatchesHtml = colorSwatchesList.length > 0 ? `
@@ -573,7 +592,7 @@ function renderProductGrid(container, items, badgeClass, badgeLabel, baseRating)
             </div>
         ` : "";
 
-        const productUrl = `/product-details.html?id=${encodeURIComponent(id)}${initialColor ? '&color=' + encodeURIComponent(initialColor) : ''}`;
+        const productUrl = `./product-details.html?id=${encodeURIComponent(id)}${initialColor ? '&color=' + encodeURIComponent(initialColor) : ''}`;
 
         return `
             <div class="home-product-card" data-product-id="${id}" ${initialColor ? `data-selected-color="${escapeHtml(initialColor)}"` : ''}>
@@ -582,7 +601,7 @@ function renderProductGrid(container, items, badgeClass, badgeLabel, baseRating)
                     <i class="fa-regular fa-heart"></i>
                 </button>
                 <a href="${productUrl}" class="product-thumb-wrap" data-card-link>
-                    <img src="${image}" alt="${name}" onerror="this.src='/images/shirt2.jpg'">
+                    <img src="${image}" alt="${name}" onerror="this.src=normalizeProductImagePath('shirt2.jpg')">
                 </a>
                 <div class="home-card-body">
                     <span class="home-card-category">${category}</span>
@@ -614,24 +633,7 @@ function renderProductGrid(container, items, badgeClass, badgeLabel, baseRating)
 // ==========================================
 
 function formatHomeImage(image) {
-
-    if (!image) return "/images/shirt2.jpg";
-
-    let img = String(image).trim();
-    if (!img) return "/images/shirt2.jpg";
-
-    if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("data:")) {
-        return img;
-    }
-
-    img = img.replace(/\\/g, "/");
-
-    if (img.startsWith("/")) return img;
-    if (img.startsWith("images/")) return "/" + img;
-    if (img.startsWith("uploads/")) return "/" + img;
-
-    return "/images/" + img;
-
+    return normalizeProductImagePath(image);
 }
 
 

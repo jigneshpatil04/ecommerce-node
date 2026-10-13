@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Users | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../../public/css/admin-users.css">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS (ACTIVE) -->
+            <a href="/admin/users.html" class="nav-item active">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <button id="menuButton" class="menu-button" type="button"><i class="fa-solid fa-bars"></i></button>
+
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-users" style="color: var(--primary); margin-right: 8px;"></i> Users</h1>
+                <p>Manage registered customers</p>
+            </div>
+
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="content-section active">
+            <div class="page-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Registered Users</h2>
+                        <p>Customer accounts in your store</p>
+                    </div>
+                    <strong id="userCount">Loading...</strong>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="3">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const menuButton = document.getElementById("menuButton");
+        const logoutButton = document.getElementById("logoutButton");
+        const usersTableBody = document.getElementById("usersTableBody");
+        const userCount = document.getElementById("userCount");
+
+        if (menuButton) {
+            menuButton.addEventListener("click", function () {
+                sidebar.classList.toggle("open");
+            });
+        }
+
+        if (logoutButton) {
+            logoutButton.addEventListener("click", function () {
+                localStorage.removeItem("admin");
+                localStorage.removeItem("adminToken");
+                window.location.href = "/login.html";
+            });
+        }
+
+        fetch("/api/users")
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error("Unable to load users.");
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                const users = Array.isArray(data.users) ? data.users : [];
+                userCount.textContent = `${users.length} User${users.length === 1 ? "" : "s"}`;
+                usersTableBody.innerHTML = users.length
+                    ? users.map(function (user) {
+                        return `<tr><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td></tr>`;
+                    }).join("")
+                    : '<tr><td colspan="3">No users found.</td></tr>';
+            })
+            .catch(function () {
+                userCount.textContent = "Unavailable";
+                usersTableBody.innerHTML = '<tr><td colspan="3">Unable to load users.</td></tr>';
+            });
+    </script>
+
+<script src="../../public/js/admin-order-badge.js"></script>
+</body>
+
+</html>

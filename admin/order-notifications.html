@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Order Notifications | MyStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../../public/css/admin-order-notifications.css?v=1">
+</head>
+<body>
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+
+            <!-- NEW ORDER NOTIFICATIONS (ACTIVE) -->
+            <a href="/admin/order-notifications.html" class="nav-item active">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-bell" style="color: #fe4c50;"></i> New Order Notifications</h1>
+                <p>Real-time customer orders, checkout alerts &amp; dispatch actions</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-body" style="padding: 24px;">
+
+            <!-- PAGE HEADER ACTIONS -->
+            <div class="notif-header">
+                <div class="notif-header-left">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                        <span class="live-pill">
+                            <span class="live-dot"></span> Real-time Polling
+                        </span>
+                        <span style="font-size: 0.82rem; color: var(--notif-muted);">New customer orders trigger instant alert cards</span>
+                    </div>
+                </div>
+                <div class="notif-header-actions">
+                    <button type="button" id="audioToggleBtn" class="btn-notif-action" onclick="toggleAudio()">
+                        <i class="fa-solid fa-volume-high"></i> Sound Alert: ON
+                    </button>
+                    <button type="button" class="btn-notif-action" onclick="loadNotifications(); showToast('Notifications refreshed', 'info');">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                    <button type="button" class="btn-notif-primary" onclick="markAllRead()">
+                        <i class="fa-solid fa-check-double"></i> Mark All as Read
+                    </button>
+                    <button type="button" class="btn-notif-danger" onclick="clearReadNotifications()">
+                        <i class="fa-solid fa-trash"></i> Clear Read
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI STATS CARDS -->
+            <div class="notif-stats-grid">
+                <div class="notif-stat-card c-unread">
+                    <div class="notif-stat-icon"><i class="fa-solid fa-bell"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-val" id="statUnread">0</span>
+                        <span class="notif-stat-lbl">New / Unread Orders</span>
+                    </div>
+                </div>
+                <div class="notif-stat-card c-total">
+                    <div class="notif-stat-icon"><i class="fa-solid fa-boxes-packing"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-val" id="statTotal">0</span>
+                        <span class="notif-stat-lbl">Total Orders Logged</span>
+                    </div>
+                </div>
+                <div class="notif-stat-card c-today">
+                    <div class="notif-stat-icon"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-val" id="statToday">0</span>
+                        <span class="notif-stat-lbl">Today's Orders</span>
+                    </div>
+                </div>
+                <div class="notif-stat-card c-revenue">
+                    <div class="notif-stat-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-val" id="statRevenue">₹0</span>
+                        <span class="notif-stat-lbl">Unread Orders Value</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOLBAR & FILTERS -->
+            <div class="notif-toolbar-card">
+                <!-- Filter Tabs -->
+                <div class="notif-tabs">
+                    <button type="button" id="tabBtnAll" class="notif-tab-btn active" onclick="setFilter('all')">
+                        <i class="fa-solid fa-list-check"></i> All Notifications
+                    </button>
+                    <button type="button" id="tabBtnUnread" class="notif-tab-btn" onclick="setFilter('unread')">
+                        <i class="fa-solid fa-envelope"></i> Unread (New)
+                        <span class="notif-tab-badge badge-red" id="tabUnreadCount" style="display:none;">0</span>
+                    </button>
+                    <button type="button" id="tabBtnRead" class="notif-tab-btn" onclick="setFilter('read')">
+                        <i class="fa-solid fa-envelope-open"></i> Read / Archived
+                    </button>
+                </div>
+
+                <!-- Search Input -->
+                <div class="notif-search-wrap">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="notifSearchInput" class="notif-search-input" placeholder="Search by Order ID, customer, phone...">
+                </div>
+            </div>
+
+            <!-- NOTIFICATIONS LIST FEED -->
+            <div id="notifListContainer">
+                <div class="notif-empty">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <p style="margin-top: 10px;">Loading order notifications...</p>
+                </div>
+            </div>
+
+            <!-- PAGINATION -->
+            <div class="log-pagination" style="background:#ffffff;border-radius:14px;border:1.5px solid var(--notif-border);padding:14px 20px;">
+                <div id="notifPageInfo" class="log-page-info">Showing notifications...</div>
+                <div id="notifPageControls" class="log-page-controls"></div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div id="notifToastContainer"></div>
+
+<script src="../../public/js/admin-order-notifications.js?v=1"></script>
+</body>
+</html>

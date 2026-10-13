@@ -1,0 +1,456 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin â€” Banners & Promotions | MyStore</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Base admin theme -->
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <!-- Dedicated Banners CSS -->
+    <link rel="stylesheet" href="../../public/css/admin-banners.css?v=2">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- ======================================
+         SIDEBAR
+    ======================================= -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS (ACTIVE) -->
+            <a href="/admin/banners.html" class="nav-item active">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports & Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ======================================
+         MAIN CONTENT
+    ======================================= -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button">â˜°</button>
+            <div class="topbar-title">
+                <h1>Banners & Promotions</h1>
+                <p>Upload, schedule, and manage homepage hero carousels & promotional banners</p>
+            </div>
+            <div class="topbar-actions">
+                <a href="/" target="_blank" class="topbar-view-btn" title="View live storefront">
+                    <i class="fa-solid fa-store"></i> Live Store
+                </a>
+                <div class="admin-profile">
+                    <div class="admin-avatar">A</div>
+                    <div class="admin-info">
+                        <strong>Admin</strong>
+                        <span>Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="banners-page-wrapper">
+
+            <!-- STATS KPI ROW -->
+            <div class="banner-stats-grid">
+                <div class="banner-stat-card">
+                    <div class="stat-icon-wrap bg-primary-soft">
+                        <i class="fa-solid fa-images"></i>
+                    </div>
+                    <div class="stat-text">
+                        <span class="stat-label">Total Banners</span>
+                        <strong class="stat-val" id="statTotalBanners">0</strong>
+                    </div>
+                </div>
+
+                <div class="banner-stat-card">
+                    <div class="stat-icon-wrap bg-success-soft">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="stat-text">
+                        <span class="stat-label">Active on Store</span>
+                        <strong class="stat-val text-success" id="statActiveBanners">0</strong>
+                    </div>
+                </div>
+
+                <div class="banner-stat-card">
+                    <div class="stat-icon-wrap bg-warning-soft">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="stat-text">
+                        <span class="stat-label">Scheduled (Upcoming)</span>
+                        <strong class="stat-val text-warning" id="statScheduledBanners">0</strong>
+                    </div>
+                </div>
+
+                <div class="banner-stat-card">
+                    <div class="stat-icon-wrap bg-danger-soft">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </div>
+                    <div class="stat-text">
+                        <span class="stat-label">Hidden / Expired</span>
+                        <strong class="stat-val text-danger" id="statHiddenBanners">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS & FILTER BAR -->
+            <div class="banner-toolbar-card">
+                <div class="toolbar-left">
+                    <!-- Filter Tabs -->
+                    <div class="filter-pills" id="filterPills">
+                        <button type="button" class="filter-pill active" data-filter="all">All</button>
+                        <button type="button" class="filter-pill" data-filter="hero"><i class="fa-solid fa-panorama"></i> Homepage Hero</button>
+                        <button type="button" class="filter-pill" data-filter="promo"><i class="fa-solid fa-tag"></i> Promotional</button>
+                        <button type="button" class="filter-pill" data-filter="active"><i class="fa-solid fa-circle-play"></i> Active</button>
+                        <button type="button" class="filter-pill" data-filter="scheduled"><i class="fa-solid fa-calendar-days"></i> Scheduled</button>
+                        <button type="button" class="filter-pill" data-filter="hidden"><i class="fa-solid fa-eye-slash"></i> Hidden / Expired</button>
+                    </div>
+                </div>
+
+                <div class="toolbar-right">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Search banners by title or badge...">
+                    </div>
+                    <button type="button" class="btn-primary" id="openAddBannerBtn">
+                        <i class="fa-solid fa-plus"></i> Add New Banner
+                    </button>
+                </div>
+            </div>
+
+            <!-- BANNERS TABLE CARD -->
+            <div class="banner-table-card">
+                <div class="table-responsive">
+                    <table class="banners-table" id="bannersTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Order</th>
+                                <th style="width: 130px;">Preview</th>
+                                <th>Banner Title & Copy</th>
+                                <th style="width: 140px;">Position</th>
+                                <th style="width: 180px;">Schedule Window</th>
+                                <th style="width: 130px;">Status</th>
+                                <th style="width: 100px;">Show/Hide</th>
+                                <th style="width: 120px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannersTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="fa-solid fa-spinner fa-spin fa-2x text-muted"></i>
+                                    <p class="mt-2 text-muted">Loading banners...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i class="fa-regular fa-image fa-3x"></i>
+                    <h3>No banners found</h3>
+                    <p>Click "Add New Banner" to upload your first homepage hero or promotional banner.</p>
+                    <button type="button" class="btn-primary" id="emptyAddBtn">
+                        <i class="fa-solid fa-plus"></i> Add New Banner
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<!-- =====================================================
+     ADD / EDIT BANNER MODAL
+====================================================== -->
+<div class="modal-backdrop" id="bannerModal" style="display: none;">
+    <div class="modal-card modal-lg">
+        <div class="modal-header">
+            <div class="modal-title-wrap">
+                <i class="fa-solid fa-images modal-title-icon"></i>
+                <div>
+                    <h3 id="modalTitle">Add New Banner</h3>
+                    <p id="modalSub">Upload and configure banner graphics, copy, schedule, and CTA links</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close-btn" id="modalCloseBtn">&times;</button>
+        </div>
+
+        <form id="bannerForm" enctype="multipart/form-data">
+            <input type="hidden" id="bannerId" name="bannerId">
+
+            <div class="modal-body">
+
+                <!-- 1. BANNER POSITION & VISIBILITY -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="bannerPosition">Banner Position / Type <span class="req">*</span></label>
+                        <select id="bannerPosition" name="position" class="form-control" required>
+                            <option value="hero">Homepage Hero Carousel (Top Slider)</option>
+                            <option value="promo">Homepage Promotional Offer (Middle Section)</option>
+                        </select>
+                        <small class="form-hint">Choose where this banner appears on the storefront.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerStatus">Visibility Status <span class="req">*</span></label>
+                        <select id="bannerStatus" name="status" class="form-control" required>
+                            <option value="active">Active (Visible to Shoppers)</option>
+                            <option value="inactive">Inactive (Hidden from Shoppers)</option>
+                        </select>
+                        <small class="form-hint">Set to Inactive to hide without deleting.</small>
+                    </div>
+                </div>
+
+                <!-- 2. IMAGE UPLOAD & PREVIEW -->
+                <div class="form-group">
+                    <label>Banner Image <span class="req">*</span></label>
+                    
+                    <div class="banner-upload-grid">
+                        <!-- Dropzone -->
+                        <div class="upload-dropzone" id="dropzone">
+                            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                            <h4>Drag & Drop banner image here</h4>
+                            <p>or click to browse files (JPEG, PNG, WEBP â€” up to 5MB)</p>
+                            <span class="upload-rec-dims" id="recDims">Recommended: 1920 Ã— 750px (Hero) or 1200 Ã— 500px (Promo)</span>
+                            <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/webp">
+                        </div>
+
+                        <!-- Live Preview -->
+                        <div class="upload-preview-box" id="previewBox">
+                            <img id="imagePreview" src="/images/jacket1.jpg" alt="Banner Preview">
+                            <div class="preview-overlay">
+                                <span class="preview-badge" id="previewBadgeText">SPRING / SUMMER 2025</span>
+                                <h4 class="preview-title" id="previewTitleText">DEFINE YOUR STYLE</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alternate URL input -->
+                    <div class="url-input-toggle mt-2">
+                        <small class="text-muted">Or use an existing image path / URL:</small>
+                        <input type="text" id="imageUrlInput" name="imageUrl" class="form-control form-control-sm mt-1" placeholder="/images/jacket1.jpg or https://...">
+                    </div>
+                </div>
+
+                <!-- 3. COPY & MESSAGING -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="bannerTitle">Banner Title / Headline <span class="req">*</span></label>
+                        <input type="text" id="bannerTitle" name="title" class="form-control" placeholder="e.g. DEFINE YOUR STYLE" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerBadge">Badge / Tag (Optional)</label>
+                        <input type="text" id="bannerBadge" name="badge" class="form-control" placeholder="e.g. LIMITED TIME EVENT, ATELIER EXCLUSIVE">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bannerSubtitle">Subtitle / Marketing Description</label>
+                    <textarea id="bannerSubtitle" name="subtitle" class="form-control" rows="2" placeholder="e.g. Discover luxury tailored cuts, bespoke textures, and statement modern silhouettes designed to command every room."></textarea>
+                </div>
+
+                <!-- 4. CALL-TO-ACTION BUTTONS -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="buttonText">Primary Button Text</label>
+                        <input type="text" id="buttonText" name="button_text" class="form-control" placeholder="e.g. EXPLORE COLLECTION">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerLink">Primary Button Link (URL)</label>
+                        <input type="text" id="bannerLink" name="link" class="form-control" placeholder="e.g. /products.html?category=jackets">
+                    </div>
+                </div>
+
+                <div class="form-row-2" id="secondaryActionsRow">
+                    <div class="form-group">
+                        <label for="secondaryButtonText">Secondary Button Text (Optional)</label>
+                        <input type="text" id="secondaryButtonText" name="secondary_button_text" class="form-control" placeholder="e.g. VIEW TRENDING PICKS">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="secondaryLink">Secondary Button Link (Optional)</label>
+                        <input type="text" id="secondaryLink" name="secondary_link" class="form-control" placeholder="e.g. #trending-section or /products.html">
+                    </div>
+                </div>
+
+                <!-- 5. SCHEDULE DATES (START & END) -->
+                <div class="schedule-section-card">
+                    <div class="schedule-header">
+                        <i class="fa-solid fa-calendar-clock"></i>
+                        <div>
+                            <strong>Campaign Schedule Window</strong>
+                            <p class="text-muted">Set specific start and end dates. Leave blank for perpetual display (always visible).</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2 mt-3">
+                        <div class="form-group">
+                            <label for="startDate"><i class="fa-regular fa-calendar-plus text-success"></i> Start Date & Time</label>
+                            <input type="datetime-local" id="startDate" name="start_date" class="form-control">
+                            <small class="form-hint">Banner will automatically go live at this time.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endDate"><i class="fa-regular fa-calendar-xmark text-danger"></i> End Date & Time</label>
+                            <input type="datetime-local" id="endDate" name="end_date" class="form-control">
+                            <small class="form-hint">Banner will automatically expire and hide after this time.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. DISPLAY ORDER -->
+                <div class="form-row-2 mt-3">
+                    <div class="form-group">
+                        <label for="displayOrder">Display Order (Sorting)</label>
+                        <input type="number" id="displayOrder" name="display_order" class="form-control" value="0" min="0" max="999">
+                        <small class="form-hint">Lower numbers appear first in the carousel.</small>
+                    </div>
+                    <div class="form-group d-flex align-items-center pt-4">
+                        <button type="button" class="btn-clear-schedule" id="clearScheduleBtn">
+                            <i class="fa-solid fa-rotate-left"></i> Clear Dates (Make Always Active)
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="modalCancelBtn">Cancel</button>
+                <button type="submit" class="btn-primary" id="saveBannerBtn">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> <span id="saveBtnText">Save Banner</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =====================================================
+     DELETE CONFIRMATION MODAL
+====================================================== -->
+<div class="modal-backdrop" id="deleteModal" style="display: none;">
+    <div class="modal-card modal-sm">
+        <div class="modal-header">
+            <h3 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Delete Banner</h3>
+            <button type="button" class="modal-close-btn" id="deleteModalCloseBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to permanently delete <strong id="deleteBannerTitle">this banner</strong>?</p>
+            <p class="text-muted text-sm mt-1">This action cannot be undone. It will be immediately removed from the storefront.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+            <button type="button" class="btn-danger" id="confirmDeleteBtn">
+                <i class="fa-solid fa-trash"></i> Delete Banner
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div id="toastContainer" class="admin-toast-container"></div>
+
+<!-- Admin Scripts -->
+<script src="../../public/js/admin-banners.js?v=2"></script>
+
+<script src="../../public/js/admin-order-badge.js"></script>
+</body>
+</html>
+

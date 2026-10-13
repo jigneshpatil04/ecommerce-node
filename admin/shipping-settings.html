@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Shipping Settings | MyStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../../public/css/admin-shipping.css?v=2">
+</head>
+<body>
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING (ACTIVE) -->
+            <a href="/admin/shipping.html" class="nav-item active">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+            <div class="nav-sub-group">
+                <a href="/admin/shipping.html" class="nav-sub-item">
+                    <i class="fa-solid fa-list"></i> All Shipments
+                </a>
+                <a href="/admin/shipping.html?status=Pending" class="nav-sub-item">
+                    <i class="fa-solid fa-clock"></i> Pending
+                </a>
+                <a href="/admin/shipping.html?status=Shipped" class="nav-sub-item">
+                    <i class="fa-solid fa-paper-plane"></i> Shipped
+                </a>
+                <a href="/admin/shipping.html?status=In_Transit" class="nav-sub-item">
+                    <i class="fa-solid fa-truck-fast"></i> In Transit
+                </a>
+                <a href="/admin/shipping.html?status=Delivered" class="nav-sub-item">
+                    <i class="fa-solid fa-circle-check"></i> Delivered
+                </a>
+                <a href="/admin/shipping-settings.html" class="nav-sub-item active-sub">
+                    <i class="fa-solid fa-sliders"></i> Shipping Settings
+                </a>
+            </div>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+            <!-- ACTIVITY LOGS -->
+            <a href="/admin/activity-logs.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Store</a>
+            <button id="logoutButton" class="logout-button" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-sliders" style="color: #6366f1;"></i> Shipping Settings</h1>
+                <p>Configure rates, delivery time, and shipping zones</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info"><strong>Admin</strong><span>Administrator</span></div>
+            </div>
+        </header>
+
+        <div class="content-body" style="padding:24px;">
+
+            <!-- SECTION: Shipping Settings -->
+            <div class="ship-form-card" style="max-width:100%;margin-bottom:24px;">
+                <p class="section-title"><i class="fa-solid fa-sliders"></i> Standard Shipping Settings</p>
+
+                <form id="settingsForm">
+                    <div class="settings-grid">
+
+                        <div class="form-group">
+                            <label>Standard Shipping Price (₹)</label>
+                            <input type="number" id="standard_price" name="standard_price" min="0" step="0.01" placeholder="50">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Free Shipping Above (₹)</label>
+                            <input type="number" id="free_above" name="free_above" min="0" step="0.01" placeholder="999">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Min Delivery Days</label>
+                            <input type="number" id="delivery_time_min" name="delivery_time_min" min="1" placeholder="3">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Max Delivery Days</label>
+                            <input type="number" id="delivery_time_max" name="delivery_time_max" min="1" placeholder="7">
+                        </div>
+
+                        <!-- Enable Shipping toggle -->
+                        <div class="toggle-row">
+                            <div>
+                                <div class="toggle-label">Enable Shipping</div>
+                                <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">Allow customers to check out with shipping</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="enabled" name="enabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- COD toggle -->
+                        <div class="toggle-row">
+                            <div>
+                                <div class="toggle-label">COD Available</div>
+                                <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">Allow Cash on Delivery at checkout</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="cod_available" name="cod_available">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <!-- Info box -->
+                    <div style="margin:20px 0;padding:14px 18px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;font-size:0.85rem;color:#1e40af;display:flex;align-items:center;gap:10px;">
+                        <i class="fa-solid fa-circle-info" style="color:#2563eb;font-size:1.1rem;flex-shrink:0;"></i>
+                        <span>These values are loaded <strong style="color:#1d4ed8;">dynamically</strong> from the database into <code style="background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;font-weight:600;">checkout.js</code> — no hard-coding needed.</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Settings
+                    </button>
+                </form>
+            </div>
+
+            <!-- SECTION: Shipping Zones -->
+            <div class="ship-form-card" style="max-width:100%;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                    <p class="section-title" style="margin:0;"><i class="fa-solid fa-map-location-dot"></i> Shipping Zones</p>
+                    <button class="btn-primary" onclick="openZoneModal()">
+                        <i class="fa-solid fa-plus"></i> Add Zone
+                    </button>
+                </div>
+
+                <div class="ship-table-wrap">
+                    <table class="zones-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Region / State</th>
+                                <th>Shipping Price (₹)</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="zonesTableBody">
+                            <tr><td colspan="4" style="text-align:center;padding:30px;color:#64748b;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading zones...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- Zone Modal -->
+<div class="ship-modal-overlay" id="zoneModal">
+    <div class="ship-modal" style="max-width:420px;background:#ffffff;border-radius:14px;box-shadow:0 20px 40px rgba(0,0,0,0.12);padding:24px;">
+        <h3 style="display:flex;align-items:center;justify-content:space-between;margin:0 0 18px;font-size:1.15rem;font-weight:700;color:#0f172a;">
+            <span><i class="fa-solid fa-map-pin" style="color:#6366f1;margin-right:6px;"></i><span id="zoneModalTitle">Add Shipping Zone</span></span>
+            <button class="modal-close" onclick="closeZoneModal()"><i class="fa-solid fa-xmark"></i></button>
+        </h3>
+        <input type="hidden" id="editZoneId">
+        <div class="form-group" style="margin-bottom:14px;">
+            <label>Region / State Name</label>
+            <input type="text" id="zoneRegion" placeholder="e.g. Maharashtra">
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+            <label>Shipping Price (₹)</label>
+            <input type="number" id="zonePrice" placeholder="50" min="0" step="0.01">
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn-secondary" onclick="closeZoneModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveZone()"><i class="fa-solid fa-floppy-disk"></i> Save Zone</button>
+        </div>
+    </div>
+</div>
+
+<div id="shipToastContainer"></div>
+
+<style>
+.nav-sub-group{margin:0 0 8px;padding-left:20px;border-left:2px solid rgba(99,102,241,.3);margin-left:28px;}
+.nav-sub-item{display:flex;align-items:center;gap:8px;padding:6px 10px;color:#94a3b8;font-size:.82rem;border-radius:6px;text-decoration:none;transition:all .2s;margin-bottom:2px;}
+.nav-sub-item:hover,.nav-sub-item.active-sub{color:#6366f1;background:rgba(99,102,241,.1);}
+</style>
+
+<script>
+function escapeHtml(text) {
+    if (!text) return "";
+    return String(text).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    });
+}
+
+// ---- Toast ----
+function showToast(msg, type = "info") {
+    const c = document.getElementById("shipToastContainer");
+    if (!c) return;
+    const t = document.createElement("div");
+    t.className = `ship-toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+}
+
+// ---- Load settings ----
+async function loadSettings() {
+    try {
+        const r = await fetch("/api/shipments/settings/all");
+        const data = await r.json();
+        if (!data.success) return;
+        const s = data.settings;
+        document.getElementById("standard_price").value = s.standard_price;
+        document.getElementById("free_above").value = s.free_above;
+        document.getElementById("delivery_time_min").value = s.delivery_time_min;
+        document.getElementById("delivery_time_max").value = s.delivery_time_max;
+        document.getElementById("enabled").checked = !!s.enabled;
+        document.getElementById("cod_available").checked = !!s.cod_available;
+        renderZones(data.zones || []);
+    } catch(e) { console.error(e); }
+}
+loadSettings();
+
+// ---- Save settings ----
+document.getElementById("settingsForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    try {
+        const body = {
+            standard_price: document.getElementById("standard_price").value,
+            free_above: document.getElementById("free_above").value,
+            delivery_time_min: document.getElementById("delivery_time_min").value,
+            delivery_time_max: document.getElementById("delivery_time_max").value,
+            enabled: document.getElementById("enabled").checked,
+            cod_available: document.getElementById("cod_available").checked
+        };
+        const r = await fetch("/api/shipments/settings/update", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        const data = await r.json();
+        showToast(data.success ? "Settings saved successfully!" : "Error: " + data.message, data.success ? "success" : "error");
+    } catch(e) { showToast("Error: " + e.message, "error"); }
+});
+
+// ---- Zones ----
+function renderZones(zones) {
+    const tb = document.getElementById("zonesTableBody");
+    if (!zones.length) {
+        tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#64748b;">No shipping zones found.</td></tr>';
+        return;
+    }
+    tb.innerHTML = zones.map((z, i) => `
+        <tr>
+            <td style="color:#6366f1;font-weight:700;">${i + 1}</td>
+            <td style="font-weight:600;color:#0f172a;">${escapeHtml(z.region_name)}</td>
+            <td style="font-weight:700;color:#0f172a;">₹${parseFloat(z.price).toFixed(2)}</td>
+            <td style="text-align:right;">
+                <div style="display:flex;gap:8px;justify-content:flex-end;">
+                    <button onclick="editZone(${z.id},'${escapeHtml(z.region_name)}',${z.price})" title="Edit" style="background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-weight:600;transition:all 0.2s;">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </button>
+                    <button onclick="deleteZone(${z.id})" title="Delete" style="background:#fee2e2;border:1px solid #fca5a5;color:#dc2626;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-weight:600;transition:all 0.2s;">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function openZoneModal() {
+    document.getElementById("editZoneId").value = "";
+    document.getElementById("zoneRegion").value = "";
+    document.getElementById("zonePrice").value = "";
+    document.getElementById("zoneModalTitle").textContent = "Add Shipping Zone";
+    document.getElementById("zoneModal").classList.add("active");
+}
+
+function closeZoneModal() {
+    document.getElementById("zoneModal").classList.remove("active");
+}
+
+function editZone(id, region, price) {
+    document.getElementById("editZoneId").value = id;
+    document.getElementById("zoneRegion").value = region;
+    document.getElementById("zonePrice").value = price;
+    document.getElementById("zoneModalTitle").textContent = "Edit Shipping Zone";
+    document.getElementById("zoneModal").classList.add("active");
+}
+
+async function saveZone() {
+    const id = document.getElementById("editZoneId").value;
+    const body = {
+        region_name: document.getElementById("zoneRegion").value.trim(),
+        price: document.getElementById("zonePrice").value
+    };
+    if (!body.region_name || body.price === "") { showToast("Please fill all fields!", "error"); return; }
+    try {
+        const url = id ? `/api/shipments/zones/${id}` : "/api/shipments/zones/add";
+        const method = id ? "PUT" : "POST";
+        const r = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        const data = await r.json();
+        showToast(data.success ? "Shipping zone saved!" : "Error: " + data.message, data.success ? "success" : "error");
+        if (data.success) { closeZoneModal(); loadSettings(); }
+    } catch(e) { showToast("Error: " + e.message, "error"); }
+}
+
+async function deleteZone(id) {
+    if (!confirm("Are you sure you want to delete this shipping zone?")) return;
+    try {
+        const r = await fetch(`/api/shipments/zones/${id}`, { method: "DELETE" });
+        const data = await r.json();
+        showToast(data.success ? "Shipping zone deleted!" : "Error: " + data.message, data.success ? "success" : "error");
+        if (data.success) loadSettings();
+    } catch(e) { showToast("Error: " + e.message, "error"); }
+}
+
+document.getElementById("logoutButton").addEventListener("click", () => {
+    localStorage.removeItem("adminToken");
+    window.location.href = "/login.html";
+});
+document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
+</script>
+<script src="../../public/js/admin-order-badge.js"></script>
+</body>
+</html>

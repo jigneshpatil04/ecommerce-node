@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Activity Logs | MyStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../public/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../../public/css/admin-activity-logs.css?v=1">
+</head>
+<body>
+<div class="admin-container">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MY<span>STORE</span></h2>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- PRODUCTS -->
+            <a href="/admin/products.html" class="nav-item">
+                <i class="fa-solid fa-box-open nav-icon"></i>
+                <span>Products</span>
+            </a>
+
+            <!-- CATEGORIES -->
+            <a href="/admin/products/categories.html" class="nav-item">
+                <i class="fa-solid fa-layer-group nav-icon"></i>
+                <span>Categories</span>
+            </a>
+
+            <!-- BANNERS -->
+            <a href="/admin/banners.html" class="nav-item">
+                <i class="fa-solid fa-images nav-icon"></i>
+                <span>Banners</span>
+            </a>
+
+            <!-- INVENTORY -->
+            <a href="/admin/inventory.html" class="nav-item">
+                <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                <span>Inventory</span>
+            </a>
+
+            <!-- SHIPPING -->
+            <a href="/admin/shipping.html" class="nav-item">
+                <i class="fa-solid fa-truck-moving nav-icon"></i>
+                <span>Shipping</span>
+            </a>
+
+            <!-- PAYMENTS -->
+            <a href="/admin/payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card nav-icon"></i>
+                <span>Payments</span>
+            </a>
+
+            <!-- REPORTS -->
+            <a href="/admin/reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-line nav-icon"></i>
+                <span>Reports &amp; Analytics</span>
+            </a>
+
+            <!-- ACTIVITY LOGS (ACTIVE) -->
+            <a href="/admin/activity-logs.html" class="nav-item active">
+                <i class="fa-solid fa-clock-rotate-left nav-icon"></i>
+                <span>Activity Logs</span>
+            </a>
+            <!-- NEW ORDER NOTIFICATIONS -->
+            <a href="/admin/order-notifications.html" class="nav-item">
+                <i class="fa-solid fa-bell nav-icon"></i>
+                <span>Order Notifications</span>
+                <span class="nav-order-badge" id="orderNotifCount"></span>
+            </a>
+
+            <!-- USERS -->
+            <a href="/admin/users.html" class="nav-item">
+                <i class="fa-solid fa-users nav-icon"></i>
+                <span>Users</span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/" target="_blank" class="view-store-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Store
+            </a>
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <button id="menuBtn" class="menu-btn" type="button"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1><i class="fa-solid fa-clock-rotate-left" style="color: #6366f1;"></i> Activity Logs</h1>
+                <p>Real-time audit trail and administrative activity tracking</p>
+            </div>
+            <div class="admin-profile">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-body" style="padding: 24px;">
+
+            <!-- PAGE SUB-HEADER WITH LIVE BADGE & ACTIONS -->
+            <div class="log-header">
+                <div class="log-header-left">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                        <span id="liveIndicator" class="live-pill">
+                            <span class="live-dot"></span> Live Monitoring
+                        </span>
+                        <span style="font-size: 0.82rem; color: var(--log-muted);">System events recorded automatically</span>
+                    </div>
+                </div>
+                <div class="log-header-actions">
+                    <button type="button" id="liveToggleBtn" class="btn-log-action" onclick="toggleLivePolling()">
+                        <i class="fa-solid fa-pause"></i> Pause Live
+                    </button>
+                    <button type="button" class="btn-log-action" onclick="loadStats(); loadLogs(); showToast('Logs refreshed', 'info');">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                    <button type="button" class="btn-log-action" onclick="exportLogs()">
+                        <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+                    </button>
+                    <button type="button" class="btn-log-danger" onclick="openClearModal()">
+                        <i class="fa-solid fa-trash"></i> Clear Logs
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI STATS CARDS -->
+            <div class="log-stats-grid">
+                <div class="log-stat-card c-total">
+                    <div class="log-stat-icon"><i class="fa-solid fa-list-check"></i></div>
+                    <div class="log-stat-info">
+                        <span class="log-stat-val" id="statTotal">0</span>
+                        <span class="log-stat-lbl">Total Activities</span>
+                    </div>
+                </div>
+                <div class="log-stat-card c-today">
+                    <div class="log-stat-icon"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="log-stat-info">
+                        <span class="log-stat-val" id="statToday">0</span>
+                        <span class="log-stat-lbl">Activities Today</span>
+                    </div>
+                </div>
+                <div class="log-stat-card c-security">
+                    <div class="log-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="log-stat-info">
+                        <span class="log-stat-val" id="statSecurity">0</span>
+                        <span class="log-stat-lbl">Security &amp; Settings</span>
+                    </div>
+                </div>
+                <div class="log-stat-card c-ops">
+                    <div class="log-stat-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <div class="log-stat-info">
+                        <span class="log-stat-val" id="statOps">0</span>
+                        <span class="log-stat-lbl">Orders &amp; Inventory</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOLBAR & FILTERS CARD -->
+            <div class="log-toolbar-card">
+                <div class="log-toolbar-top">
+                    <!-- Search Box -->
+                    <div class="log-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="logSearchInput" class="log-search-input" placeholder="Search by action, details, admin name, IP...">
+                    </div>
+
+                    <!-- View Switcher -->
+                    <div class="view-tabs">
+                        <button type="button" id="viewBtnTimeline" class="view-tab-btn active" onclick="switchView('timeline')">
+                            <i class="fa-solid fa-timeline"></i> Timeline View
+                        </button>
+                        <button type="button" id="viewBtnTable" class="view-tab-btn" onclick="switchView('table')">
+                            <i class="fa-solid fa-table-list"></i> Table View
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dropdown Filters Row -->
+                <div class="log-filters-row">
+                    <!-- Module Select -->
+                    <div>
+                        <select id="logModuleSelect" class="log-select">
+                            <option value="all">📁 All Modules</option>
+                            <option value="Products">📦 Products</option>
+                            <option value="Categories">🗂️ Categories</option>
+                            <option value="Inventory">📊 Inventory</option>
+                            <option value="Shipping">🚚 Shipping</option>
+                            <option value="Payments">💳 Payments</option>
+                            <option value="Banners">🖼️ Banners</option>
+                            <option value="Settings">⚙️ Settings</option>
+                            <option value="Users">👥 Users</option>
+                            <option value="Auth">🔐 Auth</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Select -->
+                    <div>
+                        <select id="logStatusSelect" class="log-select">
+                            <option value="all">⚡ All Statuses</option>
+                            <option value="success">✅ Success</option>
+                            <option value="warning">⚠️ Warning</option>
+                            <option value="danger">❌ Danger / Failed</option>
+                            <option value="info">ℹ️ Info</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Filter Select -->
+                    <div>
+                        <select id="logDateSelect" class="log-select">
+                            <option value="all">📅 All Time</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last7">Last 7 Days</option>
+                            <option value="last30">Last 30 Days</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGS DISPLAY CONTAINER -->
+            <div id="logsContainer">
+                <div class="log-empty">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <p style="margin-top: 10px;">Loading activity history...</p>
+                </div>
+            </div>
+
+            <!-- PAGINATION -->
+            <div class="log-pagination">
+                <div id="pageInfo" class="log-page-info">Showing logs...</div>
+                <div id="pageControls" class="log-page-controls"></div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- CLEAR LOGS MODAL -->
+<div class="log-modal-overlay" id="clearLogsModal">
+    <div class="log-modal">
+        <div class="log-modal-header">
+            <h3><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Clear Activity Logs</h3>
+            <button class="log-modal-close" onclick="closeClearModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="color: var(--log-text-body); font-size: 0.9rem; line-height: 1.5; margin-bottom: 16px;">
+            Select an option below to purge historical activity records. This action cannot be undone.
+        </p>
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="font-size: 0.82rem; font-weight: 700; color: #475569; text-transform: uppercase;">Purge Option</label>
+            <select id="clearOptionSelect" class="log-select" style="width: 100%; margin-top: 6px; box-sizing: border-box;">
+                <option value="30">Delete logs older than 30 days</option>
+                <option value="7">Delete logs older than 7 days</option>
+                <option value="0">Delete ALL activity logs (Full Reset)</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button class="btn-log-action" onclick="closeClearModal()">Cancel</button>
+            <button class="btn-log-danger" onclick="confirmClearLogs()"><i class="fa-solid fa-trash"></i> Confirm Purge</button>
+        </div>
+    </div>
+</div>
+
+<div id="logToastContainer"></div>
+
+<script src="../../public/js/admin-activity-logs.js?v=1"></script>
+<script src="../../public/js/admin-order-badge.js"></script>
+</body>
+</html>

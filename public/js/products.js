@@ -676,22 +676,42 @@ function getProductImage(product) {
 
 function normalizeProductImagePath(image) {
     let value = String(image || "").trim();
-    if (!value) value = "tshirt1.jpg";
-    if (value.startsWith("http://") || value.startsWith("https://")) return value;
+    if (!value) value = "shirt2.jpg";
+    if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("data:")) return value;
+
+    // Handle stringified JSON array: '["/images/123.jpg"]'
+    if (value.startsWith("[") && value.endsWith("]")) {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                value = String(parsed[0] || "").trim();
+            }
+        } catch (e) {}
+    }
 
     const isStaticDeploy = (typeof window !== "undefined") && (
         window.location.hostname.endsWith("github.io") ||
-        window.location.protocol === "file:"
+        window.location.protocol === "file:" ||
+        window.location.pathname.includes("/ecommerce-node/")
     );
-    const cleanPath = value.replace(/^\/+/, "");
 
-    if (isStaticDeploy) {
-        if (cleanPath.startsWith("public/")) return "./" + cleanPath;
-        if (cleanPath.startsWith("images/")) return "./public/" + cleanPath;
-        return "./public/images/" + cleanPath;
+    let cleanPath = value.replace(/^\/+/, "");
+    if (cleanPath.startsWith("public/")) {
+        cleanPath = cleanPath.slice(7);
     }
 
-    if (cleanPath.startsWith("public/images/")) return "/" + cleanPath.slice(7);
+    if (isStaticDeploy) {
+        const pathname = (typeof window !== "undefined" && window.location.pathname) ? window.location.pathname.replace(/\\/g, "/") : "";
+        const inAdmin = pathname.includes("/admin/");
+        const inViews = pathname.includes("/views/");
+        const prefix = inAdmin ? (inViews ? "../../public/" : "../public/") : (inViews ? "../public/" : "./public/");
+        
+        if (cleanPath.startsWith("images/")) {
+            return prefix + cleanPath;
+        }
+        return prefix + "images/" + cleanPath;
+    }
+
     if (cleanPath.startsWith("images/")) return "/" + cleanPath;
     return "/images/" + cleanPath;
 }
