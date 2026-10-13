@@ -479,177 +479,65 @@ async function loadCheckoutProducts() {
     }
 
 
-    const response =
-        await fetch(
-            "/api/products",
-            {
-                method: "GET",
-
-                headers: {
-                    "Accept":
-                        "application/json"
-                }
-            }
-        );
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Unable to load products from server."
-        );
-
-    }
-
-
-    const data =
-        await response.json();
-
-
-    console.log(
-        "Products API:",
-        data
-    );
-
-
     let products = [];
+    try {
+        const response = await fetch("/api/products", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
 
-
-    // -----------------------------------------
-    // API RESPONSE
-    // -----------------------------------------
-
-    if (
-        data &&
-        Array.isArray(
-            data.products
-        )
-    ) {
-
-        products =
-            data.products;
-
-    } else if (
-        Array.isArray(
-            data
-        )
-    ) {
-
-        products =
-            data;
-
+        if (response.ok) {
+            const data = await response.json();
+            if (data && Array.isArray(data.products)) {
+                products = data.products;
+            } else if (Array.isArray(data)) {
+                products = data;
+            }
+        }
+    } catch (fetchErr) {
+        console.warn("Could not fetch /api/products in checkout, using cart data directly:", fetchErr);
     }
-
-
-    if (
-        products.length === 0
-    ) {
-
-        throw new Error(
-            "No products were returned from the server."
-        );
-
-    }
-
 
     // -----------------------------------------
     // MATCH CART PRODUCTS
     // -----------------------------------------
+    cartProducts = cart.map(function (cartItem) {
+        const cartProductId = getProductId(cartItem);
 
-    cartProducts =
-        cart
-            .map(
-                function (cartItem) {
+        if (cartProductId === undefined || cartProductId === null) {
+            console.warn("Cart product ID missing:", cartItem);
+            return null;
+        }
 
-                    const cartProductId =
-                        getProductId(
-                            cartItem
-                        );
+        const product = products.find(function (databaseProduct) {
+            return Number(databaseProduct.id) === Number(cartProductId);
+        });
 
+        if (product) {
+            return {
+                ...product,
+                quantity: Number(cartItem.quantity) || 1,
+                size: cartItem.size || product.size || null,
+                color: cartItem.color || product.color || null,
+                price: Number(cartItem.price) || Number(product.display_price ?? product.price ?? 0) || 0,
+                image: cartItem.image || product.image || "/images/tshirt1.jpg"
+            };
+        }
 
-                    if (
-                        cartProductId ===
-                        undefined ||
-                        cartProductId ===
-                        null
-                    ) {
-
-                        console.warn(
-                            "Cart product ID missing:",
-                            cartItem
-                        );
-
-                        return null;
-
-                    }
-
-
-                    const product =
-                        products.find(
-                            function (
-                                databaseProduct
-                            ) {
-
-                                return (
-                                    Number(
-                                        databaseProduct.id
-                                    ) ===
-                                    Number(
-                                        cartProductId
-                                    )
-                                );
-
-                            }
-                        );
-
-
-                    if (!product) {
-
-                        console.warn(
-                            "Product not found:",
-                            cartItem
-                        );
-
-                        return null;
-
-                    }
-
-
-                    return {
-
-                        ...product,
-
-                        quantity:
-                            Number(
-                                cartItem.quantity
-                            ) || 1,
-
-                        size:
-                            cartItem.size ||
-                            product.size ||
-                            null,
-
-                        color:
-                            cartItem.color ||
-                            product.color ||
-                            null,
-
-                        price:
-                            Number(
-                                cartItem.price
-                            ) ||
-                            Number(
-                                product.display_price ??
-                                product.price ?? 0
-                            ) || 0
-
-                    };
-
-                }
-            )
-            .filter(
-                Boolean
-            );
+        // Safe fallback: use the item directly from cart storage
+        return {
+            id: cartProductId,
+            productId: cartProductId,
+            name: cartItem.name || "Product",
+            price: Number(cartItem.price) || 0,
+            quantity: Number(cartItem.quantity) || 1,
+            color: cartItem.color || null,
+            size: cartItem.size || null,
+            image: cartItem.image || "/images/tshirt1.jpg"
+        };
+    }).filter(Boolean);
 
 
     console.log(
