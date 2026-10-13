@@ -355,15 +355,25 @@ exports.getProductById = async (req, res) => {
             String(error).includes("ECONNREFUSED");
 
         if (isConnError) {
-            console.log("ℹ️ [Offline Mode] Serving fallback single product.");
+            console.log("ℹ️ [Offline Mode] Serving single product for id:", req.params.id);
             const targetId = req.params.id;
-            const fallbackProd = FALLBACK_PRODUCTS.find(p => String(p.id) === String(targetId)) || FALLBACK_PRODUCTS[0];
-            return res.status(200).json({
-                success: true,
-                product: fallbackProd,
-                variants: fallbackProd.variants || [],
-                reviews: [],
-                similarProducts: FALLBACK_PRODUCTS.filter(p => p.id !== fallbackProd.id).slice(0, 4)
+            const found = offlineProducts.find(p => String(p.id) === String(targetId)) ||
+                          FALLBACK_PRODUCTS.find(p => String(p.id) === String(targetId));
+
+            if (found) {
+                const displayData = buildProductDisplayData(found, found.variants || []);
+                return res.status(200).json({
+                    success: true,
+                    product: displayData,
+                    variants: found.variants || [],
+                    reviews: [],
+                    similarProducts: offlineProducts.filter(p => String(p.id) !== String(targetId)).slice(0, 4)
+                });
+            }
+
+            return res.status(404).json({
+                success: false,
+                message: "Product not found."
             });
         }
 

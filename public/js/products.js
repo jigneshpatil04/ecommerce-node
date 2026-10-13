@@ -1082,7 +1082,12 @@ async function loadProducts() {
 
         // Filter out any admin deleted product IDs recorded in localStorage
         try {
-            const deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+            let deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+            // Auto purge test product IDs
+            ["1791888286081", "1791888385736", 1791888286081, 1791888385736].forEach(tid => {
+                if (!deletedIds.includes(tid)) deletedIds.push(tid);
+            });
+            try { localStorage.setItem("mystore_deleted_product_ids", JSON.stringify(deletedIds)); } catch(e){}
             if (deletedIds && deletedIds.length > 0) {
                 allProducts = allProducts.filter(p => !deletedIds.includes(Number(p.id)) && !deletedIds.includes(String(p.id)));
             }
@@ -2131,7 +2136,8 @@ function displayProducts(
             let initialColor =
                 colorSwatchesList.length > 0 ? colorSwatchesList[0].name : "";
 
-            let initialImage = normalizeProductImagePath((colorSwatchesList.length > 0 && colorSwatchesList[0].image) ? colorSwatchesList[0].image : imagePath);
+            // Always prioritize the product's actual image if available
+            let initialImage = imagePath || normalizeProductImagePath((colorSwatchesList.length > 0 && colorSwatchesList[0].image) ? colorSwatchesList[0].image : "/images/tshirt1.jpg");
 
             let activeIdx = 0;
             if (colorSwatchesList.length > 0) {

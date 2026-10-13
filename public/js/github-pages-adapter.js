@@ -186,6 +186,14 @@
 
                 // Handle GET requests
                 let fallbackList = [];
+                // Purge test IDs
+                try {
+                    let deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+                    ["1791888286081", "1791888385736", 1791888286081, 1791888385736].forEach(tid => {
+                        if (!deletedIds.includes(tid)) deletedIds.push(tid);
+                    });
+                    localStorage.setItem("mystore_deleted_product_ids", JSON.stringify(deletedIds));
+                } catch(e){}
                 try {
                     const stored = localStorage.getItem("mystore_catalog_products");
                     if (stored) {
