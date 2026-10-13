@@ -308,14 +308,16 @@
 
         let html = "";
         matches.forEach(item => {
-            const img = item.image ? (item.image.startsWith("http") || item.image.startsWith("/") || item.image.startsWith(".") ? item.image : `/images/${item.image}`) : "/images/shirts1.jpg";
+            const img = (typeof normalizeProductImagePath === "function")
+                ? normalizeProductImagePath(item.image || "shirts1.jpg")
+                : (window.fixGitHubPagesUrl ? window.fixGitHubPagesUrl(item.image || "/images/shirts1.jpg") : (item.image || "./public/images/shirts1.jpg"));
             const price = item.price ? `₹${Number(item.price).toFixed(2)}` : "";
             const cat = item.category ? `• ${item.category}` : "";
             const link = `./product-details.html?id=${encodeURIComponent(item.id)}`;
 
             html += `
                 <a href="${link}" class="nav-search-suggestion-item">
-                    <img src="${escapeHtml(img)}" alt="${escapeHtml(item.name)}" class="nav-search-thumb" onerror="this.src='/images/shirts1.jpg'">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(item.name)}" class="nav-search-thumb" onerror="this.src=(window.fixGitHubPagesUrl ? window.fixGitHubPagesUrl('/images/shirts1.jpg') : './public/images/shirts1.jpg')">
                     <div class="nav-search-info">
                         <div class="nav-search-title">${escapeHtml(item.name)}</div>
                         <div class="nav-search-meta">
@@ -354,7 +356,7 @@
         ];
 
         try {
-            if (window.location.protocol !== "file:") {
+            if (window.location.protocol !== "file:" && !window.location.hostname.endsWith("github.io")) {
                 const res = await fetch("/api/products");
                 if (res.ok) {
                     const data = await res.json();

@@ -531,25 +531,23 @@ function getProductImage(product) {
 
 
     const categoryDefaults = {
-        "t-shirt": "/images/tshirt1.jpg",
-        "tshirt": "/images/tshirt1.jpg",
-        shirt: "/images/shirt2.jpg",
-        shirts: "/images/shirt2.jpg",
-        jeans: "/images/jeans3.jpg",
-        pants: "/images/pants cargo.jpg",
-        jackets: "/images/jacket1.jpg",
-        jacket: "/images/jacket1.jpg",
-        hoodie: "/images/jacket5.jpg",
-        hoodies: "/images/jacket5.jpg",
+        "t-shirt": "tshirt1.jpg",
+        "tshirt": "tshirt1.jpg",
+        shirt: "shirt2.jpg",
+        shirts: "shirt2.jpg",
+        jeans: "jeans3.jpg",
+        pants: "pants cargo.jpg",
+        jackets: "jacket1.jpg",
+        jacket: "jacket1.jpg",
+        hoodie: "jacket5.jpg",
+        hoodies: "jacket5.jpg",
         shorts: "/images/pants cargo.jpg",
         shoes: "/images/jacket2.jpg",
         accessories: "/images/jacket3.jpg"
     };
 
 
-    const defaultImage =
-        categoryDefaults[category] ||
-        "/images/shirt2.jpg";
+    const defaultImage = normalizeProductImagePath(categoryDefaults[category] || "shirt2.jpg");
 
 
     if (!product) {
@@ -2243,10 +2241,7 @@ function displayProducts(
             // IMAGE
             // ------------------------------------------------
 
-            const imagePath =
-                getProductImage(
-                    product
-                );
+            const imagePath = normalizeProductImagePath(getProductImage(product));
 
 
             console.log(
@@ -2264,10 +2259,7 @@ function displayProducts(
             let initialColor =
                 colorSwatchesList.length > 0 ? colorSwatchesList[0].name : "";
 
-            let initialImage =
-                (colorSwatchesList.length > 0 && colorSwatchesList[0].image)
-                    ? colorSwatchesList[0].image
-                    : imagePath;
+            let initialImage = normalizeProductImagePath((colorSwatchesList.length > 0 && colorSwatchesList[0].image) ? colorSwatchesList[0].image : imagePath);
 
             let activeIdx = 0;
             if (colorSwatchesList.length > 0) {
@@ -2330,7 +2322,7 @@ function displayProducts(
                         style="cursor:pointer;"
                         onerror="
                             this.onerror=null;
-                            this.src='/images/shirts1.jpg';
+                            this.src=normalizeProductImagePath('shirts1.jpg');
                         "
                     >
 
