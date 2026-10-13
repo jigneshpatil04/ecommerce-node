@@ -334,7 +334,9 @@ exports.getProducts = async (req, res) => {
         );
 
         const isConnError = error.code === 'ECONNREFUSED' ||
-            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED'));
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
 
         if (isConnError) {
             console.warn("⚠️ MySQL Database is offline (ECONNREFUSED). Serving fallback products.");
@@ -469,7 +471,9 @@ exports.getProductById = async (req, res) => {
         );
 
         const isConnError = error.code === 'ECONNREFUSED' ||
-            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED'));
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
 
         if (isConnError) {
             console.warn("⚠️ MySQL Database is offline (ECONNREFUSED). Serving fallback single product.");

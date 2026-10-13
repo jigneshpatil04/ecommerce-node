@@ -166,7 +166,7 @@ exports.getPublicBanners = async (req, res) => {
             banners
         });
     } catch (error) {
-        if (error.code === 'ECONNREFUSED' || (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED'))) {
+        if (error.code === 'ECONNREFUSED' || error.name === 'AggregateError' || (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) || String(error).includes("ECONNREFUSED")) {
             return res.json({
                 success: true,
                 count: 0,
