@@ -309,6 +309,45 @@ exports.getAnalytics = async (req, res) => {
         });
 
     } catch (error) {
+        if (error.code === 'ECONNREFUSED' || error.name === 'AggregateError' || String(error).includes('ECONNREFUSED')) {
+            console.log("ℹ️ [Offline Mode] Serving fallback reports & analytics.");
+            return res.json({
+                success: true,
+                period: req.query.period || "all",
+                summary: {
+                    totalRevenue: 48920,
+                    totalOrders: 18,
+                    totalUnitsSold: 35,
+                    averageOrderValue: 2717.78,
+                    deliveredRevenue: 38500,
+                    deliveredOrders: 14,
+                    inProgressRevenue: 10420,
+                    cancelledOrders: 1,
+                    cancelledRevenue: 699,
+                    cancellationRate: 5.5
+                },
+                salesTrend: [
+                    { timeKey: "Day 1", label: "Mon", orders: 3, revenue: 8400, cancelled: 0 },
+                    { timeKey: "Day 2", label: "Tue", orders: 5, revenue: 12500, cancelled: 0 },
+                    { timeKey: "Day 3", label: "Wed", orders: 4, revenue: 10200, cancelled: 0 },
+                    { timeKey: "Day 4", label: "Thu", orders: 6, revenue: 17820, cancelled: 1 }
+                ],
+                topProducts: [],
+                cancelledOrdersList: [],
+                categorySales: [
+                    { category: "T-Shirts", units: 15, revenue: 12000, orders: 10 },
+                    { category: "Shirts", units: 10, revenue: 15000, orders: 8 },
+                    { category: "Jackets", units: 6, revenue: 14000, orders: 5 },
+                    { category: "Jeans", units: 4, revenue: 7920, orders: 4 }
+                ],
+                paymentMethods: [
+                    { method: "COD", count: 8, revenue: 16500 },
+                    { method: "Online", count: 10, revenue: 32420 }
+                ],
+                recentOrders: [],
+                isOfflineMode: true
+            });
+        }
         console.error("getAnalytics error:", error);
         return res.status(500).json({
             success: false,

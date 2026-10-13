@@ -227,7 +227,7 @@ const getOrderNotifications = async (req, res) => {
         });
 
     } catch (err) {
-        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError') {
+        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError' || String(err).includes('ECONNREFUSED')) {
             return res.json({
                 success: true,
                 notifications: [],
@@ -255,7 +255,7 @@ const getUnreadCount = async (req, res) => {
         );
         res.json({ success: true, count });
     } catch (err) {
-        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError') {
+        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError' || String(err).includes('ECONNREFUSED')) {
             return res.json({ success: true, count: 0, isOfflineMode: true });
         }
         console.error("getUnreadCount error:", err);

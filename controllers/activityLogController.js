@@ -168,6 +168,17 @@ const getActivityLogs = async (req, res) => {
             totalPages: Math.ceil(total / limitNum) || 1
         });
     } catch (err) {
+        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError' || String(err).includes('ECONNREFUSED')) {
+            return res.json({
+                success: true,
+                logs: [],
+                total: 0,
+                page: 1,
+                limit: 15,
+                totalPages: 1,
+                isOfflineMode: true
+            });
+        }
         console.error("getActivityLogs error:", err);
         res.status(500).json({ success: false, message: "Server error fetching activity logs", error: err.message });
     }
@@ -214,6 +225,20 @@ const getActivityStats = async (req, res) => {
             }
         });
     } catch (err) {
+        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError' || String(err).includes('ECONNREFUSED')) {
+            return res.json({
+                success: true,
+                stats: {
+                    total: 0,
+                    today: 0,
+                    securitySettings: 0,
+                    ordersOps: 0,
+                    moduleCounts: [],
+                    statusCounts: []
+                },
+                isOfflineMode: true
+            });
+        }
         console.error("getActivityStats error:", err);
         res.status(500).json({ success: false, message: "Error fetching stats", error: err.message });
     }

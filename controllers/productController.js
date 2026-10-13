@@ -1163,140 +1163,54 @@ exports.deleteProduct = async (req, res) => {
     console.log("DELETE PRODUCT");
     console.log("=================================");
 
-
     try {
 
-        const id =
-            req.params.id;
+        const id = req.params.id;
 
-
-        // ======================================
-        // DELETE PRODUCT
-        // ======================================
-
-        const [result] =
-            await db.query(
-                `
-                DELETE FROM products
-                WHERE id = ?
-                `,
-                [id]
-            );
-
-
-        // ======================================
-        // PRODUCT NOT FOUND
-        // ======================================
-
-        if (
-            result.affectedRows === 0
-        ) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message:
-                    "Product not found."
-
-            });
-
-        }
-
-
-        // ======================================
-        // SUCCESS
-        // ======================================
-
-        return res.status(200).json({
-
-            success: true,
-
-            message:
-                "Product deleted successfully."
-
-        });
-
-    }
-    catch (error) {
-
-        console.error(
-            "DELETE PRODUCT ERROR:",
-            error
+        const [result] = await db.query(
+            `DELETE FROM products WHERE id = ?`,
+            [id]
         );
 
-        return res.status(500).json({
-
-            success: false,
-
-            message:
-                "Failed to delete product.",
-
-            error:
-                error.message
-
-        });
-
-    }
-
-};
-
-
-// =====================================================
-// DELETE PRODUCT
-// =====================================================
-
-exports.deleteProduct = async (req, res) => {
-
-    try {
-
-        const productId =
-            req.params.id;
-
-
-        const [result] =
-            await db.execute(
-                "DELETE FROM products WHERE id = ?",
-                [productId]
-            );
-
-
         if (result.affectedRows === 0) {
-
             return res.status(404).json({
-
-                message:
-                    "Product not found."
-
+                success: false,
+                message: "Product not found."
             });
-
         }
 
-
-        res.json({
-
+        return res.status(200).json({
             success: true,
-
-            message:
-                "Product deleted successfully."
-
+            message: "Product deleted successfully."
         });
-
 
     } catch (error) {
 
-        console.error(
-            "DELETE PRODUCT ERROR:",
-            error
-        );
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
 
-        res.status(500).json({
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Simulating product delete.");
+            const delId = req.params.id;
+            const idx = FALLBACK_PRODUCTS.findIndex(p => String(p.id) === String(delId));
+            if (idx !== -1) {
+                FALLBACK_PRODUCTS.splice(idx, 1);
+            }
+            return res.status(200).json({
+                success: true,
+                message: "Product deleted successfully (offline mode).",
+                isOfflineMode: true
+            });
+        }
 
+        console.error("DELETE PRODUCT ERROR:", error.message || error);
+
+        return res.status(500).json({
             success: false,
-
-            message:
-                "Failed to delete product."
-
+            message: "Failed to delete product.",
+            error: error.message
         });
 
     }
