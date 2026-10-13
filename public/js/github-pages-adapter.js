@@ -109,10 +109,75 @@
                             deletedIds.push(Number(delId) || delId);
                             localStorage.setItem("mystore_deleted_product_ids", JSON.stringify(deletedIds));
                         }
+                        // Also remove from stored catalog
+                        let stored = JSON.parse(localStorage.getItem("mystore_catalog_products") || "[]");
+                        stored = stored.filter(p => String(p.id) !== String(delId));
+                        localStorage.setItem("mystore_catalog_products", JSON.stringify(stored));
                     } catch (e) {}
                     return Promise.resolve(new Response(JSON.stringify({
                         success: true,
                         message: "Product deleted successfully."
+                    }), {
+                        status: 200,
+                        headers: { "Content-Type": "application/json" }
+                    }));
+                }
+
+                // Handle product creation
+                if (method === "POST") {
+                    const newId = Date.now();
+                    let prodData = { id: newId, name: "New Product", price: 0, category: "", stock: 0 };
+                    try {
+                        if (init && init.body instanceof FormData) {
+                            prodData.name = init.body.get("name") || "New Product";
+                            prodData.price = Number(init.body.get("price")) || 0;
+                            prodData.category = init.body.get("category") || "";
+                            prodData.description = init.body.get("description") || "";
+                            prodData.stock = Number(init.body.get("stock")) || 0;
+                        } else if (init && typeof init.body === "string") {
+                            const parsed = JSON.parse(init.body);
+                            Object.assign(prodData, parsed);
+                        }
+                    } catch (e) {}
+
+                    try {
+                        let catalog = JSON.parse(localStorage.getItem("mystore_catalog_products") || "[]");
+                        catalog.unshift(prodData);
+                        localStorage.setItem("mystore_catalog_products", JSON.stringify(catalog));
+
+                        // Remove this id from deleted IDs if present
+                        let deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+                        deletedIds = deletedIds.filter(id => String(id) !== String(newId));
+                        localStorage.setItem("mystore_deleted_product_ids", JSON.stringify(deletedIds));
+                    } catch (e) {}
+
+                    return Promise.resolve(new Response(JSON.stringify({
+                        success: true,
+                        message: "Product added successfully.",
+                        productId: newId,
+                        id: newId,
+                        product: prodData
+                    }), {
+                        status: 201,
+                        headers: { "Content-Type": "application/json" }
+                    }));
+                }
+
+                // Handle product update
+                if (method === "PUT") {
+                    const parts = resource.split("?")[0].split("/");
+                    const updId = parts[parts.length - 1];
+                    try {
+                        let catalog = JSON.parse(localStorage.getItem("mystore_catalog_products") || "[]");
+                        const item = catalog.find(p => String(p.id) === String(updId));
+                        if (item && init && typeof init.body === "string") {
+                            Object.assign(item, JSON.parse(init.body));
+                            localStorage.setItem("mystore_catalog_products", JSON.stringify(catalog));
+                        }
+                    } catch (e) {}
+                    return Promise.resolve(new Response(JSON.stringify({
+                        success: true,
+                        message: "Product updated successfully."
                     }), {
                         status: 200,
                         headers: { "Content-Type": "application/json" }
@@ -167,6 +232,27 @@
                 return Promise.resolve(new Response(JSON.stringify({
                     success: true,
                     products: fallbackList
+                }), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" }
+                }));
+            }
+
+            if (resource.startsWith("/api/variants") || resource.endsWith("/api/variants")) {
+                const method = (init && init.method ? init.method.toUpperCase() : "GET");
+                if (method === "POST") {
+                    return Promise.resolve(new Response(JSON.stringify({
+                        success: true,
+                        message: "Variant created successfully",
+                        id: Math.floor(1000 + Math.random() * 9000)
+                    }), {
+                        status: 201,
+                        headers: { "Content-Type": "application/json" }
+                    }));
+                }
+                return Promise.resolve(new Response(JSON.stringify({
+                    success: true,
+                    variants: []
                 }), {
                     status: 200,
                     headers: { "Content-Type": "application/json" }

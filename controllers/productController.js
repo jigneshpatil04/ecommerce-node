@@ -18,6 +18,7 @@ try {
 // HELPERS & OFFLINE FALLBACKS
 // ==========================================
 
+let offlineProducts = [];
 const FALLBACK_PRODUCTS = [];
 
 function buildProductDisplayData(product, variants = [], lastOrderedColor = null) {
@@ -216,10 +217,11 @@ exports.getProducts = async (req, res) => {
             String(error).includes("ECONNREFUSED");
 
         if (isConnError) {
-            console.log("ℹ️ [Offline Mode] Serving fallback catalog products.");
+            console.log("ℹ️ [Offline Mode] Database offline. Serving offline product catalog.");
+            const all = [...offlineProducts, ...FALLBACK_PRODUCTS];
             return res.status(200).json({
                 success: true,
-                products: FALLBACK_PRODUCTS
+                products: all.map(p => buildProductDisplayData(p, []))
             });
         }
 
@@ -400,6 +402,9 @@ exports.createProduct = async (req, res) => {
     console.log("=================================");
 
 
+    let imagePath = null;
+    let productDetailsVal = null;
+
     try {
 
         // ======================================
@@ -547,7 +552,7 @@ exports.createProduct = async (req, res) => {
         const uploadedProductImages =
             req.files?.productImages || [];
 
-        let imagePath = null;
+        imagePath = null;
 
         if (uploadedProductImages.length > 0) {
 
@@ -580,7 +585,7 @@ exports.createProduct = async (req, res) => {
 
 
         // ======================================
-        let productDetailsVal = req.body.product_details || null;
+        productDetailsVal = req.body.product_details || null;
         if (productDetailsVal && typeof productDetailsVal === "object") {
             try { productDetailsVal = JSON.stringify(productDetailsVal); } catch (e) {}
         }
@@ -685,24 +690,42 @@ exports.createProduct = async (req, res) => {
 
     }
     catch (error) {
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
 
-        console.error(
-            "CREATE PRODUCT ERROR:",
-            error
-        );
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Database offline. Saving created product in offline memory.");
+            const simId = Date.now();
+            const newProd = {
+                id: simId,
+                name: (req.body?.name || "").trim(),
+                description: req.body?.description || "",
+                price: Number(req.body?.price || 0),
+                category: req.body?.category || "",
+                image: imagePath || req.body?.image || null,
+                stock: Number(req.body?.stock || 0),
+                product_details: productDetailsVal,
+                created_at: new Date().toISOString()
+            };
+            offlineProducts.unshift(newProd);
+
+            return res.status(201).json({
+                success: true,
+                message: "Product added successfully (offline mode).",
+                productId: simId,
+                product: newProd
+            });
+        }
+
+        console.error("CREATE PRODUCT ERROR:", error.message || error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Failed to create product.",
-
-            error:
-                error.message
-
+            message: "Failed to create product.",
+            error: error.message
         });
-
     }
 
 };
@@ -1010,24 +1033,34 @@ exports.updateProduct = async (req, res) => {
 
     }
     catch (error) {
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
 
-        console.error(
-            "UPDATE PRODUCT ERROR:",
-            error
-        );
+        if (isConnError) {
+            const updId = req.params.id;
+            const existing = offlineProducts.find(p => String(p.id) === String(updId));
+            if (existing) {
+                if (req.body.name) existing.name = req.body.name.trim();
+                if (req.body.description !== undefined) existing.description = req.body.description;
+                if (req.body.price !== undefined) existing.price = Number(req.body.price);
+                if (req.body.category !== undefined) existing.category = req.body.category;
+                if (req.body.stock !== undefined) existing.stock = Number(req.body.stock);
+            }
+            return res.status(200).json({
+                success: true,
+                message: "Product updated successfully (offline mode)."
+            });
+        }
+
+        console.error("UPDATE PRODUCT ERROR:", error.message || error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Failed to update product.",
-
-            error:
-                error.message
-
+            message: "Failed to update product.",
+            error: error.message
         });
-
     }
 
 };
@@ -1076,6 +1109,7 @@ exports.deleteProduct = async (req, res) => {
         if (isConnError) {
             console.log("ℹ️ [Offline Mode] Simulating product delete.");
             const delId = req.params.id;
+            offlineProducts = offlineProducts.filter(p => String(p.id) !== String(delId));
             const idx = FALLBACK_PRODUCTS.findIndex(p => String(p.id) === String(delId));
             if (idx !== -1) {
                 FALLBACK_PRODUCTS.splice(idx, 1);
