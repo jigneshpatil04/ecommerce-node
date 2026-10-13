@@ -102,7 +102,9 @@ async function initBannerTable() {
 
         isTableInitialized = true;
     } catch (err) {
-        console.error("Banner Table Init Warning:", err.message);
+        if (err.code !== 'ECONNREFUSED' && err.name !== 'AggregateError') {
+            console.error("Banner Table Init Warning:", err.message);
+        }
     }
 }
 

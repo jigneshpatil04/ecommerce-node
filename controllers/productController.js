@@ -328,23 +328,23 @@ exports.getProducts = async (req, res) => {
     }
     catch (error) {
 
-        console.error(
-            "GET PRODUCTS ERROR:",
-            error.message || error
-        );
-
         const isConnError = error.code === 'ECONNREFUSED' ||
             error.name === 'AggregateError' ||
             (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
             String(error).includes("ECONNREFUSED");
 
         if (isConnError) {
-            console.warn("⚠️ MySQL Database is offline (ECONNREFUSED). Serving fallback products.");
+            console.log("ℹ️ [Offline Mode] Serving fallback catalog products.");
             return res.status(200).json({
                 success: true,
                 products: FALLBACK_PRODUCTS
             });
         }
+
+        console.error(
+            "GET PRODUCTS ERROR:",
+            error.message || error
+        );
 
         return res.status(500).json({
 
@@ -465,18 +465,13 @@ exports.getProductById = async (req, res) => {
     }
     catch (error) {
 
-        console.error(
-            "GET PRODUCT ERROR:",
-            error.message || error
-        );
-
         const isConnError = error.code === 'ECONNREFUSED' ||
             error.name === 'AggregateError' ||
             (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
             String(error).includes("ECONNREFUSED");
 
         if (isConnError) {
-            console.warn("⚠️ MySQL Database is offline (ECONNREFUSED). Serving fallback single product.");
+            console.log("ℹ️ [Offline Mode] Serving fallback single product.");
             const targetId = req.params.id;
             const fallbackProd = FALLBACK_PRODUCTS.find(p => String(p.id) === String(targetId)) || FALLBACK_PRODUCTS[0];
             return res.status(200).json({
@@ -487,6 +482,11 @@ exports.getProductById = async (req, res) => {
                 similarProducts: FALLBACK_PRODUCTS.filter(p => p.id !== fallbackProd.id).slice(0, 4)
             });
         }
+
+        console.error(
+            "GET PRODUCT ERROR:",
+            error.message || error
+        );
 
         return res.status(500).json({
 

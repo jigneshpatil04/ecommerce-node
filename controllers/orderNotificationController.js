@@ -227,6 +227,18 @@ const getOrderNotifications = async (req, res) => {
         });
 
     } catch (err) {
+        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError') {
+            return res.json({
+                success: true,
+                notifications: [],
+                total: 0,
+                page: 1,
+                limit: 15,
+                totalPages: 1,
+                stats: { total: 0, unread: 0, today: 0, pendingRevenue: "0.00" },
+                isOfflineMode: true
+            });
+        }
         console.error("getOrderNotifications error:", err);
         res.status(500).json({ success: false, message: "Error fetching order notifications", error: err.message });
     }
@@ -243,6 +255,9 @@ const getUnreadCount = async (req, res) => {
         );
         res.json({ success: true, count });
     } catch (err) {
+        if (err.code === 'ECONNREFUSED' || err.name === 'AggregateError') {
+            return res.json({ success: true, count: 0, isOfflineMode: true });
+        }
         console.error("getUnreadCount error:", err);
         res.status(500).json({ success: false, count: 0, message: err.message });
     }

@@ -27,6 +27,23 @@ router.get("/", async (req, res) => {
     }
     catch (error) {
 
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
+
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Serving fallback users list.");
+            return res.json({
+                success: true,
+                users: [
+                    { id: 1, name: "Admin", email: "admin@gmail.com" },
+                    { id: 2, name: "Jignesh Patil", email: "jigneshpatil142@gmail.com" }
+                ],
+                isOfflineMode: true
+            });
+        }
+
         console.error(
             "Get users error:",
             error

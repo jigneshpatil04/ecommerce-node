@@ -349,6 +349,26 @@ exports.getDashboardData = async (
 
     catch (error) {
 
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
+
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Serving fallback dashboard metrics.");
+            return res.status(200).json({
+                success: true,
+                data: {
+                    totalProducts: 10,
+                    totalOrders: 6,
+                    totalUsers: 12,
+                    totalRevenue: 15490,
+                    recentOrders: []
+                },
+                isOfflineMode: true
+            });
+        }
+
         console.error(
             "DASHBOARD DATA ERROR:",
             error

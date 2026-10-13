@@ -4,6 +4,40 @@
 
 const db = require("../config/db");
 
+// In-memory fallback orders for offline mode
+const offlineOrders = [
+    {
+        id: 1001,
+        user_id: 1,
+        customer_name: "Jignesh Patil",
+        email: "jigneshpatil142@gmail.com",
+        phone: "9322159403",
+        address: "12, Ring Road",
+        city: "Dhule",
+        state: "Maharashtra",
+        pincode: "425409",
+        payment_method: "COD",
+        subtotal: 599,
+        shipping: 50,
+        total: 649,
+        status: "pending",
+        created_at: new Date().toISOString(),
+        items: [
+            {
+                id: 1,
+                order_id: 1001,
+                product_id: 62,
+                product_name: "Urban Graphic Tee",
+                price: 599,
+                quantity: 1,
+                color: "White",
+                size: "M",
+                image: "/images/tshirt2.jpg"
+            }
+        ]
+    }
+];
+
 
 // ==========================================
 // CREATE ORDER
@@ -748,6 +782,55 @@ exports.createOrder = async (req, res) => {
 
         }
 
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
+
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Database offline. Saving order in mock storage.");
+            const newOrderId = Math.floor(100000 + Math.random() * 900000);
+            const b = req.body || {};
+            const newOrder = {
+                id: newOrderId,
+                user_id: b.user_id || b.userId || 1,
+                customer_name: b.customerName || b.customer_name || "Customer",
+                email: b.email || "customer@example.com",
+                phone: b.phone || "9999999999",
+                address: b.address || "",
+                city: b.city || "",
+                state: b.state || "",
+                pincode: b.pincode || "",
+                payment_method: b.paymentMethod || "COD",
+                subtotal: Number(b.subtotal) || 0,
+                shipping: Number(b.shipping) || 0,
+                total: Number(b.total) || 0,
+                status: "pending",
+                created_at: new Date().toISOString(),
+                items: Array.isArray(b.products) ? b.products.map((p, i) => ({
+                    id: i + 1,
+                    order_id: newOrderId,
+                    product_id: p.productId || p.id || 1,
+                    product_name: p.name || "Product",
+                    price: p.price || 0,
+                    quantity: p.quantity || 1,
+                    color: p.color || null,
+                    size: p.size || null,
+                    image: p.image || "/images/tshirt1.jpg"
+                })) : []
+            };
+            offlineOrders.unshift(newOrder);
+
+            return res.status(201).json({
+                success: true,
+                message: "Order placed successfully (Offline Mode).",
+                orderId: newOrderId,
+                order_id: newOrderId,
+                id: newOrderId,
+                user_id: newOrder.user_id,
+                isOfflineMode: true
+            });
+        }
 
         return res.status(500).json({
 
@@ -884,21 +967,22 @@ exports.getOrders = async (req, res) => {
 
     catch (error) {
 
-        console.error("");
-        console.error(
-            "================================="
-        );
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
 
-        console.error(
-            "GET ORDERS ERROR"
-        );
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Serving offline orders list.");
+            return res.status(200).json({
+                success: true,
+                count: offlineOrders.length,
+                orders: offlineOrders,
+                isOfflineMode: true
+            });
+        }
 
-        console.error(
-            "================================="
-        );
-
-        console.error(error);
-
+        console.error("GET ORDERS ERROR:", error);
 
         return res.status(500).json({
 
@@ -1053,6 +1137,21 @@ exports.getUserOrders = async (req, res) => {
 
 
     catch (error) {
+
+        const isConnError = error.code === 'ECONNREFUSED' ||
+            error.name === 'AggregateError' ||
+            (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED')) ||
+            String(error).includes("ECONNREFUSED");
+
+        if (isConnError) {
+            console.log("ℹ️ [Offline Mode] Serving user offline orders.");
+            return res.status(200).json({
+                success: true,
+                count: offlineOrders.length,
+                orders: offlineOrders,
+                isOfflineMode: true
+            });
+        }
 
         console.error(
             "Get User Orders Error:",
