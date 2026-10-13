@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
         logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("adminToken");
             localStorage.removeItem("admin");
-            window.location.href = "/login.html";
+            window.location.href = "./login.html";
         });
     }
 });

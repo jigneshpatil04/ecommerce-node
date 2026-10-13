@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (confirm("Are you sure you want to log out?")) {
                 localStorage.removeItem("adminToken");
                 localStorage.removeItem("admin");
-                window.location.href = "/login.html";
+                window.location.href = "./login.html";
             }
         });
     }

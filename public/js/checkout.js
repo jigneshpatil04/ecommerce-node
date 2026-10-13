@@ -1594,8 +1594,7 @@ function showOrderSuccess(orderId) {
     );
 
 
-    window.location.href =
-        `/order-details.html?id=${encodeURIComponent(
+    window.location.href = `./order-details.html?id=${encodeURIComponent(
             orderId
         )}`;
 
@@ -1619,8 +1618,7 @@ function setupContinueShopping() {
         "click",
         function () {
 
-            window.location.href =
-                "/products.html";
+            window.location.href = "./products.html";
 
         }
     );
@@ -2037,8 +2035,7 @@ async function placeOrder(event) {
             );
 
 
-            window.location.href =
-                "/products.html";
+            window.location.href = "./products.html";
 
         }
 
@@ -2771,8 +2768,7 @@ function submitRatingHandler() {
     setTimeout(
         function () {
 
-            window.location.href =
-                "/categories.html";
+            window.location.href = "./categories.html";
 
         },
         500

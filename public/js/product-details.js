@@ -1649,7 +1649,7 @@ async function loadRelatedProducts(currentProduct) {
             const pImg = getProductImage(p);
 
             return `
-                <div class="related-product-card" onclick="window.location.href='/product-details.html?id=${pId}'">
+                <div class="related-product-card" onclick="window.location.href = "./product-details.html?id=${pId}'">
                     <div class="related-card-image-wrap">
                         <img
                             src="${escapeHTML(pImg)}"
@@ -3578,8 +3578,7 @@ async function submitReview() {
         );
 
 
-        window.location.href =
-            "/login.html";
+        window.location.href = "./login.html";
 
 
         return;
@@ -4148,8 +4147,7 @@ async function addToWishlist(productId) {
         );
 
 
-        window.location.href =
-            "/login.html";
+        window.location.href = "./login.html";
 
 
         return;
@@ -5141,7 +5139,7 @@ async function toggleDetailWishlist(productId, event) {
 
     if (!userId) {
         alert("Please login to add products to your wishlist.");
-        window.location.href = "/login.html";
+        window.location.href = "./login.html";
         return;
     }
 

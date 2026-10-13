@@ -1088,7 +1088,7 @@ async function submitProductReviewModal() {
     const userId = getUserId();
     if (!userId) {
         alert("Please log in to submit a review.");
-        window.location.href = "/login.html";
+        window.location.href = "./login.html";
         return;
     }
     if (!currentReviewProductId) {

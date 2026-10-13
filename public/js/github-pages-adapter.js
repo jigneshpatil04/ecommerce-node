@@ -115,6 +115,20 @@
                 }));
             }
 
+            
+            if (resource.includes("/api/orders")) {
+                const demoOrderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+                return Promise.resolve(new Response(JSON.stringify({
+                    success: true,
+                    orderId: demoOrderId,
+                    order_id: demoOrderId,
+                    id: demoOrderId,
+                    message: "Order placed successfully!"
+                }), {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" }
+                }));
+            }
             if (resource.includes("/api/admin/dashboard")) {
                 return Promise.resolve(new Response(JSON.stringify({
                     success: true,
@@ -149,4 +163,21 @@
         }
         return originalFetch.call(this, resource, init);
     };
+
+    // Intercept all <a> link clicks pointing to root "/" or "/page.html"
+    document.addEventListener("click", function (e) {
+        const link = e.target.closest("a");
+        if (link && link.getAttribute("href")) {
+            const rawHref = link.getAttribute("href").trim();
+            if (rawHref.startsWith("http://") || rawHref.startsWith("https://") || rawHref.startsWith("#") || rawHref.startsWith("javascript:")) {
+                return;
+            }
+            if (rawHref.startsWith("/") && !rawHref.startsWith("//")) {
+                e.preventDefault();
+                const target = (rawHref === "/" || rawHref === "/index" || rawHref === "/index.html") ? "index.html" : rawHref.replace(/^\/+/, "");
+                window.location.href = rootPrefix + target;
+            }
+        }
+    }, true);
+
 })();
