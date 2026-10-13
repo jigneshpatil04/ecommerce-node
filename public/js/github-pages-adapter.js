@@ -97,14 +97,72 @@
     window.fetch = function (resource, init) {
         if (typeof resource === "string") {
             if (resource.startsWith("/api/products") || resource.endsWith("/api/products")) {
-                const fallbackList = (typeof DEFAULT_FALLBACK_PRODUCTS !== "undefined" && Array.isArray(DEFAULT_FALLBACK_PRODUCTS))
-                    ? DEFAULT_FALLBACK_PRODUCTS
-                    : [
-                        { id: 61, name: "Premium Luxury T-Shirt", category: "T-Shirts", price: 499, image: prefix + "images/tshirt1.jpg", stock: 95, rating: 4.8 },
-                        { id: 62, name: "Designer Embroidered T-Shirt", category: "T-Shirts", price: 699, image: prefix + "images/tshirt2.jpg", stock: 111, rating: 4.9 },
-                        { id: 63, name: "Minimalist Round Neck Tee", category: "T-Shirts", price: 450, image: prefix + "images/tshirt3.jpg", stock: 50, rating: 4.5 },
-                        { id: 64, name: "Athletic Performance Tee", category: "T-Shirts", price: 599, image: prefix + "images/tshirt4.jpg", stock: 58, rating: 4.8 }
-                    ];
+                const method = (init && init.method ? init.method.toUpperCase() : "GET");
+
+                // Handle product deletion on GitHub Pages / static
+                if (method === "DELETE") {
+                    const parts = resource.split("?")[0].split("/");
+                    const delId = parts[parts.length - 1];
+                    try {
+                        const deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+                        if (!deletedIds.includes(Number(delId)) && !deletedIds.includes(String(delId))) {
+                            deletedIds.push(Number(delId) || delId);
+                            localStorage.setItem("mystore_deleted_product_ids", JSON.stringify(deletedIds));
+                        }
+                    } catch (e) {}
+                    return Promise.resolve(new Response(JSON.stringify({
+                        success: true,
+                        message: "Product deleted successfully."
+                    }), {
+                        status: 200,
+                        headers: { "Content-Type": "application/json" }
+                    }));
+                }
+
+                // Handle GET requests
+                let fallbackList = [];
+                try {
+                    const stored = localStorage.getItem("mystore_catalog_products");
+                    if (stored) {
+                        fallbackList = JSON.parse(stored);
+                    } else if (typeof DEFAULT_FALLBACK_PRODUCTS !== "undefined" && Array.isArray(DEFAULT_FALLBACK_PRODUCTS)) {
+                        fallbackList = DEFAULT_FALLBACK_PRODUCTS;
+                    }
+                } catch (e) {
+                    fallbackList = [];
+                }
+
+                // Exclude any deleted products
+                try {
+                    const deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+                    if (deletedIds && deletedIds.length > 0) {
+                        fallbackList = fallbackList.filter(p => !deletedIds.includes(Number(p.id)) && !deletedIds.includes(String(p.id)));
+                    }
+                } catch (e) {}
+
+                // If asking for a single product e.g. /api/products/61
+                const parts = resource.split("?")[0].split("/");
+                const lastPart = parts[parts.length - 1];
+                if (lastPart && lastPart !== "products" && !isNaN(Number(lastPart))) {
+                    const single = fallbackList.find(p => String(p.id) === String(lastPart));
+                    if (single) {
+                        return Promise.resolve(new Response(JSON.stringify({
+                            success: true,
+                            product: single
+                        }), {
+                            status: 200,
+                            headers: { "Content-Type": "application/json" }
+                        }));
+                    } else {
+                        return Promise.resolve(new Response(JSON.stringify({
+                            success: false,
+                            message: "Product not found."
+                        }), {
+                            status: 404,
+                            headers: { "Content-Type": "application/json" }
+                        }));
+                    }
+                }
 
                 return Promise.resolve(new Response(JSON.stringify({
                     success: true,

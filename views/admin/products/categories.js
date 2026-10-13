@@ -204,6 +204,13 @@ async function loadProducts() {
             allProducts = [];
         }
 
+        try {
+            const deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+            if (deletedIds && deletedIds.length > 0) {
+                allProducts = allProducts.filter(p => !deletedIds.includes(Number(p.id)) && !deletedIds.includes(String(p.id)));
+            }
+        } catch (e) {}
+
         renderCategoryCards();
 
         // Check if there is an active category or URL parameter
@@ -1450,9 +1457,19 @@ async function deleteProduct(productId) {
         }
 
 
-        alert(
-            "Product deleted successfully."
-        );
+        // Persist deleted product ID to localStorage
+        try {
+            const deletedIds = JSON.parse(localStorage.getItem("mystore_deleted_product_ids") || "[]");
+            if (!deletedIds.includes(Number(productId))) {
+                deletedIds.push(Number(productId));
+                localStorage.setItem("mystore_deleted_product_ids", JSON.stringify(deletedIds));
+            }
+        } catch (e) {}
+
+        allProducts = allProducts.filter(p => Number(p.id) !== Number(productId));
+        renderCategoryCards();
+
+        alert("Product deleted successfully.");
 
 
         await loadProducts();
