@@ -166,7 +166,14 @@ exports.getPublicBanners = async (req, res) => {
             banners
         });
     } catch (error) {
-        console.error("getPublicBanners error:", error);
+        if (error.code === 'ECONNREFUSED' || (error.errors && error.errors.some(e => e.code === 'ECONNREFUSED'))) {
+            return res.json({
+                success: true,
+                count: 0,
+                banners: []
+            });
+        }
+        console.error("getPublicBanners error:", error.message || error);
         return res.status(500).json({
             success: false,
             message: "Failed to fetch banners",
