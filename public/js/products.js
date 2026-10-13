@@ -2019,7 +2019,8 @@ function renderAmazonPagination(totalItems, currentPage) {
         return;
     }
 
-    wrapper.style.display = "flex";
+    wrapper.style.display = "none";
+    return;
     const totalPages = window.totalCatalogPages || 400;
     const page = Math.max(1, Math.min(currentPage || 1, totalPages));
 
@@ -2166,7 +2167,7 @@ function displayProducts(
 
     const page = window.currentPage || 1;
     const perPage = window.productsPerPage || 8;
-    const pageProducts = getPageProducts(products, page, perPage);
+    const pageProducts = products;
 
     if (resultCount) {
         const startItem = (page - 1) * perPage + 1;
@@ -2174,7 +2175,7 @@ function displayProducts(
         const activeCategory = (window.sidebarState && window.sidebarState.category && window.sidebarState.category !== 'all')
             ? ' for "' + window.sidebarState.category + '"'
             : '';
-        resultCount.textContent = startItem + '-' + endItem + ' of over 10,000 results' + activeCategory;
+        resultCount.textContent = products.length + ' Product' + (products.length === 1 ? '' : 's') + ' Found' + activeCategory;
     }
 
     // ========================================================
